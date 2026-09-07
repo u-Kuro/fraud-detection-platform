@@ -1,4 +1,4 @@
-import pandas
+from pandas import DataFrame
 from pytest_mock import MockerFixture
 
 from services.drift_check.src.modules.configs.evidently import EvidentlyConfig
@@ -45,7 +45,7 @@ def test_extract_drift_summary():
     assert EvidentlyConfig.drifted_key in concept_drift
 
 def test_run_drift_report(mocker: MockerFixture):
-    dataframe = pandas.DataFrame({
+    dataframe = DataFrame({
         TransactionInferences.is_fraud.key: [1.0],
         TransactionInferences.is_fraud_prediction.key: [1],
         TransactionInferences.is_fraud_probability.key: [1.0],

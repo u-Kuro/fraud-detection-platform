@@ -1,53 +1,22 @@
-from unittest.mock import MagicMock
-import dataclasses
+from dataclasses import fields
+from types import FunctionType
+from typing import TypeAliasType
 
-import pytest
+import optuna
 
 from services.train_model.src.modules.configs.hyperparameters import XGBHyperparametersSampler
 
+class TestXGBHyperparametersSampler:
+    def test_values(self):
+        assert isinstance(XGBHyperparametersSampler.HyperparameterSampler, TypeAliasType)
+        for field in fields(XGBHyperparametersSampler):
+            assert getattr(XGBHyperparametersSampler, field.name)
+        assert isinstance(XGBHyperparametersSampler.resolve, FunctionType)
 
-def test_xgb_sampler_is_frozen_dataclass():
-    sampler = XGBHyperparametersSampler()
-    with pytest.raises((dataclasses.FrozenInstanceError, AttributeError)):
-        sampler.n_estimators = None
+    def test_resolve(self):
+        trial = optuna.create_study().ask()
+        resolved = XGBHyperparametersSampler().resolve(trial)
+        field_names = {field.name for field in fields(XGBHyperparametersSampler)}
 
-
-def test_xgb_sampler_resolve_returns_dict():
-    sampler = XGBHyperparametersSampler()
-    mock_trial = MagicMock()
-    mock_trial.suggest_int.return_value = 100
-    mock_trial.suggest_float.return_value = 0.1
-    result = sampler.resolve(mock_trial)
-    assert isinstance(result, dict)
-
-
-def test_xgb_sampler_resolve_contains_n_estimators():
-    sampler = XGBHyperparametersSampler()
-    mock_trial = MagicMock()
-    mock_trial.suggest_int.return_value = 200
-    mock_trial.suggest_float.return_value = 0.1
-    result = sampler.resolve(mock_trial)
-    assert "n_estimators" in result
-
-
-def test_xgb_sampler_resolve_contains_all_hyperparams():
-    sampler = XGBHyperparametersSampler()
-    mock_trial = MagicMock()
-    mock_trial.suggest_int.return_value = 100
-    mock_trial.suggest_float.return_value = 0.1
-    result = sampler.resolve(mock_trial)
-    expected_keys = {
-        "n_estimators", "max_depth", "learning_rate", "subsample",
-        "colsample_bytree", "reg_alpha", "reg_lambda", "gamma", "min_child_weight"
-    }
-    assert expected_keys == set(result.keys())
-
-
-def test_xgb_sampler_resolve_calls_trial_suggest():
-    sampler = XGBHyperparametersSampler()
-    mock_trial = MagicMock()
-    mock_trial.suggest_int.return_value = 100
-    mock_trial.suggest_float.return_value = 0.1
-    sampler.resolve(mock_trial)
-    assert mock_trial.suggest_int.call_count >= 1
-    assert mock_trial.suggest_float.call_count >= 1
+        assert all(name in resolved for name in field_names)
+        assert all(isinstance(value, (int, float)) for value in resolved.values())

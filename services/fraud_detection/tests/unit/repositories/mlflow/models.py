@@ -1,9 +1,12 @@
+import pytest
+
 from services.fraud_detection.src.modules.schemas.mlflow import DeployedModel
 from services.fraud_detection.src.repositories.mlflow.models import MlflowModel
 
 class TestMlflowModel:
     @staticmethod
-    def make_data():
+    @pytest.fixture
+    def data():
         return {
             "deployed_model": DeployedModel(
                 model_name="value",
@@ -11,8 +14,7 @@ class TestMlflowModel:
             )
         }
 
-    def test_values(self):
-        data = self.make_data()
+    def test_values(self, data: dict):
         values = MlflowModel(**data)
 
         for key, expected in data.items():

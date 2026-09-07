@@ -23,7 +23,7 @@ def train_model(
         preprocessed_output=preprocess_outputs,
         scaler=scaler,
         model=model,
-        hyperparameters_sampler=hyperparameters_sampler()
+        hyperparameters_sampler=hyperparameters_sampler
     )
 
     best_model_hyperparameters = model_results.best_params
@@ -55,7 +55,7 @@ def optimize_model_hyperparameters(
     preprocessed_output: PreprocessOutputs,
     scaler: type[RobustScaler],
     model: type[XGBClassifier],
-    hyperparameters_sampler: XGBHyperparametersSampler,
+    hyperparameters_sampler: type[XGBHyperparametersSampler],
 ) -> Study:
     def objective(trial: optuna.Trial) -> float:
         estimator = Pipeline([
@@ -63,7 +63,7 @@ def optimize_model_hyperparameters(
             (
                 MLflowConfig.model_name,
                 model(
-                    **hyperparameters_sampler.resolve(trial),
+                    **hyperparameters_sampler().resolve(trial),
                     scale_pos_weight=preprocessed_output.original_y_train_positive_scale,
                     random_state=TrainingConfig.random_state,
                     n_jobs=-1,

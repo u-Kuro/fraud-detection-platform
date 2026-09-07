@@ -13,16 +13,17 @@ from services.shared.src.modules.schemas.postgres.transaction_inferences import 
 
 class TestFraudClassifier:
     @staticmethod
-    def make_model(**overrides) -> dict:
+    @pytest.fixture
+    def model_data() -> dict:
         data = {
             "model_name": "value",
             "model_version": 1
         }
-        data.update(overrides)
         return data
 
     @staticmethod
-    def make_request(**overrides) -> dict:
+    @pytest.fixture
+    def request_data() -> dict:
         data = {
             TransactionInferences.transaction_id.key: str(uuid4()),
             FraudClassificationFeaturesKeys.transaction_timestamp: datetime.now().isoformat(),
@@ -32,15 +33,17 @@ class TestFraudClassifier:
                 if key.startswith("v") and key[1:].isdigit()
             },
         }
-        data.update(overrides)
         return data
 
     def test_identity(self):
         assert issubclass(FraudClassifier, MlflowModel)
 
-    def test_classify(self, mocker: MockerFixture):
-        model_data = self.make_model()
-        request_data = self.make_request()
+    def test_classify(
+        self,
+        mocker: MockerFixture,
+        model_data: dict,
+        request_data: dict,
+    ):
         fraud_probability = 1.0
 
         fraud_classifier = FraudClassifier(**model_data)

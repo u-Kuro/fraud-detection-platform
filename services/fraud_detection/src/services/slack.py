@@ -23,7 +23,11 @@ def start_socket_mode() -> None:
         name="slack_socket_mode"
     ).start()
 
-def update_message(client: WebClient, body: dict, text_markdown: str) -> None:
+def update_message(
+    client: WebClient,
+    body: dict,
+    text_markdown: str
+) -> None:
     client.chat_update(
         channel=body["channel"]["id"],
         ts=body["message"]["ts"],
@@ -35,10 +39,3 @@ def update_message(client: WebClient, body: dict, text_markdown: str) -> None:
             }
         }],
     )
-
-def common_callback_configurations(body: dict) -> dict:
-    return {
-        "approved_by": body.get("user", {}).get("username"),
-        "channel_id": body.get("channel", {}).get("id"),
-        "message_ts": body.get("message", {}).get("ts"),
-    }
