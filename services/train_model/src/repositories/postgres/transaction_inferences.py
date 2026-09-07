@@ -6,7 +6,7 @@ from sqlalchemy import select, func, or_
 
 from services.shared.src.modules.configs.dataset import DatasetConfig
 from services.shared.src.modules.configs.postgres import PostgresConfig
-from services.shared.src.modules.schemas import ModelDeployments
+from services.shared.src.modules.schemas.postgres.model_deployments import ModelDeployments
 from services.shared.src.modules.schemas.postgres.transaction_inferences import TransactionInferences
 from services.train_model.src.modules.schemas.postgres.transaction_inferences import TransactionInferencesDatasetNow
 from services.train_model.src.repositories.postgres.postgres import sql_session
@@ -16,7 +16,7 @@ def get_timed_latest_unused_dataset() -> TransactionInferencesDatasetNow:
         cutoff_subquery = (
             select(func.max(ModelDeployments.dataset_max_timestamp))
             .where(
-                ModelDeployments.project_id == PostgresConfig.project_id(),
+                ModelDeployments.project_id == PostgresConfig.project_id,
                 ModelDeployments.active.is_(True),
             )
             .order_by(ModelDeployments.created_at.desc())

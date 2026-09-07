@@ -48,12 +48,8 @@ class FraudClassificationRequest(BaseModel):
     v28: StrictFloat
 
 class FraudClassificationResponse(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
     is_fraud_prediction: StrictBool
     is_fraud_probability: StrictFloat = Field(..., ge=0.0, le=1.0)
 
 class FraudClassificationOutput(DeployedModel, FraudClassificationRequest, FraudClassificationResponse):
-    model_config = ConfigDict(extra="forbid")
-
     is_fraud: StrictBool | None = None

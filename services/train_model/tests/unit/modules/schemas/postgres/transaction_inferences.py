@@ -1,31 +1,26 @@
+from datetime import datetime
+
 import pytest
+from pandas import DataFrame
 
-try:
-    from services.train_model.src.modules.schemas.postgres.transaction_inferences import (
-        TransactionInferencesDatasetNow,
-    )
-    _SCHEMA_AVAILABLE = True
-except RuntimeError:
-    _SCHEMA_AVAILABLE = False
+from services.train_model.src.modules.schemas.postgres.transaction_inferences import TransactionInferencesDatasetNow
 
-pytestmark = pytest.mark.skipif(
-    not _SCHEMA_AVAILABLE,
-    reason="Pydantic Strict() on arbitrary types not supported in this environment version",
-)
+class TestTransactionInferencesDatasetNow:
+    @staticmethod
+    @pytest.fixture
+    def data() -> dict:
+        return {
+            "dataset": DataFrame(),
+            "retrieved_datetime": datetime.now(),
+        }
 
-from datetime import datetime, timezone
-import pandas as pd
+    def test_values(self, data: dict):
+        values = TransactionInferencesDatasetNow(**data)
 
+        for key, expected in data.items():
+            actual = getattr(values, key)
 
-def test_transaction_inferences_dataset_now_instantiation():
-    df = pd.DataFrame({"col": [1, 2]})
-    now = datetime.now(timezone.utc)
-    obj = TransactionInferencesDatasetNow(dataset=df, retrieved_datetime=now)
-    assert obj.retrieved_datetime == now
-
-
-def test_transaction_inferences_dataset_now_stores_dataframe():
-    df = pd.DataFrame({"col": [1, 2]})
-    now = datetime.now(timezone.utc)
-    obj = TransactionInferencesDatasetNow(dataset=df, retrieved_datetime=now)
-    assert isinstance(obj.dataset, pd.DataFrame)
+            if isinstance(expected, DataFrame):
+                assert expected.equals(actual)
+            else:
+                assert expected == actual

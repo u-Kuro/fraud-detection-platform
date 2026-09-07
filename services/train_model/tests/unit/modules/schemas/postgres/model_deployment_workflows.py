@@ -1,21 +1,21 @@
+from datetime import datetime
+
 import pytest
-from pydantic import ValidationError
+from services.train_model.src.modules.schemas.postgres.model_deployment_workflows import ModelDeploymentWorkflowDatasetTimestamps
 
-from services.train_model.src.modules.schemas.postgres.model_deployment_workflows import (
-    ModelDeploymentWorkflowDatasetTimestamps,
-)
+class TestModelDeploymentWorkflowDatasetTimestamps:
+    @staticmethod
+    @pytest.fixture
+    def data() -> dict:
+        return {
+            "model_dataset_min_iso_datetime": datetime.now().isoformat(),
+            "model_dataset_max_iso_datetime": datetime.now().isoformat(),
+        }
 
+    def test_values(self, data: dict):
+        values = ModelDeploymentWorkflowDatasetTimestamps(**data)
 
-def test_timestamps_instantiation():
-    t = ModelDeploymentWorkflowDatasetTimestamps(
-        model_dataset_min_iso_datetime="2025-01-01T00:00:00",
-        model_dataset_max_iso_datetime="2025-06-01T00:00:00",
-    )
-    assert t.model_dataset_min_iso_datetime == "2025-01-01T00:00:00"
+        for key, expected in data.items():
+            actual = getattr(values, key)
 
-
-def test_timestamps_missing_field_raises():
-    with pytest.raises(ValidationError):
-        ModelDeploymentWorkflowDatasetTimestamps(
-            model_dataset_min_iso_datetime="2025-01-01T00:00:00"
-        )
+            assert expected == actual

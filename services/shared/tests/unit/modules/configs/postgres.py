@@ -11,9 +11,8 @@ class TestPostgresConfig:
             target="services.shared.src.modules.configs.postgres.get_project_id",
             return_value=value,
         )
-        PostgresConfig.project_id.cache_clear()
 
-        result = PostgresConfig.project_id()
+        result = PostgresConfig.project_id
 
         assert isinstance(result, UUID)
-        assert result == value
+        assert PostgresConfig.project_id == value

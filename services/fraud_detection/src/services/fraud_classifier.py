@@ -22,7 +22,7 @@ class FraudClassifier(MlflowModel):
             FraudClassificationFeaturesKeys.transaction_timestamp
         ].apply(lambda x: int(x.timestamp()))
 
-        fraud_probability = float(self.model.predict_proba(features_df)[0][1])
+        fraud_probability = float(self.model.predict(features_df.values)[0][1])
         fraud_prediction = fraud_probability > FraudClassifierConfig.classification_threshold
 
         return FraudClassificationOutput(

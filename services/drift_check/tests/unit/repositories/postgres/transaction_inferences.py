@@ -25,4 +25,4 @@ def test_load_current_dataset(mocker: MockerFixture):
     result = load_current_dataset(current_dataset_cutoff=datetime.now())
 
     assert isinstance(result, DataFrame)
-    pandas.testing.assert_frame_equal(dataframe, result)
+    pandas.testing.assert_frame_equal(result, dataframe)

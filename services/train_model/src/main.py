@@ -32,13 +32,13 @@ def main() -> None:
 
         model_evaluations = evaluate_model(
             model=train_model_outputs.model,
-            X_test=preprocess_outputs.X_test,
+            x_test=preprocess_outputs.x_test,
             y_test=preprocess_outputs.y_test
         )
 
         registered_model_info = save_and_register_model(
             model=train_model_outputs.model,
-            X_test_samples=preprocess_outputs.X_test[:5]
+            x_test_samples=preprocess_outputs.x_test[:5]
         )
 
         save_model_reference_dataset(

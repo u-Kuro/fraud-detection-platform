@@ -1,42 +1,67 @@
 import pytest
-from unittest.mock import MagicMock
+from matplotlib.figure import Figure
 
-try:
-    from services.train_model.src.modules.schemas.evaluation import (
-        EvaluateModelOutputs,
-        ModelEvaluationFigures,
-        ModelEvaluationMetrics,
-    )
-    _SCHEMA_AVAILABLE = True
-except RuntimeError:
-    _SCHEMA_AVAILABLE = False
+from services.train_model.src.modules.schemas.evaluation import ModelEvaluationMetrics, ModelEvaluationFigures, EvaluateModelOutputs
 
-pytestmark = pytest.mark.skipif(
-    not _SCHEMA_AVAILABLE,
-    reason="Pydantic Strict() on arbitrary types not supported in this environment version",
-)
+class TestModelEvaluationMetrics:
+    @staticmethod
+    def make_metrics() -> dict:
+        return {
+            "f1_score": 1.0,
+            "pr_auc": 1.0,
+            "recall": 1.0,
+            "precision": 1.0,
+            "roc_auc": 1.0,
+            "accuracy": 1.0,
+        }
 
-from pydantic import ValidationError
+    def test_values(self):
+        data = self.make_metrics()
+        values = ModelEvaluationMetrics(**data)
 
+        for key, expected in data.items():
+            actual = getattr(values, key)
 
-def test_model_evaluation_metrics_instantiation():
-    m = ModelEvaluationMetrics(
-        f1_score=0.8, pr_auc=0.7, recall=0.75, precision=0.85, roc_auc=0.9, accuracy=0.95
-    )
-    assert m.f1_score == 0.8
+            if isinstance(expected, float):
+                assert expected == pytest.approx(actual)
+            else:
+                assert expected == actual
 
+class TestModelEvaluationFigures:
+    @staticmethod
+    def make_figures() -> dict:
+        return {
+            "probability_scatter": Figure(),
+            "confusion_matrix": Figure(),
+        }
 
-def test_model_evaluation_figures_instantiation():
-    fig = MagicMock()
-    figs = ModelEvaluationFigures(probability_scatter=fig, confusion_matrix=fig)
-    assert figs.probability_scatter is fig
+    def test_values(self):
+        data = self.make_figures()
+        values = ModelEvaluationFigures(**data)
 
+        for key, expected in data.items():
+            actual = getattr(values, key)
 
-def test_evaluate_model_outputs_instantiation():
-    fig = MagicMock()
-    metrics = ModelEvaluationMetrics(
-        f1_score=0.8, pr_auc=0.7, recall=0.75, precision=0.85, roc_auc=0.9, accuracy=0.95
-    )
-    figures = ModelEvaluationFigures(probability_scatter=fig, confusion_matrix=fig)
-    outputs = EvaluateModelOutputs(metrics=metrics, metric_figures=figures)
-    assert outputs.metrics is metrics
+            assert expected is actual
+
+class TestEvaluateModelOutputs:
+    def test_values(self):
+        metrics = TestModelEvaluationMetrics.make_metrics()
+        figures = TestModelEvaluationFigures.make_figures()
+        values = EvaluateModelOutputs(
+            metrics=ModelEvaluationMetrics(**metrics),
+            metric_figures=ModelEvaluationFigures(**figures)
+        )
+
+        for key, expected in metrics.items():
+            actual = getattr(values.metrics, key)
+
+            if isinstance(expected, float):
+                assert expected == pytest.approx(actual)
+            else:
+                assert expected == actual
+
+        for key, expected in figures.items():
+            actual = getattr(values.metric_figures, key)
+
+            assert expected is actual

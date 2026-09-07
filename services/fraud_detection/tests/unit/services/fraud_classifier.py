@@ -15,16 +15,15 @@ class TestFraudClassifier:
     @staticmethod
     @pytest.fixture
     def model_data() -> dict:
-        data = {
+        return {
             "model_name": "value",
             "model_version": 1
         }
-        return data
 
     @staticmethod
     @pytest.fixture
-    def request_data() -> dict:
-        data = {
+    def json_request() -> dict:
+        return {
             TransactionInferences.transaction_id.key: str(uuid4()),
             FraudClassificationFeaturesKeys.transaction_timestamp: datetime.now().isoformat(),
             FraudClassificationFeaturesKeys.amount: "1.0",
@@ -33,7 +32,6 @@ class TestFraudClassifier:
                 if key.startswith("v") and key[1:].isdigit()
             },
         }
-        return data
 
     def test_identity(self):
         assert issubclass(FraudClassifier, MlflowModel)
@@ -42,7 +40,7 @@ class TestFraudClassifier:
         self,
         mocker: MockerFixture,
         model_data: dict,
-        request_data: dict,
+        json_request: dict,
     ):
         fraud_probability = 1.0
 
@@ -53,7 +51,7 @@ class TestFraudClassifier:
             return_value=[[1.0 - fraud_probability, fraud_probability]]
         )
         output = fraud_classifier.classify(
-            FraudClassificationRequest(**request_data)
+            FraudClassificationRequest(**json_request)
         )
 
         for key, expected in model_data.items():
@@ -61,7 +59,7 @@ class TestFraudClassifier:
 
             assert expected == actual
 
-        for key, expected in request_data.items():
+        for key, expected in json_request.items():
             actual = getattr(output, key)
 
             match key:

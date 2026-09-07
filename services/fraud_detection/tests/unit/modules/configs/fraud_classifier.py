@@ -13,9 +13,8 @@ class TestFraudClassifierConfig:
             target="services.fraud_detection.src.repositories.postgres.model_deployments.get_active_model_deployment",
             return_value=deployed_model_value,
         )
-        FraudClassifierConfig.deployed_model.cache_clear()
 
-        deployed_model_result = FraudClassifierConfig.deployed_model()
+        deployed_model_result = FraudClassifierConfig.deployed_model
 
         assert isinstance(FraudClassifierConfig.classification_threshold, float)
         assert isinstance(deployed_model_result, DeployedModel)

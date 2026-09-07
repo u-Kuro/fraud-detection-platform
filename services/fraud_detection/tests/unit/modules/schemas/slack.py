@@ -8,7 +8,7 @@ from services.fraud_detection.src.modules.schemas.slack import TrainingValue, Pr
 
 class TestTrainingValue:
     @staticmethod
-    def make_data(**overrides) -> dict:
+    def make_json_data(**overrides) -> dict:
         data = {
             "workflow_id": str(uuid4()),
             "should_train_for_promotion": json.dumps(True)
@@ -17,10 +17,10 @@ class TestTrainingValue:
         return data
 
     def test_values(self):
-        data = self.make_data()
-        value = TrainingValue(**data)
+        json_data = self.make_json_data()
+        value = TrainingValue(**json_data)
 
-        for key, expected in data.items():
+        for key, expected in json_data.items():
             actual = getattr(value, key)
 
             match key:
@@ -32,13 +32,13 @@ class TestTrainingValue:
                     raise ValueError(f"Unexpected key: {key}")
 
     def test_failure_for_extra_field(self):
-        data = self.make_data(extra=0)
+        data = self.make_json_data(extra=0)
         with pytest.raises(ValidationError):
             TrainingValue(**data)
 
 class TestPromotionValue:
     @staticmethod
-    def make_data(**overrides) -> dict:
+    def make_json_data(**overrides) -> dict:
         data = {
             "workflow_id": str(uuid4())
         }
@@ -46,10 +46,10 @@ class TestPromotionValue:
         return data
 
     def test_values(self):
-        data = self.make_data()
-        value = PromotionValue(**data)
+        json_data = self.make_json_data()
+        value = PromotionValue(**json_data)
 
-        for key, expected in data.items():
+        for key, expected in json_data.items():
             actual = getattr(value, key)
 
             match key:
@@ -59,6 +59,6 @@ class TestPromotionValue:
                     raise ValueError(f"Unexpected key: {key}")
 
     def test_failure_for_extra_field(self):
-        data = self.make_data(extra=0)
+        data = self.make_json_data(extra=0)
         with pytest.raises(ValidationError):
             PromotionValue(**data)

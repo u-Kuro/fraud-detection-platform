@@ -7,8 +7,8 @@ from sklearn.model_selection import StratifiedKFold
 class PreprocessOutputs(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
-    X_train: Annotated[ndarray, Strict()]
-    X_test: Annotated[ndarray, Strict()]
+    x_train: Annotated[ndarray, Strict()]
+    x_test: Annotated[ndarray, Strict()]
     y_train: Annotated[ndarray, Strict()]
     y_test: Annotated[ndarray, Strict()]
     original_y_train_positive_scale: StrictFloat

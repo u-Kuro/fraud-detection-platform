@@ -1,3 +1,5 @@
+from typing import cast
+
 import numpy
 import optuna
 from optuna import Study
@@ -42,12 +44,12 @@ def train_model(
             ),
         ]
     ).fit(
-        preprocess_outputs.X_train,
+        preprocess_outputs.x_train,
         preprocess_outputs.y_train
     )
 
     return TrainModelOutputs(
-        model=best_model,
+        model=cast(Pipeline, best_model),
         hyperparameters=best_model_hyperparameters
     )
 
@@ -76,7 +78,7 @@ def optimize_model_hyperparameters(
             numpy.mean(
                 cross_val_score(
                     estimator,
-                    preprocessed_output.X_train,
+                    preprocessed_output.x_train,
                     preprocessed_output.y_train,
                     cv=preprocessed_output.cross_validation,
                     scoring="average_precision",

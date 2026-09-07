@@ -1,5 +1,4 @@
 import uuid
-from dataclasses import dataclass
 from datetime import datetime
 from enum import StrEnum
 from typing import Optional
@@ -9,7 +8,6 @@ from sqlalchemy.orm import Mapped, mapped_column
 
 from dags.shared.modules.schemas.postgres.postgres import PostgresTableBase
 
-@dataclass(frozen=True)
 class ModelDeploymentWorkflowState(StrEnum):
     train_pending = "train_pending"
     promote_pending = "promote_pending"

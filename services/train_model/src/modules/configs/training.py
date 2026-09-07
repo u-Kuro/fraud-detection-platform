@@ -6,8 +6,4 @@ class TrainingConfig:
     test_size: float = 0.2
     bayes_steps: int = 30
     training_timeout_seconds: int = 3_600
-
-    @classmethod
-    def cv_val_size(cls) -> float:
-        # 60/20/20 train/val/test — val is 25% of train set (0.2 / 0.8)
-        return cls.test_size / (1 - cls.test_size)
+    cv_val_size: float = test_size / (1 - test_size)

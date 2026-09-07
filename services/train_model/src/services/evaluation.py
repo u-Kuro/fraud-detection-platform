@@ -2,16 +2,17 @@ import numpy
 from matplotlib import pyplot, ticker
 from numpy import ndarray
 from sklearn.metrics import f1_score, average_precision_score, recall_score, precision_score, roc_auc_score, accuracy_score, ConfusionMatrixDisplay
+from sklearn.pipeline import Pipeline
 
 from services.shared.src.modules.configs.mlflow import MLflowConfig
 from services.train_model.src.modules.schemas.evaluation import EvaluateModelOutputs, ModelEvaluationMetrics, ModelEvaluationFigures
 
 def evaluate_model(
-    model: object,
-    X_test: ndarray,
+    model: Pipeline,
+    x_test: ndarray,
     y_test: ndarray,
 ) -> EvaluateModelOutputs:
-    model_predictions = get_predictions_sklearn(model, X_test)
+    model_predictions = get_predictions_sklearn(model, x_test)
 
     return EvaluateModelOutputs(
         metrics=evaluate_model_predictions(
@@ -26,7 +27,7 @@ def evaluate_model(
     )
 
 def get_predictions_sklearn(
-    model: object,
+    model: Pipeline,
     x: ndarray,
     threshold: float = 0.5
 ) -> dict[str, ndarray]:

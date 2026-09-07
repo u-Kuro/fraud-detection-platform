@@ -1,5 +1,4 @@
 import os
-import shutil
 import tempfile
 from contextlib import contextmanager
 from typing import Any
@@ -10,7 +9,7 @@ from pandas import DataFrame
 from pyarrow import parquet
 
 from services.shared.src.modules.configs.mlflow import MLflowConfig
-from services.shared.src.repositories import mlflow_client, mlflow_module
+from services.shared.src.repositories.mlflow.mlflow import mlflow_module, mlflow_client
 
 @contextmanager
 def transactional_mlflow_run(run_name: str):
@@ -18,8 +17,8 @@ def transactional_mlflow_run(run_name: str):
         try: yield
         except:
             run_id_str = str(run.info.run_id)
-            mlflow_client.delete_run(run_id=run_id_str)
             try:
+                mlflow_client.delete_run(run_id=run_id_str)
                 items = mlflow_client.search_model_versions(filter_string=f"run_id='{run_id_str}'")
                 for item in items:
                     mlflow_client.delete_model_version(
@@ -33,8 +32,7 @@ def save_model_reference_dataset(
     mlflow_model_run_id: str,
     model_reference_dataset: DataFrame
 ) -> None:
-    temporary_directory = tempfile.mkdtemp()
-    try:
+    with tempfile.TemporaryDirectory() as temporary_directory:
         dataset_reference_file_path = os.path.join(
             temporary_directory,
             MLflowConfig.reference_dataset_file_name
@@ -51,8 +49,6 @@ def save_model_reference_dataset(
             artifact_path=MLflowConfig.reference_dataset_path,
             run_id=mlflow_model_run_id
         )
-    finally:
-        shutil.rmtree(temporary_directory)
 
 def save_model_hyperparameters(
     mlflow_model_run_id: str,
