@@ -1,17 +1,25 @@
-import pytest
-from pydantic import ValidationError
+from _pytest.monkeypatch import MonkeyPatch
+
 from dags.shared.modules.environment.github import GitHubEnvironment
 
-def test_github_environment_reads_connection_id(monkeypatch):
-    monkeypatch.setenv("AIRFLOW_VAR_GITHUB_CONNECTION_ID", "github_conn")
-    env = GitHubEnvironment()
-    assert env.GITHUB_CONNECTION_ID == "github_conn"
+class TestGitHubEnvironment:
+    def test_instance(self):
+        from dags.shared.modules.environment.github import github_environment
 
-def test_github_environment_missing_connection_id_raises(monkeypatch):
-    monkeypatch.delenv("AIRFLOW_VAR_GITHUB_CONNECTION_ID", raising=False)
-    with pytest.raises(ValidationError):
-        GitHubEnvironment()
+        assert isinstance(github_environment, GitHubEnvironment)
 
-def test_github_environment_module_level_instance():
-    from dags.shared.modules.environment.github import github_environment
-    assert isinstance(github_environment, GitHubEnvironment)
+    def test_values(self, monkeypatch: MonkeyPatch):
+        value = "value"
+        monkeypatch.setenv(
+            name="GITHUB_CONNECTION_ID",
+            value=value
+        )
+        monkeypatch.setenv(
+            name="GITHUB_TOKEN",
+            value=value
+        )
+
+        environment = GitHubEnvironment()
+
+        assert environment.GITHUB_CONNECTION_ID == value
+        assert environment.GITHUB_TOKEN == value

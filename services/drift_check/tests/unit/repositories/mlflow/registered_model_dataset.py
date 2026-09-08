@@ -12,7 +12,7 @@ def test_load_reference_dataset(mocker: MockerFixture):
         TransactionInferences.transaction_timestamp.key: [1]
     })
     mocker.patch(
-        "services.drift_check.src.repositories.mlflow.registered_model_dataset.parquet.read_table",
+        target="services.drift_check.src.repositories.mlflow.registered_model_dataset.parquet.read_table",
         return_value=table
     )
 

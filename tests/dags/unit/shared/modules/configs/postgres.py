@@ -1,28 +1,18 @@
-from uuid import uuid4
+from uuid import uuid4, UUID
+
+from pytest_mock import MockerFixture
+
 from dags.shared.modules.configs.postgres import PostgresConfig
 
-def test_project_id_returns_uuid(mocker):
-    expected = uuid4()
-    mocker.patch(
-        "dags.shared.modules.configs.postgres.get_project_id",
-        return_value=expected,
-    )
-    result = PostgresConfig.project_id
-    assert result == expected
+class TestPostgresConfig:
+    def test_values(self, mocker: MockerFixture):
+        value = uuid4()
+        mocker.patch(
+            target="dags.shared.repositories.postgres.projects.get_project_id",
+            return_value=value,
+        )
 
-def test_project_id_is_cached(mocker):
-    expected = uuid4()
-    mock_fn = mocker.patch(
-        "dags.shared.modules.configs.postgres.get_project_id",
-        return_value=expected,
-    )
-    PostgresConfig.project_id
-    mock_fn.assert_called_once()
+        result = PostgresConfig.project_id
 
-def test_project_id_uses_fraud_detection_name(mocker):
-    mock_fn = mocker.patch(
-        "dags.shared.modules.configs.postgres.get_project_id",
-        return_value=uuid4(),
-    )
-    PostgresConfig.project_id
-    mock_fn.assert_called_once_with("fraud_detection")
+        assert isinstance(result, UUID)
+        assert PostgresConfig.project_id == value

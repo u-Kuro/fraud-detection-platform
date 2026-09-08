@@ -1,22 +1,17 @@
 from dags.model_lifecycle_orchestrator.check_training_need.modules.configs.airflow.task_ids import NoActionTaskIDs, DispatchTrainingApprovalTaskIDs, SetupTrainingApprovalTaskIDs
+from dags.model_lifecycle_orchestrator.check_training_need.services.tasks import no_action, dispatch_training_approval, setup_training_approval
 
-def test_no_action_task_ids_is_str_enum():
-    from enum import StrEnum
-    assert issubclass(NoActionTaskIDs, StrEnum)
+class TestNoActionTaskIDs:
+    def test_values(self):
+        for actual in NoActionTaskIDs:
+            assert  f"{no_action.__name__}.{actual.name}" == actual
 
-def test_dispatch_training_approval_task_ids_is_str_enum():
-    from enum import StrEnum
-    assert issubclass(DispatchTrainingApprovalTaskIDs, StrEnum)
+class TestDispatchTrainingApprovalTaskIDs:
+    def test_values(self):
+        for actual in DispatchTrainingApprovalTaskIDs:
+            assert  f"{dispatch_training_approval.__name__}.{actual.name}" == actual
 
-def test_setup_training_approval_task_ids_is_str_enum():
-    from enum import StrEnum
-    assert issubclass(SetupTrainingApprovalTaskIDs, StrEnum)
-
-def test_no_action_task_ids_no_drift():
-    assert "no_drift" in NoActionTaskIDs.no_drift
-
-def test_dispatch_training_approval_task_ids_cold_start():
-    assert "cold_start" in DispatchTrainingApprovalTaskIDs.cold_start
-
-def test_setup_training_approval_task_ids_post():
-    assert "post" in SetupTrainingApprovalTaskIDs.post
+class TestSetupTrainingApprovalTaskIDs:
+    def test_values(self):
+        for actual in SetupTrainingApprovalTaskIDs:
+            assert f"{setup_training_approval.__name__}.{actual.name}" == actual

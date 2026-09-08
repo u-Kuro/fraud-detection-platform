@@ -1,7 +1,16 @@
-import dags.model_lifecycle_orchestrator.check_training_need.main as mod
+from datetime import datetime
 
-def test_module_is_importable():
-    assert mod is not None
+from airflow.dag_processing.dagbag import DagBag
 
-def test_check_training_need_callable():
-    assert callable(mod.check_training_need)
+from dags.model_lifecycle_orchestrator import check_training_need
+
+class TestCheckTrainingNeed:
+    def test_dag(self, dag_bag: DagBag):
+        dag = dag_bag.get_dag(check_training_need.__name__)
+
+        assert dag is not None
+
+        assert dag.schedule == "@daily"
+        assert isinstance(dag.start_date, datetime)
+
+        assert dag.max_active_runs == 1

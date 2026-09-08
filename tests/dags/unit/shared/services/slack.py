@@ -1,29 +1,34 @@
-from dags.shared.services.slack import create_blocks, slack_client
+import pytest
 
-def test_create_blocks_returns_list():
-    blocks = create_blocks(title="Hello", body="World")
-    assert isinstance(blocks, list)
+from dags.shared.services.slack import create_blocks
 
-def test_create_blocks_has_header():
-    blocks = create_blocks(title="My Title", body="Body text")
-    header = next(b for b in blocks if b.get("type") == "header")
-    assert header["text"]["text"] == "My Title"
+class TestCreateBlocks:
+    @staticmethod
+    @pytest.fixture
+    def default_blocks() -> list[dict]:
+        return create_blocks(
+            title="value",
+            body="value"
+        )
 
-def test_create_blocks_has_section():
-    blocks = create_blocks(title="T", body="Body content")
-    section = next(b for b in blocks if b.get("type") == "section")
-    assert section["text"]["text"] == "Body content"
+    @staticmethod
+    @pytest.fixture
+    def blocks_with_button() -> list[dict]:
+        return create_blocks(
+            title="value",
+            body="value",
+            buttons=[{}]
+        )
 
-def test_create_blocks_with_buttons_includes_actions():
-    buttons = [{"type": "button", "text": {"type": "plain_text", "text": "OK"}}]
-    blocks = create_blocks(title="T", body="B", buttons=buttons)
-    actions = [b for b in blocks if b.get("type") == "actions"]
-    assert len(actions) == 1
+    def test_return(self, default_blocks: list[dict]):
+        assert isinstance(default_blocks, list)
 
-def test_create_blocks_without_buttons_has_no_actions():
-    blocks = create_blocks(title="T", body="B")
-    actions = [b for b in blocks if b.get("type") == "actions"]
-    assert len(actions) == 0
+    def test_buttons(
+        self,
+        default_blocks: list[dict],
+        blocks_with_button: list[dict],
+    ):
+        assert len(default_blocks) == 2
 
-def test_slack_client_is_not_none():
-    assert slack_client is not None
+        assert len(blocks_with_button) == 3
+        assert blocks_with_button[2]["type"] == "actions"

@@ -19,8 +19,10 @@ class TaskDAGRun:
 
 class TaskContext:
     def __init__(self, context: Context):
-        self.context = context
-        self.exception = context["exception"]
+        self.context: Context = context
+        self.task_instance: RuntimeTaskInstanceProtocol = context["task_instance"]
+        self.dag_run: TaskDAGRun = TaskDAGRun(context["dag_run"])
+        self.exception: None | str | BaseException = context["exception"]
 
     def resolve_task_id(self, task_id: str) -> str:
         current_task_id = self.task_instance.task_id
@@ -35,11 +37,3 @@ class TaskContext:
 
     def configurations[T: BaseModel](self, pydantic_model: type[T]) -> T:
         return pydantic_model.model_validate(self.dag_run.conf)
-
-    @property
-    def task_instance(self) -> RuntimeTaskInstanceProtocol:
-        return self.context["ti"]
-
-    @property
-    def dag_run(self) -> TaskDAGRun:
-        return TaskDAGRun(self.context["dag_run"])

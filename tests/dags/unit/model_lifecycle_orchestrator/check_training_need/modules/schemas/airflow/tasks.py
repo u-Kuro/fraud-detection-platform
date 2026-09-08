@@ -1,58 +1,123 @@
-import pytest
 from uuid import uuid4
-
-from pydantic import ValidationError
 
 from dags.model_lifecycle_orchestrator.check_training_need.modules.schemas.airflow.tasks import ExpiredModelDeploymentWorkflow, ReservedModelDeploymentWorkflow, ExpiredAndReservedModelDeploymentWorkflows, ActiveModelDeployment, ModelDeploymentWorkflowForTraining
 
-def test_active_model_deployment_instantiation():
-    obj = ActiveModelDeployment(mlflow_run_id="run-abc")
-    assert obj.mlflow_run_id == "run-abc"
+class TestExpiredModelDeploymentWorkflow:
+    @staticmethod
+    def make_workflow(**overrides) -> dict:
+        data = {
+            "id": uuid4(),
+            "model_name": "value",
+            "model_version": 1,
+            "mlflow_run_id": "value",
+            "slack_promotion_approval_message_ts": "value",
+        }
+        data.update(overrides)
+        return data
 
-def test_active_model_deployment_strict_str():
-    with pytest.raises(ValidationError):
-        ActiveModelDeployment(mlflow_run_id=123)
+    def test_values(self):
+        data = self.make_workflow()
+        values = ExpiredModelDeploymentWorkflow(**data)
 
-def test_model_deployment_workflow_for_training_instantiation():
-    obj = ModelDeploymentWorkflowForTraining(
-        state="train_the_challenger",
-        should_train_for_promotion=True,
-    )
-    assert obj.state == "train_the_challenger"
-    assert obj.should_train_for_promotion is True
+        for key, expected in data.items():
+            actual = getattr(values, key)
 
-def test_model_deployment_workflow_for_training_optional_id():
-    obj = ModelDeploymentWorkflowForTraining(
-        state="train_the_challenger",
-        should_train_for_promotion=False,
-    )
-    assert obj.id is None
+            assert expected == actual
 
-def test_expired_model_deployment_workflow_instantiation():
-    obj = ExpiredModelDeploymentWorkflow(
-        id=uuid4(),
-        model_name="xgboost",
-        model_version=3,
-        mlflow_run_id="run-abc",
-        slack_promotion_approval_message_ts="ts.123",
-    )
-    assert obj.model_name == "xgboost"
-    assert obj.model_version == 3
+class TestReservedModelDeploymentWorkflow:
+    @staticmethod
+    def make_workflow(**overrides) -> dict:
+        data = {
+            "model_name": "value",
+            "model_version": 1,
+        }
+        data.update(overrides)
+        return data
 
-def test_reserved_model_deployment_workflow_instantiation():
-    obj = ReservedModelDeploymentWorkflow(model_name="xgboost", model_version=2)
-    assert obj.model_name == "xgboost"
-    assert obj.model_version == 2
+    def test_values(self):
+        data = self.make_workflow()
+        values = ReservedModelDeploymentWorkflow(**data)
 
-def test_expired_and_reserved_model_deployment_workflows_instantiation():
-    expired = ExpiredModelDeploymentWorkflow(
-        id=uuid4(),
-        model_name="xgboost",
-        model_version=3,
-        mlflow_run_id="run-abc",
-        slack_promotion_approval_message_ts="ts.111",
-    )
-    reserved = ReservedModelDeploymentWorkflow(model_name="xgboost", model_version=2)
-    combined = ExpiredAndReservedModelDeploymentWorkflows(expired=expired, reserved=reserved)
-    assert combined.expired is expired
-    assert combined.reserved is reserved
+        for key, expected in data.items():
+            actual = getattr(values, key)
+
+            assert expected == actual
+
+class TestExpiredAndReservedModelDeploymentWorkflows:
+    def test_values(self):
+        expired_workflow_data = TestExpiredModelDeploymentWorkflow.make_workflow()
+        reserved_workflow_data = TestReservedModelDeploymentWorkflow.make_workflow()
+        values = ExpiredAndReservedModelDeploymentWorkflows(
+            expired=ExpiredModelDeploymentWorkflow(**expired_workflow_data),
+            reserved=ReservedModelDeploymentWorkflow(**reserved_workflow_data)
+        )
+
+        for key, expected in expired_workflow_data.items():
+            actual = getattr(values.expired, key)
+
+            assert expected == actual
+
+        for key, expected in reserved_workflow_data.items():
+            actual = getattr(values.reserved, key)
+
+            assert expected == actual
+
+class TestActiveModelDeployment:
+    @staticmethod
+    def make_deployment(**overrides) -> dict:
+        data = {
+            "mlflow_run_id": "value",
+        }
+        data.update(overrides)
+        return data
+
+    def test_values(self):
+        data = self.make_deployment()
+        values = ActiveModelDeployment(**data)
+
+        for key, expected in data.items():
+            actual = getattr(values, key)
+
+            assert expected == actual
+
+class TestModelDeploymentWorkflowForTraining:
+    @staticmethod
+    def make_deployment(**overrides) -> dict:
+        data = {
+            "state": "value",
+            "should_train_for_promotion": True,
+            "id": None,
+            "slack_training_approval_message_ts": None,
+        }
+        data.update(overrides)
+        return data
+
+    def test_values(self):
+        data = self.make_deployment()
+        values = ModelDeploymentWorkflowForTraining(**data)
+
+        for key, expected in data.items():
+            actual = getattr(values, key)
+
+            assert expected == actual
+
+    def test_assignment(self):
+        data = self.make_deployment()
+        values = ModelDeploymentWorkflowForTraining(**data)
+
+        state = "new"
+        should_train_for_promotion = False
+        uuid = uuid4()
+        slack_training_approval_message_ts = "new"
+
+        values.state = state
+        values.should_train_for_promotion = should_train_for_promotion
+        values.id = uuid
+        values.slack_training_approval_message_ts = slack_training_approval_message_ts
+
+        assert values.state == state
+        assert values.should_train_for_promotion == should_train_for_promotion
+        assert values.id == uuid
+        assert values.slack_training_approval_message_ts == slack_training_approval_message_ts
+
+

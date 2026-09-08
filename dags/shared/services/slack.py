@@ -26,8 +26,8 @@ def slack_failure_alert():
         )
     )
 
-def create_blocks(title: str, body: str, buttons: list[dict] | None = None) -> list:
-    blocks: list[dict[str, str | dict | list]] = [
+def create_blocks(title: str, body: str, buttons: list[dict] | None = None) -> list[dict]:
+    blocks: list[dict] = [
         {
             "type": "header",
             "text": {

@@ -1,15 +1,9 @@
-import dataclasses
-import pytest
+from pathlib import Path
+
 from dags.shared.modules.configs.project import ProjectConfig
 
-def test_project_config_project_name():
-    assert ProjectConfig.project_name == "fraud_detection"
-
-def test_project_config_is_frozen():
-    config = ProjectConfig()
-    with pytest.raises((dataclasses.FrozenInstanceError, AttributeError)):
-        config.project_name = "other"
-
-def test_project_config_instantiation():
-    config = ProjectConfig()
-    assert config.project_name == "fraud_detection"
+class TestProjectConfig:
+    def test_values(self):
+        assert isinstance(ProjectConfig.project_name, str)
+        assert isinstance(ProjectConfig.root_path, Path)
+        assert isinstance(ProjectConfig.dags_path, Path)

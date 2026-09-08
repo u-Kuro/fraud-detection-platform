@@ -1,55 +1,40 @@
-import sys
-
 import pytest
-from unittest.mock import MagicMock
 
-@pytest.fixture(autouse=True)
-def mock_boto3_module():
-    sys.modules.update({
-        "boto3": MagicMock(),
-        # "boto3.client": MagicMock(),
-        # "boto3.client.head_bucket": MagicMock(),
-        # "boto3.client.create_bucket": MagicMock(),
-    })
+from pytest_mock import MockerFixture
 
-    yield sys.modules["boto3"]
+@pytest.fixture(
+    autouse=True,
+    scope="session"
+)
+def mock_boto3(mocker: MockerFixture):
+    pass
+    # mocker.patch(target="boto3")
 
-    del sys.modules["boto3"]
+@pytest.fixture(
+    autouse=True,
+    scope="session"
+)
+def mock_mlflow(mocker: MockerFixture):
+    pass
+    # mocker.patch(target="mlflow")
 
-@pytest.fixture(autouse=True)
-def mock_mlflow_module():
-    sys.modules.update({
-        # "mlflow": MagicMock(),
-    })
+@pytest.fixture(
+    autouse=True,
+    scope="session"
+)
+def mock_slack_bolt(mocker: MockerFixture):
+    pass
+    # mocker.patch(target="slack_bolt")
+    # mocker.patch(target="slack_bolt.App")
 
-    yield sys.modules["mlflow"]
-
-    del sys.modules["mlflow"]
-
-@pytest.fixture(autouse=True)
-def mock_slack_bolt_module():
-    slack_bolt_app = MagicMock()
-    slack_bolt_app.state.return_value = lambda fn: fn
-
-    sys.modules.update({
-        # "slack_bolt": MagicMock(),
-        "slack_bolt.App": slack_bolt_app
-    })
-
-    yield sys.modules["slack_bolt"]
-
-    del sys.modules["slack_bolt"]
-
-@pytest.fixture(autouse=True)
-def mock_sqlalchemy_module():
-    sys.modules.update({
-        # "sqlalchemy": MagicMock(),
-        # "sqlalchemy.orm.sessionmaker": MagicMock(),
-    })
-
-    yield sys.modules["sqlalchemy"]
-
-    del sys.modules["sqlalchemy"]
+@pytest.fixture(
+    autouse=True,
+    scope="session"
+)
+def mock_sqlalchemy(mocker: MockerFixture):
+    pass
+    # mocker.patch(target="sqlalchemy")
+    # mocker.patch(target="sqlalchemy.orm.sessionmaker")
 
 
 

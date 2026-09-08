@@ -1,6 +1,6 @@
 from dataclasses import dataclass
-from pathlib import Path, PurePath
+from pathlib import Path
 
 @dataclass(frozen=True)
 class ProjectConfig:
-    root_path: PurePath = Path(__file__).parents[4]
+    root_path: Path = Path(__file__).parents[4]

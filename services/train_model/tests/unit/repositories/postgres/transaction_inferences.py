@@ -15,7 +15,7 @@ def test_get_timed_latest_unused_dataset(mocker: MockerFixture):
     })
     mocker.patch.object(dataframe, "__len__", return_value=DatasetConfig.minimum_rows)
     mocker.patch(
-        "services.train_model.src.repositories.postgres.transaction_inferences.pandas.read_sql",
+        target="services.train_model.src.repositories.postgres.transaction_inferences.pandas.read_sql",
         return_value=dataframe
     )
 

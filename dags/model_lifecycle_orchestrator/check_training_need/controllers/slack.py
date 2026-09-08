@@ -146,7 +146,7 @@ def initialize_training_approval(
 def cold_start_buttons(
     workflow_id: UUID,
     should_train_for_promotion: bool
-) -> list:
+) -> list[dict]:
     return [
         {
             "type": "button",
@@ -213,7 +213,7 @@ def build_training_approval_blocks(
     workflow_id: UUID,
     drift_result: DriftCheckResult | None,
     should_train_for_promotion: bool,
-) -> list:
+) -> list[dict]:
     if drift_result is None:
         return create_blocks(
             title="🆕 Training Required",

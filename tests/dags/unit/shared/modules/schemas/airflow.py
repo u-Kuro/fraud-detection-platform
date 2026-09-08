@@ -1,58 +1,82 @@
-import pytest
-from unittest.mock import MagicMock
+from typing import cast
 
-from dags.shared.modules.schemas.airflow import TaskContext, TaskDAGRun
+from airflow.sdk import Context
+# noinspection protected-member
+from airflow.sdk.types import DagRunProtocol, RuntimeTaskInstanceProtocol
 
-def make_airflow_context(exception=None):
-    ti = MagicMock()
-    ti.task_id = "my_task"
-    ti.log_url = "http://localhost/log"
-    ti.run_id = "run-001"
-    dag_run = MagicMock()
-    dag_run.conf = {"key": "val"}
-    ctx = MagicMock()
-    ctx.__getitem__ = MagicMock(
-        side_effect=lambda k: {"ti": ti, "dag_run": dag_run, "exception": exception}[k]
-    )
-    return ctx
+from dags.shared.modules.schemas.airflow import TaskDAGRun, TaskContext
 
-def test_task_context_exposes_exception():
-    ctx = make_airflow_context(exception=ValueError("fail"))
-    tc = TaskContext(ctx)
-    assert isinstance(tc.exception, ValueError)
+class TestTaskDAGRun:
+    @staticmethod
+    def make_dag_run() -> DagRunProtocol:
+        return cast(
+            DagRunProtocol,
+            cast(object, {
+                "conf": {}
+            })
+        )
 
-def test_task_context_exposes_task_instance():
-    ctx = make_airflow_context()
-    tc = TaskContext(ctx)
-    assert tc.task_instance.task_id == "my_task"
+    def test_instance(self):
+        dag_run = self.make_dag_run()
+        task_dag_run = TaskDAGRun(dag_run)
 
-def test_task_context_resolve_task_id_simple():
-    ctx = make_airflow_context()
-    ctx.__getitem__ = MagicMock(
-        side_effect=lambda k: {"ti": MagicMock(task_id="top_task"), "dag_run": MagicMock(), "exception": None}[k]
-    )
-    tc = TaskContext(ctx)
-    assert tc.resolve_task_id("sub") == "sub"
+        assert task_dag_run.conf == dag_run.conf
 
-def test_task_context_resolve_task_id_with_group():
-    ctx = make_airflow_context()
-    ti = MagicMock()
-    ti.task_id = "group.current_task"
-    ctx.__getitem__ = MagicMock(
-        side_effect=lambda k: {"ti": ti, "dag_run": MagicMock(), "exception": None}[k]
-    )
-    tc = TaskContext(ctx)
-    assert tc.resolve_task_id("sub") == "group.sub"
+class TestTaskContext:
+    @staticmethod
+    def make_task_instance(**overrides) -> RuntimeTaskInstanceProtocol:
+        task_instance = {
+            "task_id": "group.current_task"
+        }
+        return cast(
+            RuntimeTaskInstanceProtocol,
+            cast(object, task_instance.update(**overrides))
+        )
 
-def test_task_dag_run_conf_returns_dict():
-    dag_run = MagicMock()
-    dag_run.conf = {"a": 1}
-    tdr = TaskDAGRun(dag_run)
-    assert tdr.conf == {"a": 1}
+    def make_context(self, **overrides) -> Context:
+        context = {
+            "task_instance": self.make_task_instance(),
+            "dag_run": TestTaskDAGRun.make_dag_run(),
+            "exception": "value",
+        }
+        return cast(
+            Context,
+            cast(object, context.update(**overrides))
+        )
 
-def test_task_dag_run_conf_raises_type_error_when_none():
-    dag_run = MagicMock()
-    dag_run.conf = None
-    tdr = TaskDAGRun(dag_run)
-    with pytest.raises(TypeError):
-        _ = tdr.conf
+    def test_instance(self):
+        context = self.make_context()
+        task_context = TaskContext(context)
+
+        assert task_context.task_instance == context["task_instance"]
+        assert task_context.dag_run == context["dag_run"]
+        assert task_context.exception == context["exception"]
+
+    def test_resolve_task_id(self):
+        group = "group"
+        task_ids = {
+            "root": "task_id",
+            "group": f"{group}.task_id",
+            "nested": f"{group}.{group}.task_id"
+        }
+        task_contexts = {
+            type_of_task_id: TaskContext(self.make_context(
+                task_instance=self.make_task_instance(
+                    task_id=task_id
+                )
+            ))
+            for type_of_task_id, task_id in task_ids.items()
+        }
+
+        task_destination = "destination"
+        for type_of_task_id, task_context in task_contexts.items():
+            expected = task_context.resolve_task_id(task_destination)
+
+            actual = None
+            match type_of_task_id:
+                case "root": actual = task_destination
+                case "group": actual = f"{group}.{task_destination}"
+                case "nested": actual = f"{group}.{group}.{task_destination}"
+
+            assert actual is not None
+            assert expected == actual

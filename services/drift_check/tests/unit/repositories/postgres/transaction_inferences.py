@@ -17,7 +17,7 @@ def test_load_current_dataset(mocker: MockerFixture):
     })
     mocker.patch.object(dataframe, "__len__", return_value=DatasetConfig.minimum_rows)
     mocker.patch(
-        "services.drift_check.src.repositories.postgres.transaction_inferences.pandas.read_sql",
+        target="services.drift_check.src.repositories.postgres.transaction_inferences.pandas.read_sql",
         return_value=dataframe
     )
 

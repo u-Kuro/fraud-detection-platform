@@ -1,7 +1,14 @@
-import dags.model_lifecycle_orchestrator.on_training_decision.main as mod
+from airflow.dag_processing.dagbag import DagBag
 
-def test_module_is_importable():
-    assert mod is not None
+from dags.model_lifecycle_orchestrator import on_training_decision
 
-def test_on_training_decision_callable():
-    assert callable(mod.on_training_decision)
+class TestOnTrainingDecision:
+    def test_dag(self, dag_bag: DagBag):
+        dag = dag_bag.get_dag(on_training_decision.__name__)
+
+        assert dag is not None
+
+        assert dag.schedule is None
+        assert dag.start_date is None
+
+        assert dag.max_active_runs == 1

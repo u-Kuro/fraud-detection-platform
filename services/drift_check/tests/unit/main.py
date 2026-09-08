@@ -10,7 +10,7 @@ from services.shared.src.modules.configs.airflow import AirflowConfig
 @pytest.mark.usefixtures("fs")
 def test_main(mocker: MockerFixture):
     mocker.patch(
-        "services.drift_check.src.main.drift_check",
+        target="services.drift_check.src.main.drift_check",
         return_value=(
             True,
             {

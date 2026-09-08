@@ -1,9 +1,10 @@
+from typing import Annotated
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, StrictStr, StrictInt, StrictBool
+from pydantic import BaseModel, ConfigDict, StrictStr, StrictInt, StrictBool, Strict
 
 class ExpiredModelDeploymentWorkflow(BaseModel):
-    id: UUID
+    id: Annotated[UUID, Strict()]
     model_name: StrictStr
     model_version: StrictInt
     mlflow_run_id: StrictStr
@@ -25,5 +26,5 @@ class ModelDeploymentWorkflowForTraining(BaseModel):
 
     state: StrictStr
     should_train_for_promotion: StrictBool
-    id: UUID | None = None
+    id: Annotated[UUID, Strict()] | None = None
     slack_training_approval_message_ts: StrictStr | None = None

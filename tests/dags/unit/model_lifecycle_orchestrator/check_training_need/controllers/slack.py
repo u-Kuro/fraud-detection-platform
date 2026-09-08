@@ -1,78 +1,90 @@
-from uuid import uuid4
+import json
+from uuid import uuid4, UUID
 
-from dags.model_lifecycle_orchestrator.check_training_need.controllers.slack import build_training_approval_blocks, build_training_approval_blocks_initializing, cold_start_buttons, drift_retraining_buttons
+from pytest_mock import MockerFixture
 
-from unittest.mock import MagicMock
+from dags.model_lifecycle_orchestrator.check_training_need.controllers.slack import build_training_approval_blocks_initializing, initialize_training_approval, cold_start_buttons, drift_retraining_buttons, build_training_approval_blocks
+from dags.model_lifecycle_orchestrator.check_training_need.modules.schemas.airflow.tasks import ModelDeploymentWorkflowForTraining
+from dags.model_lifecycle_orchestrator.check_training_need.modules.schemas.airflow.xcom import DriftCheckResult
 
-def test_cold_start_buttons_returns_list():
-    buttons = cold_start_buttons(workflow_id=uuid4(), should_train_for_promotion=True)
-    assert isinstance(buttons, list)
+def test_build_training_approval_blocks_initializing():
+    no_drift_result = build_training_approval_blocks_initializing(None)
+    with_drift_result = build_training_approval_blocks_initializing(
+        drift_result=DriftCheckResult(
+            drift_summary={"value":{}},
+            drift_detected=False
+        )
+    )
 
-def test_cold_start_buttons_has_two_buttons():
-    buttons = cold_start_buttons(workflow_id=uuid4(), should_train_for_promotion=False)
-    assert len(buttons) == 2
+    assert no_drift_result[0]["text"]["text"] == "🆕 Training Required"
+    assert with_drift_result[0]["text"]["text"] == "⚠️ Model Retraining Required"
 
-def test_cold_start_buttons_action_ids():
-    buttons = cold_start_buttons(workflow_id=uuid4(), should_train_for_promotion=True)
-    action_ids = {b["action_id"] for b in buttons}
-    assert "approve_training" in action_ids
-    assert "reject_training" in action_ids
+def test_initialize_training_approval(mocker: MockerFixture):
+    ts = "value"
+    mocker.patch(
+        target="dags.shared.services.slack.slack_client.chat_postMessage",
+        return_value={"ts": ts}
+    )
 
-def test_drift_retraining_buttons_returns_list():
-    buttons = drift_retraining_buttons(workflow_id=uuid4(), should_train_for_promotion=True)
-    assert isinstance(buttons, list)
+    output: ModelDeploymentWorkflowForTraining = initialize_training_approval.function(
+        model_deployment_workflow_for_training=ModelDeploymentWorkflowForTraining(
+            state="value",
+            should_train_for_promotion=True,
+            id=uuid4(),
+            slack_training_approval_message_ts=None,
+        ),
+        drift_result=DriftCheckResult(
+            drift_summary={"value": {}},
+            drift_detected=True
+        )
+    )
 
-def test_drift_retraining_buttons_action_ids():
-    buttons = drift_retraining_buttons(workflow_id=uuid4(), should_train_for_promotion=False)
-    action_ids = {b["action_id"] for b in buttons}
-    assert "approve_retraining" in action_ids
-    assert "reject_retraining" in action_ids
+    assert output.slack_training_approval_message_ts == ts
 
-def test_build_training_approval_blocks_no_drift_returns_list():
-    blocks = build_training_approval_blocks(
+def test_cold_start_buttons():
+    uuid = uuid4()
+    should_train_for_promotion = True
+
+    output = cold_start_buttons(
+        workflow_id=uuid,
+        should_train_for_promotion=should_train_for_promotion
+    )
+
+    assert isinstance(output, list)
+
+    for item in output:
+        assert UUID(json.loads(item["value"])["workflow_id"]) == uuid
+        assert json.loads(item["value"])["should_train_for_promotion"] == should_train_for_promotion
+
+def test_drift_retraining_buttons():
+    uuid = uuid4()
+    should_train_for_promotion = True
+
+    output = drift_retraining_buttons(
+        workflow_id=uuid,
+        should_train_for_promotion=should_train_for_promotion
+    )
+
+    assert isinstance(output, list)
+
+    for item in output:
+        assert UUID(json.loads(item["value"])["workflow_id"]) == uuid
+        assert json.loads(item["value"])["should_train_for_promotion"] == should_train_for_promotion
+
+def test_build_training_approval_blocks():
+    no_drift_result = build_training_approval_blocks(
         workflow_id=uuid4(),
         drift_result=None,
-        should_train_for_promotion=True,
+        should_train_for_promotion=True
     )
-    assert isinstance(blocks, list)
-
-def test_build_training_approval_blocks_no_drift_has_header():
-    blocks = build_training_approval_blocks(
+    with_drift_result = build_training_approval_blocks(
         workflow_id=uuid4(),
-        drift_result=None,
-        should_train_for_promotion=True,
+        drift_result=DriftCheckResult(
+            drift_summary={"value":{}},
+            drift_detected=False
+        ),
+        should_train_for_promotion=True
     )
-    headers = [b for b in blocks if b.get("type") == "header"]
-    assert len(headers) == 1
-    assert "Training" in headers[0]["text"]["text"]
 
-def test_build_training_approval_blocks_with_drift():
-    mock_drift = MagicMock()
-    mock_drift.drift_summary = {
-        "data_drift": {"share_drifted_features": 0.5, "number_of_drifted_features": 5, "total_features": 10},
-        "concept_drift": {"f1_delta": -0.1},
-    }
-    blocks = build_training_approval_blocks(
-        workflow_id=uuid4(),
-        drift_result=mock_drift,
-        should_train_for_promotion=False,
-    )
-    assert isinstance(blocks, list)
-    headers = [b for b in blocks if b.get("type") == "header"]
-    assert "Retraining" in headers[0]["text"]["text"]
-
-def test_build_training_approval_blocks_initializing_no_drift():
-    blocks = build_training_approval_blocks_initializing(drift_result=None)
-    assert isinstance(blocks, list)
-    headers = [b for b in blocks if b.get("type") == "header"]
-    assert len(headers) == 1
-
-def test_build_training_approval_blocks_initializing_with_drift():
-    mock_drift = MagicMock()
-    mock_drift.drift_summary = {
-        "data_drift": {"share_drifted_features": 0.3, "number_of_drifted_features": 3, "total_features": 10},
-        "concept_drift": {"f1_delta": -0.08},
-    }
-    blocks = build_training_approval_blocks_initializing(drift_result=mock_drift)
-    assert isinstance(blocks, list)
-    assert len(blocks) > 0
+    assert no_drift_result[0]["text"]["text"] == "🆕 Training Required"
+    assert with_drift_result[0]["text"]["text"] == "⚠️ Model Retraining Required"
