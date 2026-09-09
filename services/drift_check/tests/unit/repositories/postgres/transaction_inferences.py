@@ -15,10 +15,15 @@ def test_load_current_dataset(mocker: MockerFixture):
         TransactionInferences.amount.key: [1.0],
         TransactionInferences.transaction_timestamp.key: [datetime.now()],
     })
-    mocker.patch.object(dataframe, "__len__", return_value=DatasetConfig.minimum_rows)
     mocker.patch(
         target="services.drift_check.src.repositories.postgres.transaction_inferences.pandas.read_sql",
         return_value=dataframe
+    )
+
+    mocker.patch.object(
+        target=DatasetConfig,
+        attribute="minimum_rows",
+        new=len(dataframe.index)
     )
 
     from services.drift_check.src.repositories.postgres.transaction_inferences import load_current_dataset

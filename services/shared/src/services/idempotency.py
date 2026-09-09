@@ -10,19 +10,19 @@ class IdempotencyGuard:
 
     def __enter__(self) -> "IdempotencyGuard":
         with self.store.lock:
-            expiry = self.store.completed.get(self.key)
-            if expiry is not None and time.monotonic() < expiry:
+            expiration = self.store.completed.get(self.key)
+            if expiration is None:
+                self.store.completed[self.key] = time.monotonic() + self.store.ttl
+            elif expiration >= time.monotonic():
                 raise AlreadyProcessed()
-            self.store.completed[self.key] = time.monotonic() + self.store.ttl
         return self
 
-    def __exit__(self, exc_type, *args) -> bool:
-        if exc_type is AlreadyProcessed:
-            return True  # suppress — already done, skip silently
-        if exc_type is None:
+    def __exit__(self, exception_type, *args) -> bool:
+        if exception_type is AlreadyProcessed: return True
+        if exception_type is None:
             with self.store.lock:
                 self.store.completed.pop(self.key, None)
-        return False  # propagate any real exceptions
+        return False
 
 class IdempotencyStore:
     def __init__(
@@ -30,34 +30,30 @@ class IdempotencyStore:
         ttl: float,
         cleanup_interval: float | None = None,
     ):
-        self.completed: dict[str, float] = {}   # key → expiry monotonic time
-        self.lock = threading.Lock()
-        self.ttl  = ttl
+        self.completed: dict[str, float] = {}
+        self.ttl = ttl
         self.cleanup_interval = (
             cleanup_interval if cleanup_interval is not None
             else max(ttl / 2, 1)
         )
-        self.start_cleanup_thread()
+        self.lock = threading.Lock()
 
-    def start_cleanup_thread(self) -> None:
+        def cleanup_loop():
+            while True:
+                time.sleep(self.cleanup_interval)
+                self.purge_expired()
         threading.Thread(
-            target=self.cleanup_loop,
+            target=cleanup_loop,
             daemon=True,
             name="idempotency-cleanup"
         ).start()
 
-    def cleanup_loop(self) -> None:
-        while True:
-            time.sleep(self.cleanup_interval)
-            self.purge_expired()
-
-    def purge_expired(self) -> int:
-        now = time.monotonic()
+    def purge_expired(self) -> None:
         with self.lock:
+            now = time.monotonic()
             expired = [key for key, expiration in self.completed.items() if expiration <= now]
-            for k in expired:
-                del self.completed[k]
-        return len(expired)
+            for key in expired:
+                del self.completed[key]
 
     def guard(self, *parts: str) -> IdempotencyGuard:
         return IdempotencyGuard(self, ":".join(parts))

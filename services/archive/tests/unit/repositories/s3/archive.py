@@ -4,7 +4,7 @@ from datetime import date
 from pytest_mock import MockerFixture
 
 def test_upload_transaction_inference_batch(mocker: MockerFixture):
-    tested_function = mocker.patch(target="services.archive.src.services.archive.archive_transaction_inferences")
+    tested_function = mocker.patch(target="services.archive.src.repositories.s3.archive.upload_transaction_inference_batch")
 
     from services.archive.src.repositories.s3.archive import upload_transaction_inference_batch
     today = date.today()

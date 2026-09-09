@@ -23,7 +23,7 @@ RUN uv sync --frozen --only-group drift_check --only-group test --no-install-pro
 COPY services/drift_check ./services/drift_check
 COPY services/shared ./services/shared
 
-RUN python -m pytest services/drift_check/tests/unit/ services/shared/tests/unit/ --quiet
+RUN python -m pytest services/drift_check/tests services/shared/tests --quiet
 
 FROM builder AS runtime
 

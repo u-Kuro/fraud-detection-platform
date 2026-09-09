@@ -16,7 +16,6 @@ def load_current_dataset(
             select(
                 TransactionInferences.is_fraud,
                 TransactionInferences.is_fraud_prediction,
-                TransactionInferences.is_fraud_probability,
                 TransactionInferences.amount,
                 TransactionInferences.transaction_timestamp,
                 TransactionInferences.v1, TransactionInferences.v2,
@@ -59,8 +58,8 @@ def load_current_dataset(
         if len(df_current) < DatasetConfig.minimum_rows:
             raise ValueError(f"Dataset window is too small ({len(df_current)} rows), minimum is {DatasetConfig.minimum_rows}.")
 
-        # Convert bool to float64 (int64 is non-nullable)
-        df_current[TransactionInferences.is_fraud.key] = df_current[TransactionInferences.is_fraud.key].astype("float64")
+        # Convert boolean to Int64 (nullable)
+        df_current[TransactionInferences.is_fraud.key] = df_current[TransactionInferences.is_fraud.key].astype("Int64")
         # Convert bool to int64
         df_current[TransactionInferences.is_fraud_prediction.key] = df_current[TransactionInferences.is_fraud_prediction.key].astype("int64")
         # Convert datetime64[ns, UTC] to seconds (int64)

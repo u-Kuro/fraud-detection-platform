@@ -114,18 +114,18 @@ dev = [
 ]
 
 [tool.pytest.ini_options]
-pythonpath = ["."]
-testpaths = [
-    "services/archive/tests",
-    "services/drift_check/tests",
-    "services/fraud_detection/tests",
-    "services/train_model/tests",
-    "services/shared/tests",
-    "tests/dags",
-]
+#pythonpath = ["."]
+#testpaths = [
+#    "services/archive/tests",
+#    "services/drift_check/tests",
+#    "services/fraud_detection/tests",
+#    "services/train_model/tests",
+#    "services/shared/tests",
+#    "tests/dags",
+#]
 python_files = ["[a-z]*.py"]
-python_functions = ["test_*"]
-python_classes = ["Test*"]
+#python_functions = ["test_*"]
+#python_classes = ["Test*"]
 env = [
     # services/shared — MLflow
     "MLFLOW_WORKSPACE=test-0123456789",

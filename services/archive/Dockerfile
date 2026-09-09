@@ -23,7 +23,7 @@ RUN uv sync --frozen --only-group archive --only-group test --no-install-project
 COPY services/archive ./services/archive
 COPY services/shared ./services/shared
 
-RUN python -m pytest services/archive/tests/unit/ services/shared/tests/unit/ --quiet
+RUN python -m pytest services/archive/tests services/shared/tests --quiet
 
 FROM builder AS runtime
 

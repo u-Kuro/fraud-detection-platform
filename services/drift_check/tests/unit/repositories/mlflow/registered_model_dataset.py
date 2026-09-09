@@ -8,6 +8,8 @@ from pytest_mock import MockerFixture
 from services.shared.src.modules.schemas.postgres.transaction_inferences import TransactionInferences
 
 def test_load_reference_dataset(mocker: MockerFixture):
+    mocker.patch(target="services.drift_check.src.repositories.mlflow.registered_model_dataset.mlflow_module.artifacts.download_artifacts")
+
     table = pyarrow.table({
         TransactionInferences.transaction_timestamp.key: [1]
     })

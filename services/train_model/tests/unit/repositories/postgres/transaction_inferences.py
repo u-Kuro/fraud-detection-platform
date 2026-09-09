@@ -13,10 +13,15 @@ def test_get_timed_latest_unused_dataset(mocker: MockerFixture):
         TransactionInferences.is_fraud.key: [1.0],
         TransactionInferences.transaction_timestamp.key: [datetime.now()],
     })
-    mocker.patch.object(dataframe, "__len__", return_value=DatasetConfig.minimum_rows)
     mocker.patch(
         target="services.train_model.src.repositories.postgres.transaction_inferences.pandas.read_sql",
         return_value=dataframe
+    )
+
+    mocker.patch.object(
+        target=DatasetConfig,
+        attribute="minimum_rows",
+        new=len(dataframe.index)
     )
 
     result = get_timed_latest_unused_dataset()

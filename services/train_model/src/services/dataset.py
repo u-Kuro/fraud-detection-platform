@@ -16,7 +16,13 @@ def get_dataset_min_and_max_timestamps(
     assert isinstance(min_timestamp, numpy.integer)
     assert isinstance(max_timestamp, numpy.integer)
 
+    min_timestamp = pandas.Timestamp(min_timestamp, unit="s", tz="UTC")
+    max_timestamp = pandas.Timestamp(max_timestamp, unit="s", tz="UTC")
+
+    assert isinstance(min_timestamp, pandas.Timestamp)
+    assert isinstance(max_timestamp, pandas.Timestamp)
+
     return ModelDeploymentWorkflowDatasetTimestamps(
-        model_dataset_min_iso_datetime=pandas.Timestamp(min_timestamp, unit="s", tz="UTC").isoformat(),
-        model_dataset_max_iso_datetime=pandas.Timestamp(max_timestamp, unit="s", tz="UTC").isoformat(),
+        model_dataset_min_iso_datetime=min_timestamp.isoformat(),
+        model_dataset_max_iso_datetime=max_timestamp.isoformat(),
     )

@@ -26,6 +26,7 @@ def get_timed_latest_unused_dataset() -> TransactionInferencesDatasetNow:
         df = pandas.read_sql(
             select(
                 TransactionInferences.is_fraud,
+                TransactionInferences.is_fraud_prediction,
                 TransactionInferences.amount,
                 TransactionInferences.transaction_timestamp,
                 TransactionInferences.v1, TransactionInferences.v2,
@@ -67,6 +68,8 @@ def get_timed_latest_unused_dataset() -> TransactionInferencesDatasetNow:
 
         # Convert bool to int64
         df[TransactionInferences.is_fraud.key] = df[TransactionInferences.is_fraud.key].astype("int64")
+        # Convert bool to int64
+        df[TransactionInferences.is_fraud_prediction.key] = df[TransactionInferences.is_fraud_prediction.key].astype("int64")
         # Convert datetime64[ns, UTC] to seconds (int64)
         df[TransactionInferences.transaction_timestamp.key] = (
             pandas.Series(

@@ -20,7 +20,11 @@ def main() -> None:
     seed_everything(TrainingConfig.random_state)
 
     unused_dataset_outputs = get_timed_latest_unused_dataset()
-    preprocess_outputs = preprocess(unused_dataset_outputs.dataset)
+    preprocess_outputs = preprocess(
+        dataset=unused_dataset_outputs.dataset.drop(
+            columns=[TransactionInferences.is_fraud_prediction.key]
+        )
+    )
 
     with transactional_mlflow_run(run_name=MLflowConfig.model_name):
         train_model_outputs = train_model(

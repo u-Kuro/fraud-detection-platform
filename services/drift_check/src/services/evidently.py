@@ -80,8 +80,6 @@ def run_drift_report(
         classification=[BinaryClassification(
             target=TransactionInferences.is_fraud.key,
             prediction_labels=TransactionInferences.is_fraud_prediction.key,
-            prediction_probas=TransactionInferences.is_fraud_probability.key,
-            labels={0: "Legitimate", 1: "Fraud"},
         )],
         numerical_columns=list(FraudClassificationFeaturesKeys),
     )
@@ -97,7 +95,8 @@ def run_drift_report(
     # Only include ClassificationPreset if there's enough labeled data
     # Fraud labels arrive earlier which skews concept drift
     metrics: list[DataDriftPreset | ClassificationPreset] = [DataDriftPreset()]
-    if df_current[TransactionInferences.is_fraud.key].count() >= DatasetConfig.minimum_rows:
+    df_current_labeled_count = len(df_current.index) - df_current[TransactionInferences.is_fraud.key].isna().sum()
+    if df_current_labeled_count >= DatasetConfig.minimum_rows:
         metrics.append(ClassificationPreset())
 
     report = Report(
