@@ -11,7 +11,7 @@ class TestTrainingValue:
     def make_json_data(**overrides) -> dict:
         data = {
             "workflow_id": str(uuid4()),
-            "should_train_for_promotion": json.dumps(True)
+            "should_train_for_promotion": True
         }
         data.update(overrides)
         return data
@@ -27,7 +27,7 @@ class TestTrainingValue:
                 case "workflow_id":
                     assert actual == UUID(expected)
                 case "should_train_for_promotion":
-                    assert actual == json.loads(expected)
+                    assert actual == expected
                 case _:
                     raise ValueError(f"Unexpected key: {key}")
 

@@ -53,8 +53,9 @@ def test_cold_start_buttons():
     assert isinstance(output, list)
 
     for item in output:
-        assert UUID(json.loads(item["value"])["workflow_id"]) == uuid
-        assert json.loads(item["value"])["should_train_for_promotion"] == should_train_for_promotion
+        value = json.loads(item["value"])
+        assert UUID(value["workflow_id"]) == uuid
+        assert value["should_train_for_promotion"] == should_train_for_promotion
 
 def test_drift_retraining_buttons():
     uuid = uuid4()
@@ -68,8 +69,9 @@ def test_drift_retraining_buttons():
     assert isinstance(output, list)
 
     for item in output:
-        assert UUID(json.loads(item["value"])["workflow_id"]) == uuid
-        assert json.loads(item["value"])["should_train_for_promotion"] == should_train_for_promotion
+        value = json.loads(item["value"])
+        assert UUID(value["workflow_id"]) == uuid
+        assert value["should_train_for_promotion"] == should_train_for_promotion
 
 def test_build_training_approval_blocks():
     no_drift_result = build_training_approval_blocks(

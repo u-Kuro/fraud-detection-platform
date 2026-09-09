@@ -7,7 +7,7 @@ from dags.model_lifecycle_orchestrator.on_training_decision.services.tasks impor
 from dags.shared.modules.schemas.airflow import TaskContext
 
 class TrainModelResult(BaseModel):
-    model_trained_at_datetime: StrictStr
+    model_trained_at_datetime: datetime
     model_mlflow_run_id: StrictStr
     model_name: StrictStr
     model_version: StrictInt

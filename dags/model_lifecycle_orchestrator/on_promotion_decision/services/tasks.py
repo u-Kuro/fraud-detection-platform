@@ -53,7 +53,6 @@ def apply_model_deployment() -> HttpOperator:
         response_check=lambda response: response.status_code == 204,
     )
 
-@task
 def archive_transaction_inferences_used_for_deployed_model(promoted_model_deployment: PromotedModelDeployment):
     return KubernetesPodOperator(
         task_id=archive_transaction_inferences_used_for_deployed_model.__name__,

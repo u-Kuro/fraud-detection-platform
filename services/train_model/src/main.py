@@ -64,7 +64,7 @@ def main() -> None:
     )
 
     xcom_push({
-        TrainModelXComKeys.model_trained_at_datetime: unused_dataset_outputs.retrieved_datetime,
+        TrainModelXComKeys.model_trained_at_datetime: unused_dataset_outputs.retrieved_iso_datetime,
         TrainModelXComKeys.model_mlflow_run_id: registered_model_info.run_id,
         TrainModelXComKeys.model_name: registered_model_info.model_name,
         TrainModelXComKeys.model_version: registered_model_info.model_version,

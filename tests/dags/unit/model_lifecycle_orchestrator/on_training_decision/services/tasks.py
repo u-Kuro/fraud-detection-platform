@@ -1,13 +1,9 @@
-import dags.model_lifecycle_orchestrator.on_training_decision.services.tasks as mod
+from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
 
-def test_module_is_importable():
-    assert mod is not None
+from dags.model_lifecycle_orchestrator.on_training_decision.services.tasks import train_model_operator
 
-def test_get_training_decision_exists():
-    assert hasattr(mod, "get_training_decision")
+def test_train_model_operator():
+    k8s_operator = train_model_operator()
 
-def test_check_training_decision_exists():
-    assert hasattr(mod, "check_training_decision")
-
-def test_train_model_exists():
-    assert hasattr(mod, "train_model")
+    assert isinstance(k8s_operator, KubernetesPodOperator)
+    assert k8s_operator.task_id == train_model_operator.__name__

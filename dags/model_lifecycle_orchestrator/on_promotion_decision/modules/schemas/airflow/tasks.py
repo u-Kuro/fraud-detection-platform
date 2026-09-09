@@ -1,7 +1,8 @@
 from datetime import datetime
+from typing import Annotated
 from uuid import UUID
 
-from pydantic import BaseModel, StrictBool
+from pydantic import BaseModel, StrictBool, Strict
 
 class ModelDeploymentWorkflowForPromotion(BaseModel):
     id: UUID
@@ -11,4 +12,4 @@ class PromotionDecision(BaseModel):
     model_deployment_workflow: ModelDeploymentWorkflowForPromotion
 
 class PromotedModelDeployment(BaseModel):
-    dataset_max_timestamp: datetime
+    dataset_max_timestamp: Annotated[datetime, Strict()]

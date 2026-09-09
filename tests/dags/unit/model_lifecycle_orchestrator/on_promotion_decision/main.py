@@ -1,5 +1,3 @@
-# TODO - 08/09/2026 - Continue here... Rewrite all tests in on_decisions
-
 from airflow.dag_processing.dagbag import DagBag
 
 from dags.model_lifecycle_orchestrator import on_promotion_decision
