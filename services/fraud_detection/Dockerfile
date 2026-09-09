@@ -23,7 +23,7 @@ RUN uv sync --frozen --only-group fraud_detection --only-group test --no-install
 COPY services/fraud_detection ./services/fraud_detection
 COPY services/shared ./services/shared
 
-RUN python -m pytest services/fraud_detection/tests/unit/ services/shared/tests/unit/ --quiet
+RUN python -m pytest services/fraud_detection/tests services/shared/tests --quiet
 
 FROM builder AS runtime
 

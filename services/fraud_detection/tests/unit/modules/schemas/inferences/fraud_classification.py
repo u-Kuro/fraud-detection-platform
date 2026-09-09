@@ -27,9 +27,9 @@ class TestFraudClassificationRequest:
         data = {
             TransactionInferences.transaction_id.key: str(uuid4()),
             FraudClassificationFeaturesKeys.transaction_timestamp: datetime.now().isoformat(),
-            FraudClassificationFeaturesKeys.amount: "1.0",
+            FraudClassificationFeaturesKeys.amount: 1.0,
             **{
-                key: "1.0" for key in FraudClassificationFeaturesKeys
+                key: 1.0 for key in FraudClassificationFeaturesKeys
                 if key.startswith("v") and key[1:].isdigit()
             },
         }
@@ -38,6 +38,8 @@ class TestFraudClassificationRequest:
 
     def test_values(self):
         json_data = self.make_json_request()
+
+
         values = FraudClassificationRequest(**json_data)
 
         for key, expected in json_data.items():
@@ -45,13 +47,13 @@ class TestFraudClassificationRequest:
 
             match key:
                 case TransactionInferences.transaction_id.key:
-                    assert actual == UUID(expected)
+                    assert UUID(expected) == actual
                 case FraudClassificationFeaturesKeys.transaction_timestamp:
-                    assert actual == datetime.fromisoformat(expected).astimezone(timezone.utc)
+                    assert datetime.fromisoformat(expected).astimezone(timezone.utc) == actual
                 case FraudClassificationFeaturesKeys.amount:
-                    assert actual == pytest.approx(float(expected))
+                    assert expected == pytest.approx(actual)
                 case _ if key.startswith("v") and key[1:].isdigit():
-                    assert actual == pytest.approx(float(expected))
+                    assert expected == pytest.approx(actual)
                 case _:
                     raise ValueError(f"Unexpected key: {key}")
 
@@ -110,11 +112,12 @@ class TestFraudClassificationOutput:
 
             assert expected == actual
 
-
         for key, expected in (request | response).items():
             actual = getattr(values, key)
 
-            if isinstance(expected, float):
+            if isinstance(expected, datetime):
+                assert expected.astimezone(timezone.utc) == actual
+            elif isinstance(expected, float):
                 assert expected == pytest.approx(actual)
             else:
                 assert expected == actual

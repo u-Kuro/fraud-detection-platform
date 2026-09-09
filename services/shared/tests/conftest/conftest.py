@@ -1,7 +1,15 @@
 from unittest.mock import patch
 from uuid import uuid4
 
-# Import stage
-patch("services.shared.src.repositories.postgres.projects.get_project_id", return_value=uuid4()).start()
-patch("boto3.s3.inject.upload_fileobj").start()
-patch("mlflow.set_experiment").start()
+# MLflow
+patch(target="mlflow.set_experiment").start()
+patch(target="mlflow.pyfunc.load_model").start()
+
+# Postgres
+patch(
+    target="services.shared.src.repositories.postgres.projects.get_project_id",
+    return_value=uuid4()
+).start()
+
+# S3
+patch(target="boto3.s3.inject.upload_fileobj").start()

@@ -6,6 +6,7 @@ from pytest_mock import MockerFixture
 
 from services.fraud_detection.src.modules.configs.fraud_classifier import FraudClassifierConfig
 from services.fraud_detection.src.modules.schemas.inferences.fraud_classification import FraudClassificationRequest
+from services.fraud_detection.src.modules.schemas.mlflow import DeployedModel
 from services.fraud_detection.src.repositories.mlflow.models import MlflowModel
 from services.fraud_detection.src.services.fraud_classifier import FraudClassifier
 from services.shared.src.modules.schemas.models_dataset.fraud_classification import FraudClassificationFeaturesKeys
@@ -26,9 +27,9 @@ class TestFraudClassifier:
         return {
             TransactionInferences.transaction_id.key: str(uuid4()),
             FraudClassificationFeaturesKeys.transaction_timestamp: datetime.now().isoformat(),
-            FraudClassificationFeaturesKeys.amount: "1.0",
+            FraudClassificationFeaturesKeys.amount: 1.0,
             **{
-                key: "1.0" for key in FraudClassificationFeaturesKeys
+                key: 1.0 for key in FraudClassificationFeaturesKeys
                 if key.startswith("v") and key[1:].isdigit()
             },
         }
@@ -44,7 +45,7 @@ class TestFraudClassifier:
     ):
         fraud_probability = 1.0
 
-        fraud_classifier = FraudClassifier(**model_data)
+        fraud_classifier = FraudClassifier(deployed_model=DeployedModel(**model_data))
         mocker.patch.object(
             target=fraud_classifier.model,
             attribute="predict_proba",
@@ -64,13 +65,13 @@ class TestFraudClassifier:
 
             match key:
                 case TransactionInferences.transaction_id.key:
-                    assert actual == UUID(expected)
+                    assert UUID(expected) == actual
                 case FraudClassificationFeaturesKeys.transaction_timestamp:
-                    assert actual == datetime.fromisoformat(expected).astimezone(timezone.utc)
+                    assert datetime.fromisoformat(expected).astimezone(timezone.utc) == actual
                 case FraudClassificationFeaturesKeys.amount:
-                    assert actual == pytest.approx(float(expected))
+                    assert expected == pytest.approx(actual)
                 case _ if key.startswith("v") and key[1:].isdigit():
-                    assert actual == pytest.approx(float(expected))
+                    assert expected == pytest.approx(actual)
                 case _:
                     raise ValueError(f"Unexpected key: {key}")
 

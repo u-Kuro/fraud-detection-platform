@@ -25,9 +25,9 @@ class TestTrainingValue:
 
             match key:
                 case "workflow_id":
-                    assert actual == UUID(expected)
+                    assert UUID(expected) == actual
                 case "should_train_for_promotion":
-                    assert actual == expected
+                    assert expected == actual
                 case _:
                     raise ValueError(f"Unexpected key: {key}")
 
@@ -54,7 +54,7 @@ class TestPromotionValue:
 
             match key:
                 case "workflow_id":
-                    assert actual == UUID(expected)
+                    assert UUID(expected) == actual
                 case _:
                     raise ValueError(f"Unexpected key: {key}")
 

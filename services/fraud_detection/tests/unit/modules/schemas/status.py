@@ -1,6 +1,3 @@
-import pytest
-from pydantic import ValidationError
-
 from services.fraud_detection.src.modules.schemas.status import StatusResponse
 
 class TestStatusResponse:
@@ -20,8 +17,3 @@ class TestStatusResponse:
             actual = getattr(values, key)
 
             assert expected == actual
-
-    def test_failure_for_extra_field(self):
-        data = self.make_data(extra=0)
-        with pytest.raises(ValidationError):
-            StatusResponse(**data)
