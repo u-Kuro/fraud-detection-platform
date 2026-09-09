@@ -13,8 +13,7 @@ def test_no_action():
     assert empty_operator.task_id == task_id
 
 def test_drift_check_operator():
-    active_model_deployment = ActiveModelDeployment(mlflow_run_id="value")
-    k8s_operator = drift_check_operator(active_model_deployment=active_model_deployment)
+    k8s_operator = drift_check_operator(active_model_deployment_mlflow_run_id="value")
 
     assert isinstance(k8s_operator, KubernetesPodOperator)
     assert k8s_operator.task_id == drift_check_operator.__name__

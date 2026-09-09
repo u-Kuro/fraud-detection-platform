@@ -40,5 +40,5 @@ def has_active_model_deployment(
         )
     else:
         return context.resolve_task_id(
-            task_id=drift_check.__name__
+            task_id=drift_check.function.__name__
         )

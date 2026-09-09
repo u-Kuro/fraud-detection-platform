@@ -36,7 +36,7 @@ def invalidate_expired_challenger_model() -> None:
         ]
     )
 
-def drift_check_operator(active_model_deployment: ActiveModelDeployment) -> KubernetesPodOperator:
+def drift_check_operator(active_model_deployment_mlflow_run_id: str) -> KubernetesPodOperator:
     return KubernetesPodOperator(
         task_id=drift_check_operator.__name__,
         name=drift_check_operator.__name__,
@@ -52,7 +52,7 @@ def drift_check_operator(active_model_deployment: ActiveModelDeployment) -> Kube
         env_vars=[
             models.V1EnvVar(
                 name=DriftCheckEnvironmentKeys.ACTIVE_MODEL_DEPLOYMENT_MLFLOW_RUN_ID,
-                value=active_model_deployment.mlflow_run_id
+                value=active_model_deployment_mlflow_run_id
             )
         ],
         env_from=[
@@ -79,12 +79,17 @@ def drift_check(active_model_deployment: ActiveModelDeployment | None) -> DriftC
     assert active_model_deployment is not None
 
     @task
+    def get_active_model_deployment_mlflow_run_id(inner_active_model_deployment: ActiveModelDeployment) -> str:
+        return inner_active_model_deployment.mlflow_run_id
+
+    @task
     def get_drift_result() -> DriftCheckResult:
         context = TaskContext(get_current_context())
         return context.xcom_pull(pydantic_model=DriftCheckResult)
 
     sequence(
-        drift_check_operator(active_model_deployment),
+        active_model_deployment_mlflow_run_id := get_active_model_deployment_mlflow_run_id(active_model_deployment),
+        drift_check_operator(active_model_deployment_mlflow_run_id),
         drift_result := get_drift_result()
     )
 

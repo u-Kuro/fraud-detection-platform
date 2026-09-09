@@ -2,11 +2,9 @@ from datetime import datetime
 
 from airflow.dag_processing.dagbag import DagBag
 
-from dags.model_lifecycle_orchestrator import check_training_need
-
 class TestCheckTrainingNeed:
     def test_dag(self, dag_bag: DagBag):
-        dag = dag_bag.get_dag(check_training_need.__name__)
+        dag = dag_bag.dags["check_training_need"]
 
         assert dag is not None
 

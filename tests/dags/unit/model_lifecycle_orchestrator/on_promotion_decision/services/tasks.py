@@ -13,8 +13,7 @@ def test_apply_model_deployment():
     assert http_operator.task_id == apply_model_deployment.__name__
 
 def test_archive_transaction_inferences_used_for_deployed_model():
-    promoted_model_deployment = PromotedModelDeployment(dataset_max_timestamp=datetime.now())
-    k8s_operator = archive_transaction_inferences_used_for_deployed_model(promoted_model_deployment=promoted_model_deployment)
+    k8s_operator = archive_transaction_inferences_used_for_deployed_model(transaction_inferences_iso_datetime_cutoff=datetime.now().isoformat())
 
     assert isinstance(k8s_operator, KubernetesPodOperator)
     assert k8s_operator.task_id == archive_transaction_inferences_used_for_deployed_model.__name__

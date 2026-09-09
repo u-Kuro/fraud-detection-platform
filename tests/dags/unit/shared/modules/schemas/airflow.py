@@ -51,7 +51,7 @@ class TestTaskContext:
         task_context = TaskContext(context)
 
         assert task_context.task_instance == context["task_instance"]
-        assert task_context.dag_run == context["dag_run"]
+        assert task_context.dag_run == TaskDAGRun(context["dag_run"])
         assert task_context.exception == context["exception"]
 
     def test_resolve_task_id(self):

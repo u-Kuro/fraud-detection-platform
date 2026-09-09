@@ -22,11 +22,11 @@ def check_training_decision(training_decision: TrainingDecision) -> str:
 
     if training_decision.approved:
         return context.resolve_task_id(
-            task_id=update_approved_training_workflow.__name__
+            task_id=update_approved_training_workflow.function.__name__
         )
     else:
         return context.resolve_task_id(
-            task_id=delete_rejected_training_workflow.__name__
+            task_id=delete_rejected_training_workflow.function.__name__
         )
 
 def train_model_operator() -> KubernetesPodOperator:

@@ -14,7 +14,7 @@ class TestDriftCheckResult:
     def mocked_task_context(mocker: MockerFixture) -> TaskContext:
         xcom_values = {
             DriftCheckXComKeys.drift_detected: True,
-            DriftCheckXComKeys.drift_summary: "value",
+            DriftCheckXComKeys.drift_summary: {"key": {"key": "value"}},
         }
 
         task_context = TaskContext(TestTaskContext().make_context())

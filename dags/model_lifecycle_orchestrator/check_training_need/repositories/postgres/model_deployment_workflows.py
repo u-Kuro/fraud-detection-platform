@@ -87,7 +87,7 @@ def has_expired_promote_pending_workflow_with_replacement(expired_and_reserved_m
         )
     else:
         return context.resolve_task_id(
-            task_id=invalidate_expired_promotion_approval.__name__
+            task_id=invalidate_expired_promotion_approval.function.__name__
         )
 
 @task
@@ -176,19 +176,19 @@ def check_current_model_deployment_workflows(model_deployment_workflow_for_train
         match model_deployment_workflow_for_training.state:
             case CurrentModelDeploymentWorkflowForTrainingStates.train_the_challenger:
                 return context.resolve_task_id(
-                    task_id=initialize_train_pending_workflow.__name__
+                    task_id=initialize_train_pending_workflow.function.__name__
                 )
             case CurrentModelDeploymentWorkflowForTrainingStates.train_and_replace_the_challenger:
                 return context.resolve_task_id(
-                    task_id=invalidate_old_training_approval.__name__
+                    task_id=invalidate_old_training_approval.function.__name__
                 )
             case CurrentModelDeploymentWorkflowForTrainingStates.train_the_challenger_substitute:
                 return context.resolve_task_id(
-                    task_id=initialize_train_pending_workflow.__name__
+                    task_id=initialize_train_pending_workflow.function.__name__
                 )
             case CurrentModelDeploymentWorkflowForTrainingStates.train_and_replace_the_challenger_substitute:
                 return context.resolve_task_id(
-                    task_id=invalidate_old_training_approval.__name__
+                    task_id=invalidate_old_training_approval.function.__name__
                 )
         raise ValueError(f"Unexpected state: {model_deployment_workflow_for_training.state}")
 
