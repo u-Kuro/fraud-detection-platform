@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 import pandas
 from pandas import DataFrame
@@ -13,7 +13,7 @@ def test_load_current_dataset(mocker: MockerFixture):
         TransactionInferences.is_fraud_prediction.key: [1],
         TransactionInferences.is_fraud_probability.key: [1.0],
         TransactionInferences.amount.key: [1.0],
-        TransactionInferences.transaction_timestamp.key: [datetime.now()],
+        TransactionInferences.transaction_timestamp.key: [datetime.now(tz=timezone.utc)],
     })
     mocker.patch(
         target="services.drift_check.src.repositories.postgres.transaction_inferences.pandas.read_sql",
