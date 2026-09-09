@@ -1,5 +1,3 @@
-from evidently.legacy.calculations.classification_performance import calculate_confusion_by_classes
-from evidently.metrics.classification import RocAucCalculation
 from pandas import DataFrame
 from pytest_mock import MockerFixture
 

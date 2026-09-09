@@ -129,6 +129,7 @@ python_files = ["[a-z]*.py"]
 env = [
     # services/shared — MLflow
     "MLFLOW_WORKSPACE=test-0123456789",
+    "MLFLOW_TRACKING_URI=http://localhost:4566",
     # services/shared — S3
     "S3_BUCKET_NAME=test-bucket",
     # services/shared — Slack

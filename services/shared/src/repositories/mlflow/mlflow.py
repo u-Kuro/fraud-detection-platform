@@ -5,7 +5,7 @@ from services.shared.src.modules.configs.mlflow import MLflowConfig
 from services.shared.src.modules.environment.mlflow import mlflow_environment
 
 def initialize_mlflow():
-    # mlflow.set_tracking_uri(mlflow_environment.MLFLOW_TRACKING_URI)
+    mlflow.set_tracking_uri(mlflow_environment.MLFLOW_TRACKING_URI)
     mlflow.set_workspace(mlflow_environment.MLFLOW_WORKSPACE)
     mlflow.set_experiment(MLflowConfig.experiment_name)
 
