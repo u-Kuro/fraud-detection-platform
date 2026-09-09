@@ -1,4 +1,3 @@
-# TODO - 09/09/2026 - Continue here... Try tests for fraud/train/dags
 from unittest.mock import patch
 
 from services.fraud_detection.src.modules.schemas.mlflow import DeployedModel

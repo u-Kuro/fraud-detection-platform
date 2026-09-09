@@ -17,6 +17,15 @@ class TaskDAGRun:
         else:
             return conf
 
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, TaskDAGRun):
+            return self.dag_run == other.dag_run
+        else:
+            return super().__eq__(other)
+
+    def __hash__(self) -> int:
+        return id(self)
+
 class TaskContext:
     def __init__(self, context: Context):
         self.context: Context = context

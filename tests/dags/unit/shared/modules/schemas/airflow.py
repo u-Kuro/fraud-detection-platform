@@ -1,3 +1,4 @@
+from types import SimpleNamespace
 from typing import cast
 
 from airflow.sdk import Context
@@ -11,9 +12,7 @@ class TestTaskDAGRun:
     def make_dag_run() -> DagRunProtocol:
         return cast(
             DagRunProtocol,
-            cast(object, {
-                "conf": {}
-            })
+            cast(object, SimpleNamespace(conf={}))
         )
 
     def test_instance(self):
@@ -26,12 +25,12 @@ class TestTaskContext:
     @staticmethod
     def make_task_instance(**overrides) -> RuntimeTaskInstanceProtocol:
         task_instance = {
-            "task_id": "group.current_task"
+            "task_id": "group.current_task",
+            **overrides
         }
-        task_instance.update(**overrides)
         return cast(
             RuntimeTaskInstanceProtocol,
-            cast(object, task_instance)
+            cast(object, SimpleNamespace(**task_instance))
         )
 
     def make_context(self, **overrides) -> Context:
@@ -39,8 +38,8 @@ class TestTaskContext:
             "task_instance": self.make_task_instance(),
             "dag_run": TestTaskDAGRun.make_dag_run(),
             "exception": "value",
+            **overrides
         }
-        context.update(**overrides)
         return cast(
             Context,
             cast(object, context)
