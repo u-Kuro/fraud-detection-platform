@@ -1,0 +1,8 @@
+services/archive/Dockerfile
+services/archive/Dockerfile.dockerignore
+
+**/__pycache__
+**/*.pyc
+**/*.pyo
+**/*.pyd
+.venv

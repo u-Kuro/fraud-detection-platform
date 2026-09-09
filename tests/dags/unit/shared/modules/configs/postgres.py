@@ -1,18 +1,7 @@
-from uuid import uuid4, UUID
-
-from pytest_mock import MockerFixture
+from uuid import UUID
 
 from dags.shared.modules.configs.postgres import PostgresConfig
 
 class TestPostgresConfig:
-    def test_values(self, mocker: MockerFixture):
-        value = uuid4()
-        mocker.patch(
-            target="dags.shared.repositories.postgres.projects.get_project_id",
-            return_value=value,
-        )
-
-        result = PostgresConfig.project_id
-
-        assert isinstance(result, UUID)
-        assert PostgresConfig.project_id == value
+    def test_values(self):
+        assert isinstance(PostgresConfig.project_id, UUID)

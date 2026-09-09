@@ -4,7 +4,7 @@ from unittest.mock import patch
 from services.fraud_detection.src.modules.schemas.mlflow import DeployedModel
 
 # noinspection unused-imports
-import services.shared.tests.conftest.conftest # noqa: F401
+import services.shared.tests.conftest  # noqa: F401
 
 # Postgres
 patch(

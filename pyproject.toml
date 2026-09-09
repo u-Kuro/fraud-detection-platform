@@ -143,10 +143,10 @@ env = [
     "TRANSACTION_INFERENCES_ISO_DATETIME_CUTOFF=2025-01-01T00:00:00+00:00",
     # services/drift_check
     "ACTIVE_MODEL_DEPLOYMENT_MLFLOW_RUN_ID=test-run-id-000000000000",
-    # dags/shared — ECR
-    "DRIFT_CHECK_IMAGE=000000000000.dkr.ecr.us-east-1.amazonaws.com/drift-check:test",
-    "TRAIN_MODEL_IMAGE=000000000000.dkr.ecr.us-east-1.amazonaws.com/train-model:test",
-    "ARCHIVE_IMAGE=000000000000.dkr.ecr.us-east-1.amazonaws.com/archive:test",
+    # dags/shared — ECR (AIRFLOW_VAR_ prefix)
+    "AIRFLOW_VAR_DRIFT_CHECK_IMAGE=000000000000.dkr.ecr.us-east-1.amazonaws.com/drift-check:test",
+    "AIRFLOW_VAR_TRAIN_MODEL_IMAGE=000000000000.dkr.ecr.us-east-1.amazonaws.com/train-model:test",
+    "AIRFLOW_VAR_ARCHIVE_IMAGE=000000000000.dkr.ecr.us-east-1.amazonaws.com/archive:test",
     # dags/shared — GitHub (AIRFLOW_VAR_ prefix)
     "AIRFLOW_VAR_GITHUB_CONNECTION_ID=github_default",
     # dags/shared — K8s (AIRFLOW_VAR_ prefix)

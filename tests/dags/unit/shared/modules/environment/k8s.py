@@ -1,5 +1,6 @@
 from _pytest.monkeypatch import MonkeyPatch
 
+from dags.shared.modules.configs.airflow.airflow import AirflowConfig
 from dags.shared.modules.environment.k8s import K8sEnvironment
 
 class TestK8sEnvironment:
@@ -11,23 +12,23 @@ class TestK8sEnvironment:
     def test_values(self, monkeypatch: MonkeyPatch):
         value = "value"
         monkeypatch.setenv(
-            name="K8S_CONNECTION_ID",
+            name=f"{AirflowConfig.environment_prefix}K8S_CONNECTION_ID",
             value=value
         )
         monkeypatch.setenv(
-            name="K8S_NAMESPACE",
+            name=f"{AirflowConfig.environment_prefix}K8S_NAMESPACE",
             value=value
         )
         monkeypatch.setenv(
-            name="K8S_BASE_CONFIG_MAP_NAME",
+            name=f"{AirflowConfig.environment_prefix}K8S_BASE_CONFIG_MAP_NAME",
             value=value
         )
         monkeypatch.setenv(
-            name="K8S_BASE_SECRET_NAME",
+            name=f"{AirflowConfig.environment_prefix}K8S_BASE_SECRET_NAME",
             value=value
         )
         monkeypatch.setenv(
-            name="K8S_DOCKER_REGISTRY_SECRET_NAME",
+            name=f"{AirflowConfig.environment_prefix}K8S_DOCKER_REGISTRY_SECRET_NAME",
             value=value
         )
 

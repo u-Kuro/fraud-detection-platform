@@ -1,5 +1,6 @@
 from _pytest.monkeypatch import MonkeyPatch
 
+from dags.shared.modules.configs.airflow.airflow import AirflowConfig
 from dags.shared.modules.environment.slack import SlackEnvironment
 
 class TestSlackEnvironment:
@@ -11,11 +12,11 @@ class TestSlackEnvironment:
     def test_values(self, monkeypatch: MonkeyPatch):
         value = "value"
         monkeypatch.setenv(
-            name="SLACK_CONNECTION_ID",
+            name=f"{AirflowConfig.environment_prefix}SLACK_CONNECTION_ID",
             value=value
         )
         monkeypatch.setenv(
-            name="SLACK_CHANNEL_ID",
+            name=f"{AirflowConfig.environment_prefix}SLACK_CHANNEL_ID",
             value=value
         )
 

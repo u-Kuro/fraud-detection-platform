@@ -1,14 +1,8 @@
 # Environment
 .env
 
-# Docker secrets
-/secrets
-
 # Github actions secrets
 .secrets
-
-# Kubernetes secrets
-**/secret.yaml
 
 # Terraform
 infrastructure/local_files
@@ -26,9 +20,10 @@ infrastructure/terraform.tfvars
 # Others
 .idea
 .mypy_cache
-.pytest-cache
-.ruff-cache
+.pytest_cache
+.ruff_cache
 __pycache__
+*.pyc
 
 # Temporary
 /*.md

@@ -1,5 +1,6 @@
 from _pytest.monkeypatch import MonkeyPatch
 
+from dags.shared.modules.configs.airflow.airflow import AirflowConfig
 from dags.shared.modules.environment.ecr import ECREnvironment
 
 class TestECREnvironment:
@@ -11,15 +12,15 @@ class TestECREnvironment:
     def test_values(self, monkeypatch: MonkeyPatch):
         value = "value"
         monkeypatch.setenv(
-            name="DRIFT_CHECK_IMAGE",
+            name=f"{AirflowConfig.environment_prefix}DRIFT_CHECK_IMAGE",
             value=value
         )
         monkeypatch.setenv(
-            name="TRAIN_MODEL_IMAGE",
+            name=f"{AirflowConfig.environment_prefix}TRAIN_MODEL_IMAGE",
             value=value
         )
         monkeypatch.setenv(
-            name="ARCHIVE_IMAGE",
+            name=f"{AirflowConfig.environment_prefix}ARCHIVE_IMAGE",
             value=value
         )
 

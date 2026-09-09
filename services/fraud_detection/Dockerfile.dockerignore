@@ -1,0 +1,8 @@
+services/fraud_detection/Dockerfile
+services/fraud_detection/Dockerfile.dockerignore
+
+**/__pycache__
+**/*.pyc
+**/*.pyo
+**/*.pyd
+.venv

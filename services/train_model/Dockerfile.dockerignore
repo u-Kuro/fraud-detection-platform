@@ -1,0 +1,8 @@
+services/train_model/Dockerfile
+services/train_model/Dockerfile.dockerignore
+
+**/__pycache__
+**/*.pyc
+**/*.pyo
+**/*.pyd
+.venv

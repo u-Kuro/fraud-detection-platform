@@ -66,7 +66,7 @@ def archive_transaction_inferences_used_for_deployed_model(promoted_model_deploy
                 name=k8s_environment.K8S_DOCKER_REGISTRY_SECRET_NAME
             )
         ],
-        env=[
+        env_vars=[
             models.V1EnvVar(
                 name=ArchiveEnvironmentKeys.TRANSACTION_INFERENCES_ISO_DATETIME_CUTOFF,
                 value=promoted_model_deployment.dataset_max_timestamp.isoformat()

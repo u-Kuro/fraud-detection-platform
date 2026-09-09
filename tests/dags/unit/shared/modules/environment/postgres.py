@@ -1,5 +1,6 @@
 from _pytest.monkeypatch import MonkeyPatch
 
+from dags.shared.modules.configs.airflow.airflow import AirflowConfig
 from dags.shared.modules.environment.postgres import PostgresEnvironment
 
 class TestPostgresEnvironment:
@@ -11,7 +12,7 @@ class TestPostgresEnvironment:
     def test_values(self, monkeypatch: MonkeyPatch):
         value = "value"
         monkeypatch.setenv(
-            name="POSTGRES_CONNECTION_ID",
+            name=f"{AirflowConfig.environment_prefix}POSTGRES_CONNECTION_ID",
             value=value
         )
 

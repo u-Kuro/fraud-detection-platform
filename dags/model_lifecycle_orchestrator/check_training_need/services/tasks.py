@@ -49,7 +49,7 @@ def drift_check_operator(active_model_deployment: ActiveModelDeployment) -> Kube
                 name=k8s_environment.K8S_DOCKER_REGISTRY_SECRET_NAME
             )
         ],
-        env=[
+        env_vars=[
             models.V1EnvVar(
                 name=DriftCheckEnvironmentKeys.ACTIVE_MODEL_DEPLOYMENT_MLFLOW_RUN_ID,
                 value=active_model_deployment.mlflow_run_id

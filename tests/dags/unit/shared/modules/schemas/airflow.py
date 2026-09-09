@@ -28,9 +28,10 @@ class TestTaskContext:
         task_instance = {
             "task_id": "group.current_task"
         }
+        task_instance.update(**overrides)
         return cast(
             RuntimeTaskInstanceProtocol,
-            cast(object, task_instance.update(**overrides))
+            cast(object, task_instance)
         )
 
     def make_context(self, **overrides) -> Context:
@@ -39,9 +40,10 @@ class TestTaskContext:
             "dag_run": TestTaskDAGRun.make_dag_run(),
             "exception": "value",
         }
+        context.update(**overrides)
         return cast(
             Context,
-            cast(object, context.update(**overrides))
+            cast(object, context)
         )
 
     def test_instance(self):

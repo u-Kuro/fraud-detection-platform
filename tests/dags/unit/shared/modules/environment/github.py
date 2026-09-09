@@ -1,5 +1,6 @@
 from _pytest.monkeypatch import MonkeyPatch
 
+from dags.shared.modules.configs.airflow.airflow import AirflowConfig
 from dags.shared.modules.environment.github import GitHubEnvironment
 
 class TestGitHubEnvironment:
@@ -11,11 +12,11 @@ class TestGitHubEnvironment:
     def test_values(self, monkeypatch: MonkeyPatch):
         value = "value"
         monkeypatch.setenv(
-            name="GITHUB_CONNECTION_ID",
+            name=f"{AirflowConfig.environment_prefix}GITHUB_CONNECTION_ID",
             value=value
         )
         monkeypatch.setenv(
-            name="GITHUB_TOKEN",
+            name=f"{AirflowConfig.environment_prefix}GITHUB_TOKEN",
             value=value
         )
 

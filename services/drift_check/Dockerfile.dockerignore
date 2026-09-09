@@ -1,0 +1,8 @@
+services/drift_check/Dockerfile
+services/drift_check/Dockerfile.dockerignore
+
+**/__pycache__
+**/*.pyc
+**/*.pyo
+**/*.pyd
+.venv

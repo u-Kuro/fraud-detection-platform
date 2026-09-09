@@ -1,5 +1,6 @@
 from _pytest.monkeypatch import MonkeyPatch
 
+from dags.shared.modules.configs.airflow.airflow import AirflowConfig
 from dags.shared.modules.environment.mlflow import MLflowEnvironment
 
 class TestMLflowEnvironment:
@@ -11,19 +12,19 @@ class TestMLflowEnvironment:
     def test_values(self, monkeypatch: MonkeyPatch):
         value = "value"
         monkeypatch.setenv(
-            name="MLFLOW_TRACKING_URI",
+            name=f"{AirflowConfig.environment_prefix}MLFLOW_TRACKING_URI",
             value=value
         )
         monkeypatch.setenv(
-            name="MLFLOW_TRACKING_USERNAME",
+            name=f"{AirflowConfig.environment_prefix}MLFLOW_TRACKING_USERNAME",
             value=value
         )
         monkeypatch.setenv(
-            name="MLFLOW_TRACKING_PASSWORD",
+            name=f"{AirflowConfig.environment_prefix}MLFLOW_TRACKING_PASSWORD",
             value=value
         )
         monkeypatch.setenv(
-            name="MLFLOW_WORKSPACE",
+            name=f"{AirflowConfig.environment_prefix}MLFLOW_WORKSPACE",
             value=value
         )
 
