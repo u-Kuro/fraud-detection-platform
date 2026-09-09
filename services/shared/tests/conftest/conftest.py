@@ -4,6 +4,8 @@ from uuid import uuid4
 # MLflow
 patch(target="mlflow.set_experiment").start()
 patch(target="mlflow.pyfunc.load_model").start()
+patch(target="mlflow.log_artifact").start()
+patch(target="mlflow.log_figure").start()
 
 # Postgres
 patch(

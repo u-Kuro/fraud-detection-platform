@@ -1,11 +1,8 @@
-from typing import Annotated
-
 from pandas import DataFrame
-from pydantic import BaseModel, ConfigDict, Strict, StrictStr
-
+from pydantic import BaseModel, ConfigDict, StrictStr
 
 class TransactionInferencesDatasetNow(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
-    dataset: Annotated[DataFrame, Strict()]
+    dataset: DataFrame
     retrieved_iso_datetime: StrictStr

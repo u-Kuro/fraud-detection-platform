@@ -93,7 +93,6 @@ def optimize_model_hyperparameters(
         direction="maximize",
         sampler=TPESampler(
             seed=TrainingConfig.random_state,
-            multivariate=True
         ),
     )
     study.optimize(

@@ -6,6 +6,7 @@ from services.train_model.src.modules.schemas.preprocessing import PreprocessOut
 
 class TestPreprocessOutputs:
     @staticmethod
+    @pytest.fixture
     def data() -> dict:
         return {
             "x_train": numpy.array([]),

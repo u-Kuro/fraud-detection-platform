@@ -1,10 +1,15 @@
+import pytest
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import FunctionTransformer
+
 from services.train_model.src.modules.schemas.training import TrainModelOutputs
 
 class TestMLflowRegisteredModelInfo:
     @staticmethod
+    @pytest.fixture
     def data() -> dict:
         return {
-            "model": object(),
+            "model": Pipeline(steps=[("passthrough", FunctionTransformer())]),
             "hyperparameters": {},
         }
 

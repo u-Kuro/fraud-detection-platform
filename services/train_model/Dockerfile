@@ -23,7 +23,7 @@ RUN uv sync --frozen --only-group train_model --only-group test --no-install-pro
 COPY services/train_model ./services/train_model
 COPY services/shared ./services/shared
 
-RUN python -m pytest services/train_model/tests/unit/ services/shared/tests/unit/ --quiet
+RUN python -m pytest services/train_model/tests services/shared/tests --quiet
 
 FROM builder AS runtime
 

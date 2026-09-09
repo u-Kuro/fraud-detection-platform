@@ -14,8 +14,8 @@ class ModelEvaluationMetrics(BaseModel):
 class ModelEvaluationFigures(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
-    probability_scatter: Annotated[Figure, Strict()]
-    confusion_matrix: Annotated[Figure, Strict()]
+    probability_scatter: Figure
+    confusion_matrix: Figure
 
 class EvaluateModelOutputs(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)

@@ -72,12 +72,7 @@ def get_timed_latest_unused_dataset() -> TransactionInferencesDatasetNow:
         df[TransactionInferences.is_fraud_prediction.key] = df[TransactionInferences.is_fraud_prediction.key].astype("int64")
         # Convert datetime64[ns, UTC] to seconds (int64)
         df[TransactionInferences.transaction_timestamp.key] = (
-            pandas.Series(
-                pandas.to_datetime(
-                    df[TransactionInferences.transaction_timestamp.key],
-                    utc=True
-                )
-            )
+            df[TransactionInferences.transaction_timestamp.key]
             .astype("datetime64[s, UTC]")
             .astype("int64")
         )

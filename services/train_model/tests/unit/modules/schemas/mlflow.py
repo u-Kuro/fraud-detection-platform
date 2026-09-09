@@ -1,7 +1,10 @@
+import pytest
+
 from services.train_model.src.modules.schemas.mlflow import MLflowRegisteredModelInfo
 
 class TestMLflowRegisteredModelInfo:
     @staticmethod
+    @pytest.fixture
     def data() -> dict:
         return {
             "run_id": "value",

@@ -6,5 +6,5 @@ from sklearn.pipeline import Pipeline
 class TrainModelOutputs(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
-    model: Annotated[Pipeline, Strict()]
+    model: Pipeline
     hyperparameters: Annotated[dict[StrictStr, Any], Strict()]

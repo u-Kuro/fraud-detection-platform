@@ -9,7 +9,7 @@ from services.train_model.src.services.training import train_model
 
 def test_train_model():
     number_of_class = 2
-    minimum_sample_per_class = 3
+    minimum_sample_per_class = 5
     dataframe = preprocess(
         dataset=DataFrame({
             "feature": [1] * number_of_class * minimum_sample_per_class,

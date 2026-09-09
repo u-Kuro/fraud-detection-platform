@@ -64,12 +64,7 @@ def load_current_dataset(
         df_current[TransactionInferences.is_fraud_prediction.key] = df_current[TransactionInferences.is_fraud_prediction.key].astype("int64")
         # Convert datetime64[ns, UTC] to seconds (int64)
         df_current[TransactionInferences.transaction_timestamp.key] = (
-            pandas.Series(
-                pandas.to_datetime(
-                    df_current[TransactionInferences.transaction_timestamp.key],
-                    utc=True
-                )
-            )
+            df_current[TransactionInferences.transaction_timestamp.key]
             .astype("datetime64[s, UTC]")
             .astype("int64")
         )

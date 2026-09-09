@@ -11,7 +11,7 @@ class TestTransactionInferencesDatasetNow:
     def data() -> dict:
         return {
             "dataset": DataFrame(),
-            "retrieved_datetime": datetime.now().isoformat(),
+            "retrieved_iso_datetime": datetime.now().isoformat(),
         }
 
     def test_values(self, data: dict):
