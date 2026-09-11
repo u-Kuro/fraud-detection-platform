@@ -1,4 +1,4 @@
-FROM python:3.12.13-slim AS builder
+FROM python:3.12.13-slim AS base
 
 WORKDIR /app
 
@@ -12,20 +12,26 @@ COPY --from=ghcr.io/astral-sh/uv:0.11.10 /uv /usr/local/bin/uv
 
 COPY pyproject.toml uv.lock ./
 
-RUN uv sync --frozen --only-group train_model --no-install-project
-
 COPY services/__init__.py ./services/__init__.py
 
-FROM builder AS test
+FROM base AS test-base
 
 RUN uv sync --frozen --only-group train_model --only-group test --no-install-project
 
 COPY services/train_model ./services/train_model
 COPY services/shared ./services/shared
 
+FROM test-base AS test-dev
+
+CMD ["python", "-m", "pytest", "services/train_model/tests", "services/shared/tests", "--verbose"]
+
+FROM test-base AS test
+
 RUN python -m pytest services/train_model/tests services/shared/tests --quiet
 
-FROM builder AS runtime
+FROM base AS runtime
+
+RUN uv sync --frozen --only-group train_model --no-install-project
 
 COPY services/train_model/src ./services/train_model/src
 COPY services/shared/src ./services/shared/src

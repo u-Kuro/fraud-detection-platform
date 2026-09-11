@@ -1,4 +1,4 @@
-FROM python:3.12.13-slim
+FROM python:3.12.13-slim AS test-dev
 
 WORKDIR /app
 
@@ -19,4 +19,4 @@ COPY tests/dags ./tests/dags
 
 COPY tests/__init__.py ./tests/__init__.py
 
-CMD ["python", "-m", "pytest", "tests/dags", "-v"]
+CMD ["python", "-m", "pytest", "tests/dags", "--verbose"]

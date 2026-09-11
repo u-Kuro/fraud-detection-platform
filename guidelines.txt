@@ -1,0 +1,21 @@
+# TODO - 10/09/2026 - Continue here... Try rerunning all tests (including all services test stage in container)
+
+# archive
+docker build -t test-archive -f services/archive/Dockerfile --target test-dev .
+docker run -it --rm test-archive
+
+# drift_check
+docker build -t test-drift-check -f services/drift_check/Dockerfile --target test-dev .
+docker run -it --rm test-drift-check
+
+# fraud_detection
+docker build -t test-fraud-detection -f services/fraud_detection/Dockerfile --target test-dev .
+docker run -it --rm test-fraud-detection
+
+# train_model
+docker build -t test-train-model -f services/train_model/Dockerfile --target test-dev .
+docker run -it --rm test-train-model
+
+# dags
+docker build -t test-dags -f tests/dags/Dockerfile --target test-dev .
+docker run -it --rm test-dags

@@ -138,6 +138,7 @@ env = [
     "SLACK_SIGNING_SECRET=test-slack-signing-secret",
     "SLACK_CHANNEL_ID=C000000000",
     # services/shared — MWAA
+    "AWS_DEFAULT_REGION=us-east-1",
     "MWAA_ENVIRONMENT_NAME=test-mwaa-environment",
     # services/archive
     "TRANSACTION_INFERENCES_ISO_DATETIME_CUTOFF=2025-01-01T00:00:00+00:00",

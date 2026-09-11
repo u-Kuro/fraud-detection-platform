@@ -1,8 +1,35 @@
-services/drift_check/Dockerfile
-services/drift_check/Dockerfile.dockerignore
+# Docker
+**/Dockerfile
+**/*.dockerignore
 
-**/__pycache__
+# Secrets & Environment
+**/.env
+**/.env.*
+
+# Version Control
+**/.github/
+**/.git/
+**/.gitignore
+**/.gitattributes
+
+# Python Cache
+**/.venv/
+**/__pycache__/
 **/*.pyc
 **/*.pyo
 **/*.pyd
-.venv
+**/*.egg-info/
+**/.mypy_cache/
+**/.pytest_cache/
+**/.ruff_cache/
+
+# IDE & Editor
+**/.idea/
+**/.vscode/
+
+# OS
+**/.DS_Store
+**/Thumbs.db
+
+# Logs
+**/*.log
