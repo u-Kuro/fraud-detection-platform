@@ -1,4 +1,3 @@
-# TODO - 11/09/2026 - Continue here... Next Build CI/CD
 clear
 # archive
 docker build -t test-archive -f services/archive/Dockerfile --target test-dev . -q

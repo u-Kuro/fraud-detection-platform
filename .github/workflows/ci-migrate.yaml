@@ -1,0 +1,12 @@
+# TODO - 11/09/2026 - Continue here... Build CI/CD
+name: CI / Migrate
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - database/**
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
