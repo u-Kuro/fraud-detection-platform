@@ -15,7 +15,7 @@ rds_postgres_mlflow_password = "mlflow_0123456789"
 
 # MLflow
 # /admin
-mlflow_admin_username = "mlflow_0123456789"
-mlflow_admin_password = "mlflow_0123456789"
+mlflow_admin_username = "mlflow-0123456789"
+mlflow_admin_password = "mlflow-0123456789"
 # /app-secret-key
 mlflow_flask_server_secret_key = "IXGcP6hj2CCcc2hEQrkHYJf1hbtohKf7"

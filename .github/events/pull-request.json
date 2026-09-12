@@ -1,0 +1,7 @@
+{
+  "pull_request": {
+    "number": 1,
+    "head": { "ref": "branch" },
+    "base": { "ref": "main" }
+  }
+}

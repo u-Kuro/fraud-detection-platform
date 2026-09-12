@@ -1,5 +1,6 @@
 # Secrets & Environment
 **/.env
+**/.secrets
 
 # Version Control
 **/.git/

@@ -1,4 +1,3 @@
-# TODO - 11/09/2026 - Continue here... Build CI/CD
 name: CI / Migrate
 
 on:
@@ -8,5 +7,30 @@ on:
       - database/**
 
 jobs:
-  test:
+  test-migration:
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15-alpine
+        ports: [5432:5432]
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+          --health-start-period 10s
+
+    env:
+      DEV_URL: postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: ariga/setup-atlas@v0
+      - name: Lint migrations
+        run: atlas migrate lint --env test

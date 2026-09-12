@@ -1,0 +1,24 @@
+name: Test / Push
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Print workspace
+        run: pwd && ls
+
+      - name: Check if secrets are injected
+        env:
+          TEST_SECRET: ${{ secrets.TEST_SECRET }}
+        run: |
+          if [ -n "$TEST_SECRET" ]; then
+            echo "✅ TEST_SECRET ($TEST_SECRET) is set (length: ${#TEST_SECRET})"
+          else
+            echo "❌ TEST_SECRET is not set or empty"
+          fi

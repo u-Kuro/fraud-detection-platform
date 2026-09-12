@@ -1,0 +1,40 @@
+name: CD / Migrate
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - database/**
+  workflow_dispatch:
+
+concurrency:
+  group: cd-migrate
+  cancel-in-progress: false
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    env:
+      AWS_ENDPOINT_URL: ${{ secrets.AWS_ENDPOINT_URL }} # MiniStack URL
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+          # sts-endpoint: ${{ secrets.AWS_ENDPOINT_URL }} # TODO Check if global env is enough
+
+      - name: Get database URL
+        uses: aws-actions/aws-secretsmanager-get-secrets@v3
+        with:
+          secret-ids: DATABASE_URL, ${{ secrets.TEAM_SECRET_PATH }}/postgres/migration-database-url
+
+      - uses: ariga/setup-atlas@v0
+      - name: Apply migrations
+        env:
+          URL: ${{ env.DATABASE_URL }}
+        run: atlas migrate apply --env production
