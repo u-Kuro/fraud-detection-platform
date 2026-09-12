@@ -6,8 +6,12 @@ on:
     paths:
       - database/**
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  test-migration:
+  test:
     runs-on: ubuntu-latest
 
     services:

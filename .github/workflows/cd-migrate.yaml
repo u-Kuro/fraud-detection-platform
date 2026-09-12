@@ -8,15 +8,17 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: cd-migrate
+  group: ${{ github.workflow }}
   cancel-in-progress: false
+  # noinspection YAMLSchemaValidation
+  queue: max
+
+env:
+  AWS_ENDPOINT_URL: ${{ secrets.AWS_ENDPOINT_URL }} # MiniStack URL
 
 jobs:
   migrate:
     runs-on: ubuntu-latest
-    env:
-      AWS_ENDPOINT_URL: ${{ secrets.AWS_ENDPOINT_URL }} # MiniStack URL
-
     steps:
       - uses: actions/checkout@v7
 
