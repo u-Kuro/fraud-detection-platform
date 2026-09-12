@@ -1,5 +1,5 @@
 [project]
-name = "fraud-detection"
+name = "fraud-detection-platform"
 version = "0.1.0"
 requires-python = "==3.12.13"
 
@@ -33,7 +33,7 @@ drift_check = [
     # mlflow-skinny dependencies
     "alembic>=1.19.1",
 ]
-fraud_detection = [
+fraud_detection_api = [
     "fastapi>=0.136.3",
     "pandas>=2.3.3",
     "slack-bolt>=1.30.0",
@@ -118,7 +118,7 @@ dev = [
 #testpaths = [
 #    "services/archive/tests",
 #    "services/drift_check/tests",
-#    "services/fraud_detection/tests",
+#    "services/fraud_detection_api/tests",
 #    "services/train_model/tests",
 #    "services/shared/tests",
 #    "tests/dags",

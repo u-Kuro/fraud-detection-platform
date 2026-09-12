@@ -37,7 +37,7 @@ def apply_model_deployment() -> HttpOperator:
     return HttpOperator(
         task_id=apply_model_deployment.__name__,
         http_conn_id=github_environment.GITHUB_CONNECTION_ID,
-        endpoint=f"repos/{GitHubConfig.owner}/{GitHubConfig.repository}/actions/workflows/cd-fraud-detection.yaml/dispatches",
+        endpoint=f"repos/{GitHubConfig.owner}/{GitHubConfig.repository}/actions/workflows/cd-fraud-detection-api.yaml/dispatches",
         method="POST",
         headers={
             "Authorization": f"Bearer {github_environment.GITHUB_CONNECTION_ID}",

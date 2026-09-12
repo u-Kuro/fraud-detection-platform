@@ -7,8 +7,8 @@ docker run -it --rm test-archive
 docker build -t test-drift-check -f services/drift_check/Dockerfile --target test-dev . -q
 docker run -it --rm test-drift-check
 
-# fraud_detection
-docker build -t test-fraud-detection -f services/fraud_detection/Dockerfile --target test-dev . -q
+# fraud_detection_api
+docker build -t test-fraud-detection -f services/fraud_detection_api/Dockerfile --target test-dev . -q
 docker run -it --rm test-fraud-detection
 
 # train_model

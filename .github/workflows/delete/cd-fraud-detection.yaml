@@ -61,8 +61,8 @@ jobs:
           ECR_REPO: localhost:4566/000000000000.dkr.ecr.us-east-1.amazonaws.com/fraud-detection
         run: |
           if [ -n "$IMAGE_TAG" ]; then
-            helm upgrade --install fraud-detection \
-              ./infrastructure/helm/fraud_detection \
+            helm upgrade --install fraud-detection-api \
+              ./infrastructure/helm/fraud_detection_api \
               --namespace default \
               --set image.tag=$IMAGE_TAG \
               --set image.repository=$ECR_REPO \

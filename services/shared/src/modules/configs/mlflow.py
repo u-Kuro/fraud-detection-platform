@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 @dataclass(frozen=True)
 class MLflowConfig:
-    experiment_name: str = "fraud_detection"
+    experiment_name: str = "fraud-detection"
 
     model_path:  str = "model"
     model_name:  str = "xgboost"

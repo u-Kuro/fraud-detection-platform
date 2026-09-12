@@ -1237,7 +1237,7 @@ wheels = [
 ]
 
 [[package]]
-name = "fraud-detection"
+name = "fraud-detection-platform"
 version = "0.1.0"
 source = { virtual = "." }
 
@@ -1300,7 +1300,7 @@ drift-check = [
     { name = "pydantic-settings" },
     { name = "sqlalchemy" },
 ]
-fraud-detection = [
+fraud-detection-api = [
     { name = "alembic" },
     { name = "boto3" },
     { name = "fastapi" },
@@ -1397,7 +1397,7 @@ drift-check = [
     { name = "pydantic-settings", specifier = ">=2.15.0" },
     { name = "sqlalchemy", specifier = ">=2.0.52" },
 ]
-fraud-detection = [
+fraud-detection-api = [
     { name = "alembic", specifier = ">=1.19.1" },
     { name = "boto3", specifier = ">=1.43.83" },
     { name = "fastapi", specifier = ">=0.136.3" },

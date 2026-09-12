@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       POSTGRES_VERSION: "15"
-      FRAUD_DETECTION_DB_NAME: fraud_detection
+      FRAUD_DETECTION_DB_NAME: fraud_detection_api
       POSTGRES_CONNECTION_URI: ${{ secrets.POSTGRES_CONNECTION_URI }}
     steps:
       - uses: actions/checkout@v4

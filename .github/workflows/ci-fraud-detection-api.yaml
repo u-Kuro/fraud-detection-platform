@@ -1,0 +1,23 @@
+# TODO - 12/09/2026 - Continue here... Build CI/CD
+name: CI / Migrate
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - services/fraud_detection_api/**
+      - services/shared/**
+
+jobs:
+  test-migration:
+    runs-on: ubuntu-latest
+
+    env:
+      DEV_URL: postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: ariga/setup-atlas@v0
+      - name: Lint migrations
+        run: atlas migrate lint --env test

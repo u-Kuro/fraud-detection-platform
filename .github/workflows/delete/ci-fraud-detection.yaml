@@ -3,7 +3,7 @@ name: CI — Fraud Detection
 on:
   push:
     paths:
-      - "services/fraud_detection/**"
+      - "services/fraud_detection_api/**"
       - "shared/**"
       - "pyproject.toml"
       - "uv.lock"
@@ -21,10 +21,10 @@ jobs:
         with: { python-version: "3.12.13" }
 
       - run: pip install uv
-      - run: uv sync --frozen --group fraud_detection --group dev --no-install-project
+      - run: uv sync --frozen --group fraud_detection_api --group dev --no-install-project
 
       - name: Lint
-        run: uv run ruff check services/fraud_detection shared
+        run: uv run ruff check services/fraud_detection_api shared
 
       - name: Configure AWS
         run: |
@@ -45,7 +45,7 @@ jobs:
             --build-arg FRAUD_DETECTION_PORT=30000 \
             -t $REPO:${{ github.sha }} \
             -t $REPO:latest \
-            -f services/fraud_detection/Dockerfile .
+            -f services/fraud_detection_api/Dockerfile .
           docker push $REPO:${{ github.sha }}
           docker push $REPO:latest
           echo "image_tag=${{ github.sha }}" >> $GITHUB_OUTPUT
