@@ -1,3 +1,16 @@
+# Allow teams to see the k8s cluster name
+resource "aws_ssm_parameter" "teams_k8s_cluster" {
+  for_each = var.eks_teams
+  name     = "/${var.ssm_teams_parameter_paths[each.key]}/eks/cluster"
+  type     = "String"
+  value    = aws_eks_cluster.main.name
+
+  depends_on = [
+    # Waits until teams eks resources are fully functional
+    aws_eks_cluster.main,
+    aws_eks_access_policy_association.teams
+  ]
+}
 # Allow teams to see their k8s namespaces in SSM parameter
 resource "aws_ssm_parameter" "teams_k8s_namespaces" {
   for_each = var.eks_teams
@@ -26,7 +39,7 @@ resource "aws_secretsmanager_secret_version" "teams_base64_kubeconfig" {
   for_each  = aws_secretsmanager_secret.teams_base64_kubeconfig
   secret_id = each.value.id
 
-  secret_string_wo         = local.base64_kubeconfig_for_localhost_file_path
+  secret_string_wo         = local.base64_kubeconfig_for_docker_file_path
   secret_string_wo_version = 1
 }
 # Allow teams to see that they have base64 kubeconfig for accessing K8s API

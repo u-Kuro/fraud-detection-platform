@@ -1,5 +1,5 @@
-act push -W .github/workflows/test-docker.yaml
-act pull_request -W .github/workflows/test-pull-request.yaml -e .github/events/pull-request.json
-act workflow_dispatch -W .github/workflows/test-dispatch.yaml
+act push -W .github/workflows/delete/test-docker.yaml
+act pull_request -W .github/workflows/delete/test-pull-request.yaml -e .github/events/pull-request.json
+act workflow_dispatch -W .github/workflows/delete/test-dispatch.yaml
 
 act push -W .github/workflows/delete/test-push.yaml

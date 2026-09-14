@@ -1,0 +1,76 @@
+# .github/workflows/delete/verify-image.yaml
+name: Verify Image
+
+on:
+  workflow_dispatch:
+
+env:
+  AWS_ENDPOINT_URL: ${{ secrets.AWS_ENDPOINT_URL }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+  AWS_PAGER: ""
+  IMAGE_NAME: fraud-detection-api
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure registry
+        run: |
+          cat > /tmp/buildkitd.toml << 'EOF'
+          [registry."ministack:4566"]
+          http = true
+          insecure = true
+          EOF
+
+          docker buildx create \
+            --name mybuilder \
+            --driver docker-container \
+            --driver-opt network=fraud-detection-platform-network \
+            --config /tmp/buildkitd.toml \
+            --use \
+            --bootstrap
+
+      - name: Install AWS CLI
+        run: |
+          curl -sL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.36.32.zip" -o "awscli.zip"
+          unzip -q awscli.zip
+          sudo ./aws/install
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+
+      - name: Pull and run image
+        run: |
+          PASSWORD=$(aws ecr get-login-password)
+          mkdir -p ~/.docker
+          AUTH=$(echo -n "AWS:$PASSWORD" | base64 -w 0)
+          cat > ~/.docker/config.json <<EOF
+          {
+            "auths": {
+              "ministack:4566": {
+                "auth": "$AUTH"
+              }
+            }
+          }
+          EOF
+
+          # Pull via buildkitd (resolves ministack, trusts HTTP) and load into local daemon
+          docker buildx build \
+            --builder mybuilder \
+            --load \
+            --tag ${{ env.IMAGE_NAME }}:local-test \
+            --platform linux/amd64 \
+            - <<'DOCKERFILE'
+          FROM ministack:4566/${{ env.IMAGE_NAME }}:latest
+          DOCKERFILE
+
+          # Run from local daemon
+          docker run --rm \
+            --network fraud-detection-platform-network \
+            ${{ env.IMAGE_NAME }}:local-test

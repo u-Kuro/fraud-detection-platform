@@ -4,21 +4,156 @@ on:
   push:
     branches: [main]
 
+env:
+  AWS_ENDPOINT_URL: ${{ secrets.AWS_ENDPOINT_URL }} # MiniStack URL
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+  AWS_PAGER: ""
+  IMAGE_NAME: fraud-detection-api
+
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - name: Print workspace
-        run: pwd && ls
-
-      - name: Check if secrets are injected
-        env:
-          TEST_SECRET: ${{ secrets.TEST_SECRET }}
+#      - uses: docker/setup-buildx-action@v4
+      - name: Set up Docker Buildx
         run: |
-          if [ -n "$TEST_SECRET" ]; then
-            echo "✅ TEST_SECRET ($TEST_SECRET) is set (length: ${#TEST_SECRET})"
-          else
-            echo "❌ TEST_SECRET is not set or empty"
-          fi
+          cat > /tmp/buildkitd.toml << 'EOF'
+          [registry."ministack:4566"]
+          http = true
+          insecure = true
+          EOF
+
+          docker buildx create \
+            --name mybuilder \
+            --driver docker-container \
+            --driver-opt network=fraud-detection-platform-network \
+            --config /tmp/buildkitd.toml \
+            --use \
+            --bootstrap
+
+#      - name: Install AWS CLI (Local act runs only)
+#        uses: unfor19/install-aws-cli-action@v1
+#        with:
+#          version: 2
+
+      - name: Install AWS CLI
+        run: |
+          curl -sL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.36.32.zip" -o "awscli.zip"
+          unzip -q awscli.zip
+          sudo ./aws/install
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+
+      - name: Create ECR repo if not exists
+        run: |
+          aws ecr describe-repositories \
+            --repository-names ${{ env.IMAGE_NAME }} 2>/dev/null || \
+          aws ecr create-repository \
+            --repository-name ${{ env.IMAGE_NAME }}
+
+#      - name: Login to ECR
+#        id: ecr-login
+#        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Login to ECR
+        id: ecr-login
+        run: |
+          PASSWORD=$(aws ecr get-login-password)
+          mkdir -p ~/.docker
+          AUTH=$(echo -n "AWS:$PASSWORD" | base64 -w 0)
+          cat > ~/.docker/config.json <<EOF
+          {
+            "auths": {
+              "ministack:4566": {
+                "auth": "$AUTH"
+              }
+            }
+          }
+          EOF
+          echo "registry=ministack:4566" >> $GITHUB_OUTPUT
+
+#      - name: Tags & labels
+#        id: meta
+#        uses: docker/metadata-action@v6
+#        with:
+#          images: ${{ steps.ecr-login.outputs.registry }}/${{ env.IMAGE_NAME }}
+#          tags: |
+#            type=sha,prefix=sha-,format=short
+#            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Tags & labels
+        id: meta
+        run: |
+          SHA=${GITHUB_SHA::7}
+          echo "tags=ministack:4566/${{ env.IMAGE_NAME }}:sha-$SHA,ministack:4566/${{ env.IMAGE_NAME }}:latest" >> $GITHUB_OUTPUT
+          echo "labels=" >> $GITHUB_OUTPUT
+
+      - name: Build & push
+        id: build
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ./services/fraud_detection_api/Dockerfile
+          target: runtime
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          sbom: true
+          provenance: mode=max
+
+  deploy:
+    needs: [test]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install AWS CLI
+        run: |
+          curl -sL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.36.32.zip" -o "awscli.zip"
+          unzip -q awscli.zip
+          sudo ./aws/install
+#
+#      - name: Install AWS CLI (Local act runs only)
+#        uses: unfor19/install-aws-cli-action@v1
+#        with:
+#          version: 2
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v5
+        with:
+          version: v1.36.1
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+
+      - name: Get BASE64 KUBECONFIG
+        uses: aws-actions/aws-secretsmanager-get-secrets@v3
+        with:
+          secret-ids: KUBECONFIG_B64, ${{ secrets.SECRET_PATH }}/eks/base64-kubeconfig
+
+      - name: Write KUBECONFIG File
+        run: |
+          echo "${{ env.KUBECONFIG_B64 }}" | base64 --decode > /tmp/kubeconfig
+          chmod 600 /tmp/kubeconfig
+          echo "KUBECONFIG=/tmp/kubeconfig" >> $GITHUB_ENV
+
+      - name: Verify kubectl
+        run: |
+          kubectl get nodes
+          kubectl get pods -A
+          kubectl get svc -A

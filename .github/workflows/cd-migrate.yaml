@@ -33,7 +33,7 @@ jobs:
       - name: Get database URL
         uses: aws-actions/aws-secretsmanager-get-secrets@v3
         with:
-          secret-ids: DATABASE_URL, ${{ secrets.TEAM_SECRET_PATH }}/postgres/migration-database-url
+          secret-ids: DATABASE_URL, ${{ secrets.SECRET_PATH }}/postgres/migration-database-url
 
       - uses: ariga/setup-atlas@v0
       - name: Apply migrations

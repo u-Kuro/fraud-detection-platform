@@ -95,6 +95,9 @@ if (-not $k3s_container_ip) {
 # Define configuration files directory path in K3s container
 $k3s_container_configuration_files_directory_path = "/etc/rancher/k3s"
 
+# Disable TLS verification for patched URLs that aren't in the original K3s cert SANs
+$null = docker exec $k3s_container_name sh -c 'kubectl config set-cluster $(kubectl config current-context) --insecure-skip-tls-verify=true'
+
 # Get raw kubeconfig file in K3s container
 $raw_kubeconfig = docker exec $k3s_container_name cat "${k3s_container_configuration_files_directory_path}/k3s.yaml"
 
