@@ -23,6 +23,7 @@ infrastructure/**/.terraform.lock.hcl
 infrastructure/**/.terraform.tfstate.lock.info
 infrastructure/**/*.tfstate
 infrastructure/**/*.tfstate.backup
+infrastructure/**/*.tfstate.*.backup
 infrastructure/**/terraform.tfvars
 infrastructure/local_files/
 

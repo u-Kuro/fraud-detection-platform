@@ -1,5 +1,6 @@
 cd infrastructure
 terraform init
+terraform state rm -backup="terraform.tfstate.backup" module.postgres module.metallb module.mlflow module.exports
 terraform destroy -auto-approve -parallelism=1
 terraform validate
 terraform apply -target="module.ministack_container.docker_container.ministack" -auto-approve -parallelism=1
