@@ -1,4 +1,4 @@
-# TODO - 12/09/2026 - Continue here... Build CI/CD
+# TODO - 15/09/2026 - Continue here... test in test-push and Build CI/CD here
 name: CD / Fraud Detection API
 
 on:
@@ -30,7 +30,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v7
-      - uses: docker/setup-buildx-action@v4
+      - uses: ./.github/actions/setup-buildx
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v6
@@ -38,7 +38,6 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
-          # sts-endpoint: ${{ secrets.AWS_ENDPOINT_URL }} # TODO Check if global env is enough
 
       - name: Login to ECR
         id: ecr-login

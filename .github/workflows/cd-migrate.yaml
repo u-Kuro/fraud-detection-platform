@@ -14,7 +14,7 @@ concurrency:
   queue: max
 
 env:
-  AWS_ENDPOINT_URL: ${{ secrets.AWS_ENDPOINT_URL }} # MiniStack URL
+  AWS_ENDPOINT_URL: ${{ secrets.AWS_ENDPOINT_URL }}
 
 jobs:
   migrate:
@@ -28,7 +28,6 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
-          # sts-endpoint: ${{ secrets.AWS_ENDPOINT_URL }} # TODO Check if global env is enough
 
       - name: Get database URL
         uses: aws-actions/aws-secretsmanager-get-secrets@v3

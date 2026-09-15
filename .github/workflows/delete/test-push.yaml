@@ -1,50 +1,27 @@
-name: Test / Push
+name: CI / CD
 
 on:
   push:
     branches: [main]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
 env:
-  AWS_ENDPOINT_URL: ${{ secrets.AWS_ENDPOINT_URL }} # MiniStack URL
-  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+  AWS_ENDPOINT_URL: ${{ secrets.AWS_ENDPOINT_URL }}
   AWS_PAGER: ""
   IMAGE_NAME: fraud-detection-api
 
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
+    outputs:
+      image-tag: ${{ steps.meta.outputs.version }}
     steps:
       - uses: actions/checkout@v7
-
-#      - uses: docker/setup-buildx-action@v4
-      - name: Set up Docker Buildx
-        run: |
-          cat > /tmp/buildkitd.toml << 'EOF'
-          [registry."ministack:4566"]
-          http = true
-          insecure = true
-          EOF
-
-          docker buildx create \
-            --name mybuilder \
-            --driver docker-container \
-            --driver-opt network=fraud-detection-platform-network \
-            --config /tmp/buildkitd.toml \
-            --use \
-            --bootstrap
-
-#      - name: Install AWS CLI (Local act runs only)
-#        uses: unfor19/install-aws-cli-action@v1
-#        with:
-#          version: 2
-
-      - name: Install AWS CLI
-        run: |
-          curl -sL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.36.32.zip" -o "awscli.zip"
-          unzip -q awscli.zip
-          sudo ./aws/install
+      - uses: ./.github/actions/setup-buildx
+      - uses: ./.github/actions/install-aws-cli
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v6
@@ -53,56 +30,32 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
 
-      - name: Create ECR repo if not exists
+      - name: Create ECR repository
         run: |
-          aws ecr describe-repositories \
-            --repository-names ${{ env.IMAGE_NAME }} 2>/dev/null || \
-          aws ecr create-repository \
-            --repository-name ${{ env.IMAGE_NAME }}
+          if ! aws ecr describe-repositories --repository-names "${IMAGE_NAME}" 2>/dev/null; then
+            aws ecr create-repository --repository-name "${IMAGE_NAME}"
+          fi
 
-#      - name: Login to ECR
-#        id: ecr-login
-#        uses: aws-actions/amazon-ecr-login@v2
-
-      - name: Login to ECR
+      - name: Login to Amazon ECR
         id: ecr-login
-        run: |
-          PASSWORD=$(aws ecr get-login-password)
-          mkdir -p ~/.docker
-          AUTH=$(echo -n "AWS:$PASSWORD" | base64 -w 0)
-          cat > ~/.docker/config.json <<EOF
-          {
-            "auths": {
-              "ministack:4566": {
-                "auth": "$AUTH"
-              }
-            }
-          }
-          EOF
-          echo "registry=ministack:4566" >> $GITHUB_OUTPUT
+        uses: ./.github/actions/amazon-ecr-login
 
-#      - name: Tags & labels
-#        id: meta
-#        uses: docker/metadata-action@v6
-#        with:
-#          images: ${{ steps.ecr-login.outputs.registry }}/${{ env.IMAGE_NAME }}
-#          tags: |
-#            type=sha,prefix=sha-,format=short
-#            type=raw,value=latest,enable={{is_default_branch}}
-
-      - name: Tags & labels
+      - name: Extract metadata
         id: meta
-        run: |
-          SHA=${GITHUB_SHA::7}
-          echo "tags=ministack:4566/${{ env.IMAGE_NAME }}:sha-$SHA,ministack:4566/${{ env.IMAGE_NAME }}:latest" >> $GITHUB_OUTPUT
-          echo "labels=" >> $GITHUB_OUTPUT
+        uses: docker/metadata-action@v6
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          images: ${{ steps.ecr-login.outputs.registry }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=sha,prefix=sha-,format=short
+            type=raw,value=latest,enable={{is_default_branch}}
 
-      - name: Build & push
-        id: build
+      - name: Build and push
         uses: docker/build-push-action@v7
         with:
           context: .
-          file: ./services/fraud_detection_api/Dockerfile
+          file: services/fraud_detection_api/Dockerfile
           target: runtime
           push: true
           tags: ${{ steps.meta.outputs.tags }}
@@ -113,21 +66,13 @@ jobs:
           provenance: mode=max
 
   deploy:
-    needs: [test]
+    needs: [build]
     runs-on: ubuntu-latest
+    env:
+      SECRET_NAME: fraud-detection-api-secret
     steps:
       - uses: actions/checkout@v7
-
-      - name: Install AWS CLI
-        run: |
-          curl -sL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.36.32.zip" -o "awscli.zip"
-          unzip -q awscli.zip
-          sudo ./aws/install
-#
-#      - name: Install AWS CLI (Local act runs only)
-#        uses: unfor19/install-aws-cli-action@v1
-#        with:
-#          version: 2
+      - uses: ./.github/actions/install-aws-cli
 
       - name: Set up kubectl
         uses: azure/setup-kubectl@v5
@@ -135,25 +80,55 @@ jobs:
           version: v1.36.1
 
       - name: Configure AWS credentials
+        id: aws-credentials
         uses: aws-actions/configure-aws-credentials@v6
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
 
-      - name: Get BASE64 KUBECONFIG
+      - name: Get base64 kubeconfig
         uses: aws-actions/aws-secretsmanager-get-secrets@v3
         with:
-          secret-ids: KUBECONFIG_B64, ${{ secrets.SECRET_PATH }}/eks/base64-kubeconfig
+          secret-ids: BASE64_KUBECONFIG, ${{ secrets.SECRET_PATH }}/eks/base64-kubeconfig
 
-      - name: Write KUBECONFIG File
+      - name: Decode kubeconfig
+        id: kubeconfig
         run: |
-          echo "${{ env.KUBECONFIG_B64 }}" | base64 --decode > /tmp/kubeconfig
-          chmod 600 /tmp/kubeconfig
-          echo "KUBECONFIG=/tmp/kubeconfig" >> $GITHUB_ENV
+          KUBECONFIG_PATH="${RUNNER_TEMP}/kubeconfig"
+          
+          echo "${BASE64_KUBECONFIG}" | base64 --decode > "${KUBECONFIG_PATH}"
+          chmod 600 "${KUBECONFIG_PATH}"
+          echo "KUBECONFIG=${KUBECONFIG_PATH}" >> "${GITHUB_ENV}"
 
-      - name: Verify kubectl
-        run: |
-          kubectl get nodes
-          kubectl get pods -A
-          kubectl get svc -A
+#      - name: Set Kubernetes context
+#        uses: azure/k8s-set-context@v5
+#        with:
+#          method: kubeconfig
+#          kubeconfig: ${{ env.KUBECONFIG }}
+
+      - name: Create Kubernetes secret
+        uses: azure/k8s-create-secret@v6
+        with:
+          namespace: ${{ secrets.NAMESPACE }}
+          secret-type: generic
+          secret-name: ${{ env.SECRET_NAME }}
+          string-data: |
+            {
+              "SLACK_CHANNEL_ID": "${{ secrets.SLACK_CHANNEL_ID }}",
+              "SLACK_BOT_TOKEN": "${{ secrets.SLACK_BOT_TOKEN }}",
+              "SLACK_APP_TOKEN": "${{ secrets.SLACK_APP_TOKEN }}",
+              "SLACK_SIGNING_SECRET": "${{ secrets.SLACK_SIGNING_SECRET }}"
+            }
+
+      - name: Deploy
+        uses: azure/k8s-deploy@v7
+        env:
+          K8S_PATH: services/fraud_detection_api/k8s
+        with:
+          namespace: ${{ secrets.NAMESPACE }}
+          manifests: |
+            ${{ env.K8S_PATH }}/deployment.yaml
+            ${{ env.K8S_PATH }}/service.yaml
+            ${{ env.K8S_PATH }}/ingress-route.yaml
+          images: ${{ steps.aws-credentials.outputs.aws-account-id }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/${{ env.IMAGE_NAME }}:${{ needs.build.outputs.image-tag }}

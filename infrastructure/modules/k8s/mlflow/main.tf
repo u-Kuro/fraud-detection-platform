@@ -63,11 +63,11 @@ resource "kubectl_manifest" "ingress_route" {
     apiVersion = "traefik.io/v1alpha1"
     kind       = "IngressRoute"
     metadata = {
-      name      = "${var.mlflow_host}-ingress-route"
+      name      = var.mlflow_host
       namespace = helm_release.mlflow.namespace
     }
     spec = {
-      entryPoints = ["web", "websecure"] # http 80 / https 443
+      entryPoints = ["web"] # http 80
       routes = [
         {
           match = "Host(`${local.mlflow_subdomain}`)"

@@ -1,0 +1,34 @@
+# Official: docker/setup-buildx-action passes registry config as a file path to BuildKit.
+# BuildKit runs as its own Docker Desktop container with an isolated filesystem, so it
+# never sees the file and starts with no registry config. It also lands on Docker's default
+# bridge network where "ministack" doesn't resolve.
+#
+# Custom: --config reads the file inside the act container and embeds its contents in the
+# builder creation request, so Docker Desktop passes the config into BuildKit at startup.
+# --driver-opt network attaches BuildKit to fraud-detection-platform-network where
+# ministack exists as a hostname.
+name: Setup Docker Buildx
+description: Sets up Docker Buildx for MiniStack, docker/setup-buildx-action can't configure MiniStack's plain HTTP registry.
+runs:
+  using: composite
+  steps:
+    - name: Setup Docker Buildx
+      shell: bash
+      run: |
+        REGISTRY="ministack:4566"
+        CONFIG="${RUNNER_TEMP}/buildkitd.toml"
+        NETWORK="fraud-detection-platform-network"
+        
+        cat > "${CONFIG}" << EOF
+        [registry."${REGISTRY}"]
+        http = true
+        insecure = true
+        EOF
+        
+        docker buildx create \
+          --name builder \
+          --driver docker-container \
+          --driver-opt "network=${NETWORK}" \
+          --config "${CONFIG}" \
+          --use \
+          --bootstrap

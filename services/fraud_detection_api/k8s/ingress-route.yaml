@@ -1,0 +1,18 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: fraud-detection-api
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`fraud-detection-api.172.18.0.3.sslip.io`) # TODO need to add eks ip here
+      kind: Rule
+      services:
+        - name: fraud-detection-api
+          port: 80
+    - match: Host(`fraud-detection-api.127.0.0.1.sslip.io`) # TODO need to add eks ip here
+      kind: Rule
+      services:
+        - name: fraud-detection-api
+          port: 80
