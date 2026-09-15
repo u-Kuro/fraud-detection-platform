@@ -61,8 +61,8 @@ resource "kubernetes_secret_v1" "eks_teams_base_secret" {
     MLFLOW_TRACKING_PASSWORD = var.mlflow_teams_passwords[each.key]
     # Slack (team created) # Not Fixed
     # SLACK_CHANNEL_ID = ""
-    # SLACK_BOT_TOKEN = ""
     # SLACK_APP_TOKEN = ""
+    # SLACK_BOT_TOKEN = ""
     # SLACK_SIGNING_SECRET = ""
   }
 

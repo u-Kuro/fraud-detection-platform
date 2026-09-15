@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: fraud-detection-api
-          image: fraud-detection-api:latest
+          image: 000000000000.dkr.ecr.us-east-1.amazonaws.com/fraud-detection-api:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
