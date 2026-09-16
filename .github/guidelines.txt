@@ -3,3 +3,7 @@ act pull_request -W .github/workflows/delete/test-pull-request.yaml -e .github/e
 act workflow_dispatch -W .github/workflows/delete/test-dispatch.yaml
 
 act push -W .github/workflows/delete/test-push.yaml
+
+
+act pull_request -W .github/workflows/ci-migrate.yaml -e .github/events/pull-request.json
+act push -W .github/workflows/cd-migrate.yaml

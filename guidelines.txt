@@ -1,3 +1,40 @@
+make up
+act push -W .github/workflows/delete/test-push.yaml
+
+$NS = "mle"
+$CONTAINER = "ministack-eks-us-east-1-eks"
+$KUBECTL = "docker exec -it $CONTAINER kubectl"
+$APP = "fraud-detection-api"
+Invoke-Expression "$KUBECTL get svc $APP -n $NS -o yaml"
+Invoke-Expression "$KUBECTL get ingressroute $APP -n $NS -o yaml"
+Invoke-Expression "$KUBECTL get deployment $APP -n $NS -o yaml"
+Invoke-Expression "$KUBECTL get pods -n $NS -o wide"
+Invoke-Expression "$KUBECTL describe pod -l app=$APP -n $NS"
+$POD = Invoke-Expression "$KUBECTL get pod -l app=$APP -n $NS -o jsonpath='{.items[0].metadata.name}'"
+Invoke-Expression "$KUBECTL logs $POD -n $NS"
+
+----
+
+Invoke-Expression "$KUBECTL rollout restart deployment/$APP -n $NS"
+Invoke-Expression "$KUBECTL rollout status deployment/$APP -n $NS"
+
+-----
+
+Invoke-Expression "$KUBECTL get configmap base -n $NS -o yaml"
+
+$base_secret = Invoke-Expression "$KUBECTL get secret base -n $NS -o json | ConvertFrom-Json"
+base_secret.data.PSObject.Properties | ForEach-Object {
+    $value = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($_.Value))
+    Write-Host "$($_.Name) = $value"
+}
+
+$secret = Invoke-Expression "$KUBECTL get secret fraud-detection-api-secret -n $NS -o json | ConvertFrom-Json"
+$secret.data.PSObject.Properties | ForEach-Object {
+    $value = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($_.Value))
+    Write-Host "$($_.Name) = $value"
+}
+____
+
 clear
 # archive
 docker build -t test-archive -f services/archive/Dockerfile --target test-dev . -q

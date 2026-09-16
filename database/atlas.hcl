@@ -10,7 +10,19 @@ variable "dev_url" {
 
 variable "dir" {
   type = string
-  default = "file://${abspath("${path.module}/migrations")}"
+  default = "file://migrations"
+}
+
+env "test-dev" {
+  dev = var.dev_url
+  migration {
+    dir = var.dir
+  }
+  lint {
+    latest = 1
+    destructive { error = true }
+    incompatible { error = true }
+  }
 }
 
 env "test" {
@@ -19,6 +31,9 @@ env "test" {
     dir = var.dir
   }
   lint {
+    git {
+      base = "origin/main"
+    }
     destructive { error = true }
     incompatible { error = true }
   }

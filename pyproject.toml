@@ -133,8 +133,8 @@ env = [
     # services/shared — S3
     "S3_BUCKET_NAME=test-bucket",
     # services/shared — Slack
-    "SLACK_BOT_TOKEN=test-slack-bot-token",
-    "SLACK_APP_TOKEN=test-slack-app-token",
+    "SLACK_BOT_USER_OAUTH_TOKEN=test-slack-bot-token",
+    "SLACK_APP_LEVEL_TOKEN=test-slack-app-token",
     "SLACK_SIGNING_SECRET=test-slack-signing-secret",
     "SLACK_CHANNEL_ID=C000000000",
     # services/shared — MWAA

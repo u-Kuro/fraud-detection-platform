@@ -10,14 +10,14 @@ class TestSlackEnvironment:
 
     def test_values(self, monkeypatch: MonkeyPatch):
         value = "value"
-        monkeypatch.setenv(name="SLACK_BOT_TOKEN", value=value)
-        monkeypatch.setenv(name="SLACK_APP_TOKEN", value=value)
-        monkeypatch.setenv(name="SLACK_SIGNING_SECRET", value=value)
         monkeypatch.setenv(name="SLACK_CHANNEL_ID", value=value)
+        monkeypatch.setenv(name="SLACK_APP_LEVEL_TOKEN", value=value)
+        monkeypatch.setenv(name="SLACK_BOT_USER_OAUTH_TOKEN", value=value)
+        monkeypatch.setenv(name="SLACK_SIGNING_SECRET", value=value)
 
         environment = SlackEnvironment()
 
-        assert environment.SLACK_BOT_TOKEN == value
-        assert environment.SLACK_APP_TOKEN == value
-        assert environment.SLACK_SIGNING_SECRET == value
         assert environment.SLACK_CHANNEL_ID == value
+        assert environment.SLACK_BOT_USER_OAUTH_TOKEN == value
+        assert environment.SLACK_APP_LEVEL_TOKEN == value
+        assert environment.SLACK_SIGNING_SECRET == value

@@ -15,8 +15,7 @@ outputs:
 runs:
   using: composite
   steps:
-    - name: Amazon ECR Login
-      id: login
+    - id: login
       shell: bash
       run: |
         REGISTRY="ministack:4566"

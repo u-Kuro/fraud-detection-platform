@@ -11,7 +11,7 @@ spec:
       services:
         - name: fraud-detection-api
           port: 80
-    - match: Host(`fraud-detection-api.127.0.0.1.sslip.io`) # TODO need to add eks ip here
+    - match: Host(`fraud-detection-api.127.0.0.1.sslip.io`)
       kind: Rule
       services:
         - name: fraud-detection-api

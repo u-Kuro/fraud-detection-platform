@@ -20,7 +20,7 @@ CREATE TABLE model_deployment_workflows (
     model_dataset_max_timestamp             TIMESTAMPTZ         NULL,
     slack_training_approval_message_ts      TEXT                NOT NULL,
     slack_promotion_approval_message_ts     TEXT                NULL,
-    CONSTRAINT state_check CHECK (state IN ('train_pending', 'promote_pending', 'reserved')),
+    CONSTRAINT state_check CHECK (state IN ('train_pending', 'promote_pending', 'reserved'))
 );
 
 CREATE TABLE model_deployments (

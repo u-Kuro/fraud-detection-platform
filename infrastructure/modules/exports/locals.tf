@@ -29,8 +29,8 @@
 # 14) github variable headers auth token - user created
 
 # Services
-# 1) slack_bot_token (user created)
-# 2) slack_app_token (user created)
+# 1) slack_bot_user_oauth_token (user created)
+# 2) slack_app_level_token (user created)
 # 3) slack_signing_secret (user created)
 # 4) slack_channel_id (user created)
 # 5) aws region - ok
@@ -120,7 +120,7 @@ locals {
   # slack = "SLACK_CONNECTION_ID"
   # slack = jsonencode({
   #   "conn_type": "slack",
-  #   "password": "YOUR_SLACK_BOT_TOKEN"
+  #   "password": "YOUR_SLACK_BOT_USER_OAUTH_TOKEN"
   # })
 
   # Slack (team created)

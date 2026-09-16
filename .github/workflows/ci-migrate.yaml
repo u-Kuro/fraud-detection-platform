@@ -17,7 +17,7 @@ jobs:
     services:
       postgres:
         image: postgres:15-alpine
-        ports: [5432:5432]
+        ports: [5433:5432]
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
@@ -30,11 +30,12 @@ jobs:
           --health-start-period 10s
 
     env:
-      DEV_URL: postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable
+      DEV_URL: postgres://postgres:postgres@host.docker.internal:5433/postgres?sslmode=disable
 
     steps:
       - uses: actions/checkout@v7
 
-      - uses: ariga/setup-atlas@v0
+      - uses: ./.github/actions/setup-atlas-community
       - name: Lint migrations
-        run: atlas migrate lint --env test
+        working-directory: database
+        run: atlas migrate lint --env test-dev

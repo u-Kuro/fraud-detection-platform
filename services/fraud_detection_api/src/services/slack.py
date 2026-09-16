@@ -7,14 +7,14 @@ from slack_sdk import WebClient
 from services.shared.src.modules.environment.slack import slack_environment
 
 slack_app = App(
-    token=slack_environment.SLACK_BOT_TOKEN,
+    token=slack_environment.SLACK_BOT_USER_OAUTH_TOKEN,
     signing_secret=slack_environment.SLACK_SIGNING_SECRET
 )
 
 def start_socket_mode() -> None:
     handler = SocketModeHandler(
         app=slack_app,
-        app_token=slack_environment.SLACK_APP_TOKEN,
+        app_token=slack_environment.SLACK_APP_LEVEL_TOKEN,
     )
 
     threading.Thread(

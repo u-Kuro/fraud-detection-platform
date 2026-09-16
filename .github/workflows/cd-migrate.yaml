@@ -10,8 +10,6 @@ on:
 concurrency:
   group: ${{ github.workflow }}
   cancel-in-progress: false
-  # noinspection YAMLSchemaValidation
-  queue: max
 
 env:
   AWS_ENDPOINT_URL: ${{ secrets.AWS_ENDPOINT_URL }}
@@ -34,8 +32,9 @@ jobs:
         with:
           secret-ids: DATABASE_URL, ${{ secrets.SECRET_PATH }}/postgres/migration-database-url
 
-      - uses: ariga/setup-atlas@v0
+      - uses: ./.github/actions/setup-atlas-community
       - name: Apply migrations
+        working-directory: database
         env:
           URL: ${{ env.DATABASE_URL }}
         run: atlas migrate apply --env production

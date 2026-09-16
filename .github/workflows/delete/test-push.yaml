@@ -20,7 +20,7 @@ jobs:
       image-tag: ${{ steps.meta.outputs.version }}
     steps:
       - uses: actions/checkout@v7
-      - uses: ./.github/actions/setup-buildx
+      - uses: ./.github/actions/setup-buildx-action
       - uses: ./.github/actions/install-aws-cli
 
       - name: Configure AWS credentials
@@ -101,12 +101,6 @@ jobs:
           chmod 600 "${KUBECONFIG_PATH}"
           echo "KUBECONFIG=${KUBECONFIG_PATH}" >> "${GITHUB_ENV}"
 
-#      - name: Set Kubernetes context
-#        uses: azure/k8s-set-context@v5
-#        with:
-#          method: kubeconfig
-#          kubeconfig: ${{ env.KUBECONFIG }}
-
       - name: Create Kubernetes secret
         uses: azure/k8s-create-secret@v6
         with:
@@ -116,8 +110,8 @@ jobs:
           string-data: |
             {
               "SLACK_CHANNEL_ID": "${{ secrets.SLACK_CHANNEL_ID }}",
-              "SLACK_BOT_TOKEN": "${{ secrets.SLACK_BOT_TOKEN }}",
-              "SLACK_APP_TOKEN": "${{ secrets.SLACK_APP_TOKEN }}",
+              "SLACK_BOT_USER_OAUTH_TOKEN": "${{ secrets.SLACK_BOT_USER_OAUTH_TOKEN }}",
+              "SLACK_APP_LEVEL_TOKEN": "${{ secrets.SLACK_APP_LEVEL_TOKEN }}",
               "SLACK_SIGNING_SECRET": "${{ secrets.SLACK_SIGNING_SECRET }}"
             }
 

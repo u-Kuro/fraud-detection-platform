@@ -25,7 +25,9 @@ spec:
             - containerPort: 8080
           envFrom:
             - configMapRef:
-                name: fraud-detection-api-config
+                name: base
+            - secretRef:
+                name: base
             - secretRef:
                 name: fraud-detection-api-secret
           resources:
@@ -37,14 +39,10 @@ spec:
               path: /ready
               port: 8080
             initialDelaySeconds: 30
-            periodSeconds: 10
             timeoutSeconds: 5
-            failureThreshold: 3
           livenessProbe:
             httpGet:
               path: /health
               port: 8080
             initialDelaySeconds: 60
-            periodSeconds: 30
             timeoutSeconds: 5
-            failureThreshold: 3

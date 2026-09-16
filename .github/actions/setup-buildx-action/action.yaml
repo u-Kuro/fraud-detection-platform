@@ -7,13 +7,12 @@
 # builder creation request, so Docker Desktop passes the config into BuildKit at startup.
 # --driver-opt network attaches BuildKit to fraud-detection-platform-network where
 # ministack exists as a hostname.
-name: Setup Docker Buildx
+name: Setup Buildx Action
 description: Sets up Docker Buildx for MiniStack, docker/setup-buildx-action can't configure MiniStack's plain HTTP registry.
 runs:
   using: composite
   steps:
-    - name: Setup Docker Buildx
-      shell: bash
+    - shell: bash
       run: |
         REGISTRY="ministack:4566"
         CONFIG="${RUNNER_TEMP}/buildkitd.toml"

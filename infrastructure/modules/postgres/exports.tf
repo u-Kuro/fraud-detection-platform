@@ -109,6 +109,7 @@ resource "aws_secretsmanager_secret" "teams_postgres_migration_database_url" {
   recovery_window_in_days = 0
 
   depends_on = [
+    postgresql_schema.teams,
     postgresql_grant.teams_database,
     postgresql_grant.teams_schema,
     postgresql_grant.teams_table,
@@ -125,7 +126,7 @@ resource "aws_secretsmanager_secret_version" "teams_postgres_migration_database_
   for_each  = aws_secretsmanager_secret.teams_postgres_migration_database_url
   secret_id = each.value.id
 
-  secret_string_wo         = "postgresql://${local.rds_postgres_teams_migration_usernames[each.key]}:${local.rds_postgres_teams_migration_passwords[each.key]}@${var.rds_postgres_local_host}:${var.rds_postgres_local_port}/${var.rds_postgres_db_name}"
+  secret_string_wo         = "postgresql://${local.rds_postgres_teams_migration_usernames[each.key]}:${local.rds_postgres_teams_migration_passwords[each.key]}@${var.rds_postgres_host}:${var.rds_postgres_port}/${var.rds_postgres_db_name}?search_path=${postgresql_schema.teams[each.key].name}}"
   secret_string_wo_version = 1
 }
 # Allow teams to see that they have Postgres URI with credentials

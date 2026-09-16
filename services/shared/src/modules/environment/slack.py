@@ -4,8 +4,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class SlackEnvironment(BaseSettings):
     model_config = SettingsConfigDict(case_sensitive=True)
 
-    SLACK_BOT_TOKEN: StrictStr
-    SLACK_APP_TOKEN: StrictStr
+    SLACK_BOT_USER_OAUTH_TOKEN: StrictStr
+    SLACK_APP_LEVEL_TOKEN: StrictStr
     SLACK_SIGNING_SECRET: StrictStr
     SLACK_CHANNEL_ID: StrictStr
 

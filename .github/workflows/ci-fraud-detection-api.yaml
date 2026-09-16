@@ -22,7 +22,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v7
-      - uses: ./.github/actions/setup-buildx
+      - uses: ./.github/actions/setup-buildx-action
 
       - name: Test
         uses: docker/build-push-action@v7

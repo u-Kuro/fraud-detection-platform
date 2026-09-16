@@ -14,8 +14,6 @@ on:
 concurrency:
   group: ${{ github.workflow }}
   cancel-in-progress: false
-  # noinspection YAMLSchemaValidation
-  queue: max
 
 env:
   AWS_ENDPOINT_URL: ${{ secrets.AWS_ENDPOINT_URL }} # MiniStack URL
@@ -30,7 +28,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v7
-      - uses: ./.github/actions/setup-buildx
+      - uses: ./.github/actions/setup-buildx-action
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v6

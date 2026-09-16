@@ -3,8 +3,7 @@ description: Install AWS CLI v2, nektos/act containers don't have it.
 runs:
   using: composite
   steps:
-    - name: Install AWS CLI
-      shell: bash
+    - shell: bash
       run: |
         VERSION="2.36.32"
         ARCHIVE="awscli-${VERSION}.zip"

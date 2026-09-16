@@ -1,0 +1,7 @@
+name: Setup Atlas Community
+description: Setup Atlas Community Edition (Apache 2.0), official can't get the community version.
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      run: curl --silent --fail --location https://atlasgo.sh | CI=true sh -s -- --community
