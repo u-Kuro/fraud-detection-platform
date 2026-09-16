@@ -15,7 +15,6 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  AWS_ENDPOINT_URL: ${{ secrets.AWS_ENDPOINT_URL }}
   AWS_PAGER: ""
   IMAGE_NAME: archive
 

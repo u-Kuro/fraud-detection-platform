@@ -11,9 +11,6 @@ concurrency:
   group: ${{ github.workflow }}
   cancel-in-progress: false
 
-env:
-  AWS_ENDPOINT_URL: ${{ secrets.AWS_ENDPOINT_URL }}
-
 jobs:
   migrate:
     runs-on: ubuntu-latest

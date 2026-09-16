@@ -1,4 +1,3 @@
-# TODO - 15/09/2026 - Continue here... test in test-push and Build CI/CD here
 name: CD / Fraud Detection API
 
 on:
@@ -16,7 +15,6 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  AWS_ENDPOINT_URL: ${{ secrets.AWS_ENDPOINT_URL }}
   AWS_PAGER: ""
   IMAGE_NAME: fraud-detection-api
 

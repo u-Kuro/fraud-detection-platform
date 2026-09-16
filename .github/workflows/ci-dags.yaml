@@ -23,16 +23,26 @@ jobs:
       dags_changed: ${{ steps.dags-filter.outputs.dags }}
     steps:
       - uses: actions/checkout@v7
-#        with:
-#          fetch-depth: 0 # Crucial for nektos/act and paths-filter to work?
+        with:
+          fetch-depth: 0 # Allow dorny/paths-filter to get the whole history in nektos/act
+
+      # Set dorny/paths-filter base to first commit to always proceed to succeeding jobs in nektos/act
+      - name: Get initial commit
+        id: initial-commit
+        run: echo "sha=$(git rev-list --max-parents=0 HEAD)" >> ${GITHUB_OUTPUT}
+
       - uses: dorny/paths-filter@v4
         id: image-filter
         with:
           filters: .github/config/paths-filter/dags/ci/image-filter.yaml
+          base: ${{ steps.initial-commit.outputs.sha }} # Set dorny/paths-filter base to first commit to always proceed to succeeding jobs in nektos/act
+          token: '' # Allow dorny/paths-filter to use base on pull request event in nektos/act
       - uses: dorny/paths-filter@v4
         id: dags-filter
         with:
           filters: .github/config/paths-filter/dags/ci/dags-filter.yaml
+          base: ${{ steps.initial-commit.outputs.sha }} # Set dorny/paths-filter base to first commit to always proceed to succeeding jobs in nektos/act
+          token: '' # Allow dorny/paths-filter to use base on pull request event in nektos/act
 
   test-images:
     needs: detect-changes
