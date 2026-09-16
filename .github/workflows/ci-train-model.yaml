@@ -1,0 +1,32 @@
+name: CI / Train Model
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - services/dags/train_model/**
+      - services/shared/**
+      - pyproject.toml
+      - uv.lock
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/setup-buildx-action
+
+      - name: Test
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: services/dags/train_model/Dockerfile
+          target: test
+          push: false
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

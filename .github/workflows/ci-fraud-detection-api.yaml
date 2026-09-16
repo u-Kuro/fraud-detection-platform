@@ -13,9 +13,6 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-env:
-  AWS_ENDPOINT_URL: ${{ secrets.AWS_ENDPOINT_URL }} # MiniStack URL
-
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -31,15 +28,5 @@ jobs:
           file: services/fraud_detection_api/Dockerfile
           target: test
           push: false
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-      - name: Build runtime (dry run)
-        uses: docker/build-push-action@v7
-        with:
-          context: .
-          file: services/fraud_detection_api/Dockerfile
-          target: runtime
-          load: true
           cache-from: type=gha
           cache-to: type=gha,mode=max

@@ -7,3 +7,6 @@ act push -W .github/workflows/delete/test-push.yaml
 
 act pull_request -W .github/workflows/ci-migrate.yaml -e .github/events/pull-request.json
 act push -W .github/workflows/cd-migrate.yaml
+
+act pull_request -W .github/workflows/ci-fraud-detection-api.yaml -e .github/events/pull-request.json
+act push -W .github/workflows/cd-fraud-detection-api.yaml

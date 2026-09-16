@@ -1,0 +1,4 @@
+# ci/dags-filter
+dags:
+  - dags/**
+  - tests/dags/**

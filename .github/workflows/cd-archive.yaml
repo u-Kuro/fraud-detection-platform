@@ -1,0 +1,70 @@
+name: CD / Archive
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - services/dags/archive/**
+      - services/shared/**
+      - pyproject.toml
+      - uv.lock
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+env:
+  AWS_ENDPOINT_URL: ${{ secrets.AWS_ENDPOINT_URL }}
+  AWS_PAGER: ""
+  IMAGE_NAME: archive
+
+jobs:
+  push:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/setup-buildx-action
+      - uses: ./.github/actions/install-aws-cli
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+
+      - name: Create ECR repository
+        run: |
+          if ! aws ecr describe-repositories --repository-names "${IMAGE_NAME}" 2>/dev/null; then
+            aws ecr create-repository --repository-name "${IMAGE_NAME}"
+          fi
+
+      - name: Login to Amazon ECR
+        id: ecr-login
+        uses: ./.github/actions/amazon-ecr-login
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v6
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          images: ${{ steps.ecr-login.outputs.registry }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=sha,prefix=sha-,format=short
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build and push
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: services/fraud_detection_api/Dockerfile
+          target: runtime
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          sbom: true
+          provenance: mode=max

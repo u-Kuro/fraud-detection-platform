@@ -1,6 +1,0 @@
-from unittest.mock import patch
-
-# noinspection unused-imports
-import services.shared.tests.conftest  # noqa: F401
-
-patch("services.drift_check.src.repositories.postgres.postgres.sql_session.begin").start()

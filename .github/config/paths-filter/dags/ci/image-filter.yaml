@@ -1,0 +1,18 @@
+# ci/image-filter
+archive:
+  - services/dags/archive/**
+  - services/shared/**
+  - pyproject.toml
+  - uv.lock
+
+drift-check:
+  - services/dags/drift_check/**
+  - services/shared/**
+  - pyproject.toml
+  - uv.lock
+
+train-model:
+  - services/dags/train_model/**
+  - services/shared/**
+  - pyproject.toml
+  - uv.lock

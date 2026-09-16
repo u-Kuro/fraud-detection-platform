@@ -16,19 +16,19 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  AWS_ENDPOINT_URL: ${{ secrets.AWS_ENDPOINT_URL }} # MiniStack URL
+  AWS_ENDPOINT_URL: ${{ secrets.AWS_ENDPOINT_URL }}
+  AWS_PAGER: ""
   IMAGE_NAME: fraud-detection-api
 
 jobs:
   push:
     runs-on: ubuntu-latest
     outputs:
-      digest: ${{ steps.build.outputs.digest }}
-      registry: ${{ steps.login-ecr.outputs.registry }}
-
+      image-tag: ${{ steps.meta.outputs.version }}
     steps:
       - uses: actions/checkout@v7
       - uses: ./.github/actions/setup-buildx-action
+      - uses: ./.github/actions/install-aws-cli
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v6
@@ -37,25 +37,32 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
 
-      - name: Login to ECR
-        id: ecr-login
-        uses: aws-actions/amazon-ecr-login@v2
+      - name: Create ECR repository
+        run: |
+          if ! aws ecr describe-repositories --repository-names "${IMAGE_NAME}" 2>/dev/null; then
+            aws ecr create-repository --repository-name "${IMAGE_NAME}"
+          fi
 
-      - name: Tags & labels
+      - name: Login to Amazon ECR
+        id: ecr-login
+        uses: ./.github/actions/amazon-ecr-login
+
+      - name: Extract metadata
         id: meta
         uses: docker/metadata-action@v6
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         with:
           images: ${{ steps.ecr-login.outputs.registry }}/${{ env.IMAGE_NAME }}
           tags: |
             type=sha,prefix=sha-,format=short
             type=raw,value=latest,enable={{is_default_branch}}
 
-      - name: Build & push
-        id: build
+      - name: Build and push
         uses: docker/build-push-action@v7
         with:
           context: .
-          file: ./path/to/Dockerfile
+          file: services/fraud_detection_api/Dockerfile
           target: runtime
           push: true
           tags: ${{ steps.meta.outputs.tags }}
@@ -68,13 +75,61 @@ jobs:
   deploy:
     needs: [push]
     runs-on: ubuntu-latest
-
+    env:
+      SECRET_NAME: fraud-detection-api-secret
     steps:
       - uses: actions/checkout@v7
+      - uses: ./.github/actions/install-aws-cli
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v5
+        with:
+          version: v1.36.1
+
+      - name: Configure AWS credentials
+        id: aws-credentials
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+
+      - name: Get base64 kubeconfig
+        uses: aws-actions/aws-secretsmanager-get-secrets@v3
+        with:
+          secret-ids: BASE64_KUBECONFIG, ${{ secrets.SECRET_PATH }}/eks/base64-kubeconfig
+
+      - name: Decode kubeconfig
+        id: kubeconfig
+        run: |
+          KUBECONFIG_PATH="${RUNNER_TEMP}/kubeconfig"
+
+          echo "${BASE64_KUBECONFIG}" | base64 --decode > "${KUBECONFIG_PATH}"
+          chmod 600 "${KUBECONFIG_PATH}"
+          echo "KUBECONFIG=${KUBECONFIG_PATH}" >> "${GITHUB_ENV}"
+
+      - name: Create Kubernetes secret
+        uses: azure/k8s-create-secret@v6
+        with:
+          namespace: ${{ secrets.NAMESPACE }}
+          secret-type: generic
+          secret-name: ${{ env.SECRET_NAME }}
+          string-data: |
+            {
+              "SLACK_CHANNEL_ID": "${{ secrets.SLACK_CHANNEL_ID }}",
+              "SLACK_BOT_USER_OAUTH_TOKEN": "${{ secrets.SLACK_BOT_USER_OAUTH_TOKEN }}",
+              "SLACK_APP_LEVEL_TOKEN": "${{ secrets.SLACK_APP_LEVEL_TOKEN }}",
+              "SLACK_SIGNING_SECRET": "${{ secrets.SLACK_SIGNING_SECRET }}"
+            }
 
       - name: Deploy
+        uses: azure/k8s-deploy@v7
         env:
-          IMAGE_REF: ${{ needs.push.outputs.registry }}/${{ env.IMAGE_NAME }}@${{ needs.push.outputs.digest }}
-        run: |
-          echo "Deploying $IMAGE_REF"
-          # kubectl set image deployment/fraud-detection-api app=$IMAGE_REF
+          K8S_PATH: services/fraud_detection_api/k8s
+        with:
+          namespace: ${{ secrets.NAMESPACE }}
+          manifests: |
+            ${{ env.K8S_PATH }}/deployment.yaml
+            ${{ env.K8S_PATH }}/service.yaml
+            ${{ env.K8S_PATH }}/ingress-route.yaml
+          images: ${{ steps.aws-credentials.outputs.aws-account-id }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/${{ env.IMAGE_NAME }}:${{ needs.build.outputs.image-tag }}

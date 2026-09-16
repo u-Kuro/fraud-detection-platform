@@ -12,7 +12,7 @@ jobs:
 
       - name: Build image
         run: |
-          docker build -t test-archive:${{ github.sha }} -f services/archive/Dockerfile --target test-dev . -q
+          docker build -t test-archive:${{ github.sha }} -f services/dags/archive/Dockerfile --target test-dev . -q
           echo "Built image: test-archive:${{ github.sha }}"
 
       - name: Run image

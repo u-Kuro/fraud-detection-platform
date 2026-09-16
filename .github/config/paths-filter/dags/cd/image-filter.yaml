@@ -1,0 +1,24 @@
+# cd/image-filter
+archive:
+  - services/dags/archive/**
+  - '!services/dags/archive/tests/**'
+  - services/shared/**
+  - '!services/shared/tests/**'
+  - pyproject.toml
+  - uv.lock
+
+drift-check:
+  - services/dags/drift_check/**
+  - '!services/dags/drift_check/tests/**'
+  - services/shared/**
+  - '!services/shared/tests/**'
+  - pyproject.toml
+  - uv.lock
+
+train-model:
+  - services/dags/train_model/**
+  - '!services/dags/train_model/tests/**'
+  - services/shared/**
+  - '!services/shared/tests/**'
+  - pyproject.toml
+  - uv.lock

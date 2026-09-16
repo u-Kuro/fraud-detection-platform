@@ -1,0 +1,82 @@
+name: CI / DAGs
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - dags/**
+      - tests/dags/**
+      - services/dags/**
+      - services/shared/**
+      - pyproject.toml
+      - uv.lock
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      images_changed: ${{ steps.image-filter.outputs.changes }}
+      dags_changed: ${{ steps.dags-filter.outputs.dags }}
+    steps:
+      - uses: actions/checkout@v7
+#        with:
+#          fetch-depth: 0 # Crucial for nektos/act and paths-filter to work?
+      - uses: dorny/paths-filter@v4
+        id: image-filter
+        with:
+          filters: .github/config/paths-filter/dags/ci/image-filter.yaml
+      - uses: dorny/paths-filter@v4
+        id: dags-filter
+        with:
+          filters: .github/config/paths-filter/dags/ci/dags-filter.yaml
+
+  test-images:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.images_changed != '[]'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        image: ${{ fromJson(needs.detect-changes.outputs.images_changed) }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/setup-buildx-action
+
+      - name: Resolve Dockerfile path
+        id: dockerfile-path
+        env:
+          IMAGE: ${{ matrix.image }}
+        run: |
+          FOLDER="${IMAGE//-/_}"
+          echo "path=services/dags/${FOLDER}/Dockerfile" >> $GITHUB_OUTPUT
+
+      - name: Test
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ${{ steps.dockerfile-path.outputs.path }}
+          target: test
+          push: false
+          cache-from: type=gha,scope=${{ matrix.image }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.image }}
+
+  test-dags:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.dags_changed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/setup-buildx-action
+
+      - name: Test
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: tests/dags/Dockerfile
+          target: test
+          push: false
+          cache-from: type=gha,scope=dags
+          cache-to: type=gha,mode=max,scope=dags

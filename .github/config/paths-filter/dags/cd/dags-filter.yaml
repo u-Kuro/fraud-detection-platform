@@ -1,0 +1,3 @@
+# cd/dags-filter
+dags:
+  - dags/**

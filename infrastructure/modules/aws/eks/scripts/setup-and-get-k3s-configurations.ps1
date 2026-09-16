@@ -39,13 +39,14 @@ $is_eks_endpoint_for_localhost = $eks_endpoint_uri.Host -in "localhost", "127.0.
 # Find K3s container configurations that EKS spawned through MiniStack
 $k3s_container_port      = $null
 $k3s_container_host_port = $null
-$k3s_container_name = $null
+$k3s_container_name      = $null
 if ($is_eks_endpoint_for_localhost) {
     $k3s_container_host_port = $eks_endpoint_uri.Port
     foreach ($container in $main_network_containers.PSObject.Properties.Value) {
         $container_json_configurations = (docker inspect $container.Name | ConvertFrom-Json)[0]
         $container_network_settings    = $container_json_configurations.NetworkSettings
         $container_ports               = $container_network_settings.Ports
+        if (@($container_ports.PSObject.Properties).Length -eq 0) { continue }
         $container_tcp                 = $container_ports[0].PSObject.Properties.Name
         $container_host_port           = $container_ports.$container_tcp[0].HostPort
         if ([int]$container_host_port -eq [int]$k3s_container_host_port) {
@@ -60,6 +61,7 @@ if ($is_eks_endpoint_for_localhost) {
         $container_json_configurations = (docker inspect $container.Name | ConvertFrom-Json)[0]
         $container_network_settings    = $container_json_configurations.NetworkSettings
         $container_ports               = $container_network_settings.Ports
+        if (@($container_ports.PSObject.Properties).Length -eq 0) { continue }
         $container_tcp                 = $container_ports[0].PSObject.Properties.Name
         $container_port                = ($container_tcp -split "/")[0]
         if ([int]$container_port -eq [int]$k3s_container_port) {

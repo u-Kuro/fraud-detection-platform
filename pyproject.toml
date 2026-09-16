@@ -116,10 +116,10 @@ dev = [
 [tool.pytest.ini_options]
 #pythonpath = ["."]
 #testpaths = [
-#    "services/archive/tests",
-#    "services/drift_check/tests",
-#    "services/fraud_detection_api/tests",
-#    "services/train_model/tests",
+#    "services/dags/archive/tests",
+#    "services/dags/drift_check/tests",
+#    "services/dags/fraud_detection_api/tests",
+#    "services/dags/train_model/tests",
 #    "services/shared/tests",
 #    "tests/dags",
 #]
@@ -140,9 +140,9 @@ env = [
     # services/shared — MWAA
     "AWS_DEFAULT_REGION=us-east-1",
     "MWAA_ENVIRONMENT_NAME=test-mwaa-environment",
-    # services/archive
+    # services/dags/archive
     "TRANSACTION_INFERENCES_ISO_DATETIME_CUTOFF=2025-01-01T00:00:00+00:00",
-    # services/drift_check
+    # services/dags/drift_check
     "ACTIVE_MODEL_DEPLOYMENT_MLFLOW_RUN_ID=test-run-id-000000000000",
     # dags/shared — ECR (AIRFLOW_VAR_ prefix)
     "AIRFLOW_VAR_DRIFT_CHECK_IMAGE=000000000000.dkr.ecr.us-east-1.amazonaws.com/drift-check:test",
@@ -180,6 +180,7 @@ url = "https://download.pytorch.org/whl/cpu"
 explicit = true
 
 [tool.uv]
+required-version = "0.12.6"
 constraint-dependencies = [
     # Apache Airflow 3.3.1-python3.12 constraints (https://raw.githubusercontent.com/apache/airflow/refs/tags/constraints-3.3.1/constraints-3.12.txt)
     "apache-airflow==3.3.1",
