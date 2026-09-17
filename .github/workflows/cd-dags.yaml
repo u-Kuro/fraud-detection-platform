@@ -1,4 +1,4 @@
-# TODO - 15/09/2026 - Continue here... for updating dags in airflow
+# TODO - 15/09/2026 - Continue here... write CD for updating dags in airflow
 name: CD / DAGs
 
 on:

@@ -6,7 +6,7 @@ spec:
   entryPoints:
     - web
   routes:
-    - match: Host(`fraud-detection-api.172.18.0.3.sslip.io`) # TODO need to add eks ip here
+    - match: Host(`fraud-detection-api.10.232.255.254.sslip.io`)
       kind: Rule
       services:
         - name: fraud-detection-api

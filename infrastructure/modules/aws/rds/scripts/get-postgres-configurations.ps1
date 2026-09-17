@@ -26,7 +26,8 @@ $main_network_containers          = $main_network_json_configurations.Containers
 
 # Get Postgres container name using its IP in Ministack network
 $postgres_container_name = $null
-foreach ($container in $main_network_containers.PSObject.Properties.Value) {
+foreach ($container_properties in $main_network_containers.PSObject.Properties) {
+    $container = $container_properties.Value
     if ($container.IPv4Address -like "$postgres_container_ip/*") {
         $postgres_container_name = $container.Name
         break

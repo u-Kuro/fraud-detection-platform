@@ -39,7 +39,8 @@ $main_network_containers          = $main_network_json_configurations.Containers
 
 # Get Airflow container name using its IP in MiniStack network
 $airflow_container_name = $null
-foreach ($container in $main_network_containers.PSObject.Properties.Value) {
+foreach ($container_properties in $main_network_containers.PSObject.Properties) {
+    $container = $container_properties.Value
     if ($container.IPv4Address -like "$airflow_container_ip/*") {
         $airflow_container_name = $container.Name
         break

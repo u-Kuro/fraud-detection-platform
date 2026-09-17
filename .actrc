@@ -1,9 +1,14 @@
--P ubuntu-latest=catthehacker/ubuntu:act-24.04
---container-options --privileged
+# Set image for runner
+--platform ubuntu-latest=catthehacker/ubuntu:act-24.04
+
+# Set main docker network
 --network fraud-detection-platform-network
 
 # Set AWS CLI to use MiniStack
 --env AWS_ENDPOINT_URL=http://ministack:4566
+
+# Allow changes to docker daemon
+--privileged
 
 # Allow dorny/paths-filter to read .git history in nektos/act
 --bind

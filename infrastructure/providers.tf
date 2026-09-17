@@ -68,6 +68,7 @@ provider "kubernetes" {
 provider "kubectl" {
   config_path      = local_sensitive_file.kubeconfig_for_localhost.filename
   load_config_file = true
+  lazy_load        = true
 }
 provider "helm" {
   plugins_path           = "${local.helm_directory_path}/plugins"

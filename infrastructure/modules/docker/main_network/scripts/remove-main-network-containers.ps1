@@ -9,7 +9,8 @@ $main_network_json_configurations = (docker inspect $main_network_name | Convert
 $main_network_containers          = $main_network_json_configurations.Containers
 
 $exclude_containers = @("ministack")
-foreach ($container in $main_network_containers.PSObject.Properties.Value) {
+foreach ($container_properties in $main_network_containers.PSObject.Properties) {
+    $container = $container_properties.Value
     if ($container.Name -in $exclude_containers) { continue }
     docker rm --force $container.Name
 }

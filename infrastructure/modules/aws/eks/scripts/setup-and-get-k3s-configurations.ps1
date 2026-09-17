@@ -42,7 +42,8 @@ $k3s_container_host_port = $null
 $k3s_container_name      = $null
 if ($is_eks_endpoint_for_localhost) {
     $k3s_container_host_port = $eks_endpoint_uri.Port
-    foreach ($container in $main_network_containers.PSObject.Properties.Value) {
+    foreach ($container_properties in $main_network_containers.PSObject.Properties) {
+        $container                     = $container_properties.Value
         $container_json_configurations = (docker inspect $container.Name | ConvertFrom-Json)[0]
         $container_network_settings    = $container_json_configurations.NetworkSettings
         $container_ports               = $container_network_settings.Ports
@@ -57,7 +58,8 @@ if ($is_eks_endpoint_for_localhost) {
     }
 } else {
     $k3s_container_port = $eks_endpoint_uri.Port
-    foreach ($container in $main_network_containers.PSObject.Properties.Value) {
+    foreach ($container_properties in $main_network_containers.PSObject.Properties) {
+        $container                     = $container_properties.Value
         $container_json_configurations = (docker inspect $container.Name | ConvertFrom-Json)[0]
         $container_network_settings    = $container_json_configurations.NetworkSettings
         $container_ports               = $container_network_settings.Ports

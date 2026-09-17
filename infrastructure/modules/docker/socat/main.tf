@@ -10,7 +10,8 @@ resource "docker_container" "traefik_http_proxy" {
   command = ["TCP-LISTEN:80,fork,reuseaddr", "TCP-CONNECT:${var.eks_container_ip}:80"]
 
   networks_advanced {
-    name = var.main_network_name
+    name         = var.main_network_name
+    ipv4_address = cidrhost(var.main_network_subnet, -2) # 10.232.255.254
   }
   ports {
     internal = 80

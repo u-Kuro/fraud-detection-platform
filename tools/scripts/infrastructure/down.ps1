@@ -9,14 +9,18 @@ if ((Get-Item .).Name -ne "infrastructure") {
 try {
     try {
         terraform state rm `
-        -backup=terraform.tfstate.backup `
-        module.postgres `
+        -backup="terraform.tfstate.backup" `
+        module.exports `
+        module.metallb `
+        module.kyverno `
         module.metallb `
         module.mlflow `
-        module.exports 2> $null
+        module.traefik `
+        module.postgres `
+        2> $null
     } catch {}
 
-    terraform destroy -auto-approve -parallelism=1
+    terraform destroy -auto-approve -parallelism=1 -refresh=false
 } finally {
     Pop-Location
 }
