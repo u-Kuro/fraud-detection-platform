@@ -17,6 +17,7 @@ variable "iam_teams_passwords" {
 # Docker Network
 # /configurations
 variable "main_network_name" { type = string }
+variable "main_network_gateway" { type = string }
 
 # Local Files
 # /paths

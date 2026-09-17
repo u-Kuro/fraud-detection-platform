@@ -1,0 +1,20 @@
+# .github/actions/json-kv/action.yml
+name: JSON KV
+description: Loop over a JSON object and export each pair to the job env
+inputs:
+  config:
+    required: true
+    description: JSON Key Value pairs.
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      env:
+        CONFIG: ${{ inputs.config }}
+      run: |
+        while IFS= read -r -d '' key && IFS= read -r -d '' value
+        do
+          
+          # here $key and $value
+          
+        done < <(echo "${CONFIG}" | jq --raw-output0 'to_entries[] | (.key, .value)')

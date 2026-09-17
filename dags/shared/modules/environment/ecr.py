@@ -9,8 +9,8 @@ class ECREnvironment(BaseSettings):
         case_sensitive=True
     )
 
+    ARCHIVE_IMAGE: StrictStr
     DRIFT_CHECK_IMAGE: StrictStr
     TRAIN_MODEL_IMAGE: StrictStr
-    ARCHIVE_IMAGE: StrictStr
 
 ecr_environment = ECREnvironment()

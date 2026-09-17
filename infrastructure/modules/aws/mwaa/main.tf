@@ -94,6 +94,7 @@ data "external" "airflow_configuration" {
 
   query = {
     main_network_name                       = var.main_network_name
+    main_network_gateway                    = var.main_network_gateway
     airflow_container_url                   = local.mwaa_urls[each.key] # https://10.232.0.5:[8080|internal-port]
     airflow_requirements_file_path          = var.local_files_mwaa_requirements_file_path
     airflow_python_packages_constraint_url  = local.mwaa_airflow_python_packages_constraint_url

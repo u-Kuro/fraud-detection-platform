@@ -295,7 +295,8 @@ module "mwaa" {
 
   # Docker Network
   # /configurations
-  main_network_name = module.main_docker_network.name
+  main_network_name     = module.main_docker_network.name
+  main_network_gateway  = module.main_docker_network.gateway
 
   # Local Files
   # /paths

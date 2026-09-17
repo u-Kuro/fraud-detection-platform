@@ -122,4 +122,6 @@ jobs:
       - uses: actions/checkout@v7
       - name: Sync DAGs
         run: |
-          # gsutil rsync -r ./dags gs://my-airflow-bucket/dags/
+          $airflow_container_persisted_directory = "/opt/airflow"
+          $airflow_container_dag_directory_path  = "$airflow_container_persisted_directory/dags"
+          docker exec $airflow_container_name rsync -archive --delete /dags $airflow_container_dag_directory_path

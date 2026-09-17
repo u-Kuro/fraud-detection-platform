@@ -45,10 +45,7 @@ def apply_model_deployment() -> HttpOperator:
         },
         # Data unused for nektos/act
         data=json.dumps({
-            "ref": "main",
-            "inputs": {
-                "environment": "production"
-            }
+            "ref": "main"
         }),
         response_check=lambda response: response.status_code == 204,
     )
