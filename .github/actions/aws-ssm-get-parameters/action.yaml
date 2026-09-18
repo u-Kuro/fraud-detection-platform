@@ -1,0 +1,101 @@
+name: AWS SSM Get Parameters
+description: Gets parameters from AWS Systems Manager.
+inputs:
+  string-names:
+    description: One or more string name to retrieve.
+    required: false
+    default: ''
+  secure-string-names:
+    description: One or more secure string name to retrieve.
+    required: false
+    default: ''
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      env:
+        SSM_STRING_NAMES: ${{ inputs.string-names }}
+        SSM_SECURE_STRING_NAMES: ${{ inputs.secure-string-names }}
+      run: |
+        set -euo pipefail
+        
+        delimiter="$(cat /proc/sys/kernel/random/uuid)"
+        
+        trim() {
+          local -n string="$1"
+          string="${string#"${string%%[![:space:]]*}"}"
+          string="${string%"${string##*[![:space:]]}"}"
+        }
+        
+        read_file_raw() {
+          local -n content="$1"
+          local file="$2"
+          content="$(cat "${file}"; printf x)"
+          content="${content%x}"
+        }
+        
+        temporary_file="$(mktemp --tmpdir="${RUNNER_TEMP}")"
+        chmod 600 "${temporary_file}"
+        trap 'rm --force "${temporary_file}"' EXIT
+        
+        process_parameters() {
+          local input="$1"
+          local is_secure="$2"
+          local line environment_name parameter_name parameter_value parameter_value_line
+      
+          while IFS= read -r line; do
+            trim line
+            if [[ -z "${line}" || "${line}" == \#* ]]; then
+              continue
+            fi
+    
+            if [[ "${line}" == *","* ]]; then
+              IFS="," read -r environment_name parameter_name <<< "${line}"
+              trim environment_name
+              trim parameter_name
+            else
+              parameter_name="${line}"
+              environment_name="${parameter_name#/}"
+              environment_name="${environment_name//[-/]/_}"
+              environment_name="${environment_name^^}"
+            fi
+    
+            if ! [[ "${environment_name}" =~ ^[a-zA-Z_][a-zA-Z0-9_]*$ ]]; then
+              echo "::error::Could not derive a valid environment name for '${parameter_name}'."
+              exit 1
+            fi
+    
+            if [[ "${is_secure}" == true ]]; then
+              aws ssm get-parameter \
+                --name "${parameter_name}" \
+                --query "Parameter.Value" \
+                --with-decryption \
+                --output text > "${temporary_file}"
+  
+              read_file_raw parameter_value "${temporary_file}"
+  
+              while IFS= read -r parameter_value_line; do
+                if [[ -n "${parameter_value_line}" ]]; then
+                  echo "::add-mask::${parameter_value_line}"
+                fi
+              done <<< "${parameter_value}"
+            else
+              aws ssm get-parameter \
+                --name "${parameter_name}" \
+                --query "Parameter.Value" \
+                --output text > "${temporary_file}"
+  
+              read_file_raw parameter_value "${temporary_file}"
+            fi
+    
+            {
+              printf '%s<<%s\n' "${environment_name}" "${delimiter}"
+              printf '%s\n'     "${parameter_value}"
+              printf '%s\n'     "${delimiter}"
+            } >> "${GITHUB_ENV}"
+      
+          done <<< "${input}"
+        }
+        
+        process_parameters "${SSM_STRING_NAMES}"        false
+        process_parameters "${SSM_SECURE_STRING_NAMES}" true

@@ -13,3 +13,6 @@
 # Allow dorny/paths-filter to read .git history in nektos/act
 --bind
 --env GIT_DISCOVERY_ACROSS_FILESYSTEM=1
+
+# For resource-constrained
+--concurrent-jobs=1

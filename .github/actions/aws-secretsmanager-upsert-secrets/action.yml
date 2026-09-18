@@ -1,0 +1,35 @@
+# .github/actions/aws-secretsmanager-upsert-secrets/action.yml
+name: AWS Secrets Manager Upsert Secrets
+description: Loops over a JSON to upsert secrets.
+inputs:
+  config:
+    required: true
+    description: JSON pairs of secrets to upsert.
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      env:
+        CONFIG: ${{ inputs.config }}
+      run: |
+        set -euo pipefail
+        
+        printf "%s" "${CONFIG}" | jq empty
+        
+        temporary_file=$(mktemp --tmpdir="${RUNNER_TEMP}")
+        chmod 600 "${temporary_file}"
+        trap 'rm --force "${temporary_file}"' EXIT
+        
+        while IFS= read -r -d '' key && IFS= read -r -d '' value; do
+          printf "%s" "${value}" > "${temporary_file}"
+        
+          if aws secretsmanager describe-secret --secret-id "${key}" >/dev/null 2>&1; then
+            aws secretsmanager put-secret-value \
+              --secret-id "${key}" \
+              --secret-string "file://${temporary_file}"
+          else
+            aws secretsmanager create-secret \
+              --name "${key}" \
+              --secret-string "file://${temporary_file}"
+          fi
+        done < <(printf "%s" "${CONFIG}" | jq --raw-output0 'to_entries[] | (.key, .value)')

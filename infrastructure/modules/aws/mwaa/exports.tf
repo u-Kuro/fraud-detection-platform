@@ -27,7 +27,7 @@ resource "aws_ssm_parameter" "teams_mwaa_environment_dag_s3_uris" {
 # Replacements for the current setup
 resource "aws_ssm_parameter" "teams_airflow_container_names" {
   for_each = aws_mwaa_environment.teams
-  name     = "/${var.ssm_teams_parameter_paths[each.key]}/mwaa/environment/container-name"
+  name     = "/${var.ssm_teams_parameter_paths[each.key]}/mwaa/container"
   type     = "String"
   value    = data.external.airflow_configuration[each.key].result.airflow_container_name
 
@@ -38,7 +38,7 @@ resource "aws_ssm_parameter" "teams_airflow_container_names" {
 }
 resource "aws_ssm_parameter" "teams_airflow_container_dag_directory_path" {
   for_each = aws_mwaa_environment.teams
-  name     = "/${var.ssm_teams_parameter_paths[each.key]}/mwaa/environment/dag-directory-path"
+  name     = "/${var.ssm_teams_parameter_paths[each.key]}/mwaa/container/dags-directory-path"
   type     = "String"
   value    = data.external.airflow_configuration[each.key].result.airflow_container_dag_directory_path
 

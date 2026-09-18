@@ -1,4 +1,4 @@
-# TODO - 15/09/2026 - Continue here... write CD for updating dags in airflow
+# TODO - 15/09/2026 - Continue here... test all
 name: CD / DAGs
 
 on:
@@ -24,14 +24,13 @@ jobs:
   detect-changes:
     runs-on: ubuntu-latest
     outputs:
-      images_changed: ${{ steps.image-filter.outputs.changes }}
-      dags_changed: ${{ steps.dags-filter.outputs.dags }}
+      images-changes: ${{ steps.image-filter.outputs.changes }}
+      dags-changed: ${{ steps.dags-filter.outputs.dags }}
     steps:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0 # Allow dorny/paths-filter to get the whole history in nektos/act
 
-      # Set dorny/paths-filter base to first commit to always proceed to succeeding jobs in nektos/act
       - name: Get initial commit
         id: initial-commit
         run: echo "sha=$(git rev-list --max-parents=0 HEAD)" >> ${GITHUB_OUTPUT}
@@ -41,6 +40,7 @@ jobs:
         with:
           filters: .github/config/paths-filter/dags/cd/image-filter.yaml
           base: ${{ steps.initial-commit.outputs.sha }} # Set dorny/paths-filter base to first commit to always proceed to succeeding jobs in nektos/act
+
       - uses: dorny/paths-filter@v4
         id: dags-filter
         with:
@@ -49,11 +49,11 @@ jobs:
 
   push-images:
     needs: detect-changes
-    if: needs.detect-changes.outputs.images_changed != '[]'
+    if: needs.detect-changes.outputs.images-changes != '[]'
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        image: ${{ fromJson(needs.detect-changes.outputs.images_changed) }}
+        image: ${{ fromJson(needs.detect-changes.outputs.images-changes) }}
     steps:
       - uses: actions/checkout@v7
       - uses: ./.github/actions/setup-buildx-action
@@ -68,11 +68,16 @@ jobs:
           echo "path=services/dags/${FOLDER}/Dockerfile" >> $GITHUB_OUTPUT
 
       - name: Configure AWS credentials
+        id: aws-credentials
         uses: aws-actions/configure-aws-credentials@v6
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+
+      - name: Login to Amazon ECR
+        id: ecr-login
+        uses: ./.github/actions/amazon-ecr-login
 
       - name: Create ECR repository
         env:
@@ -81,10 +86,6 @@ jobs:
           if ! aws ecr describe-repositories --repository-names "${IMAGE_NAME}" 2>/dev/null; then
             aws ecr create-repository --repository-name "${IMAGE_NAME}"
           fi
-
-      - name: Login to Amazon ECR
-        id: ecr-login
-        uses: ./.github/actions/amazon-ecr-login
 
       - name: Extract metadata
         id: meta
@@ -111,17 +112,80 @@ jobs:
           sbom: true
           provenance: mode=max
 
+      - name: Resolve secret ID of Airflow image variable
+        id: image-secret-id
+        env:
+          MWAA_VARIABLES_SECRET_PATH: ${{ secrets.MWAA_VARIABLES_SECRET_PATH }}
+          IMAGE: ${{ matrix.image }}
+        run: |
+          ENVIRONMENT_NAME="${IMAGE//-/_}"
+          ENVIRONMENT_NAME="${ENVIRONMENT_NAME^^}"
+          echo "secret-id=${MWAA_VARIABLES_SECRET_PATH}/${ENVIRONMENT_NAME}" >> "${GITHUB_OUTPUT}"
+
+      - name: Upsert Airflow image variable
+        uses: ./.github/actions/aws-secretsmanager-upsert-secrets
+        with:
+          config: |
+            {
+              "${{ steps.image-secret-id.outputs.secret-id }}": "${{ steps.aws-credentials.outputs.aws-account-id }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/${{ matrix.image }}:${{ steps.meta.outputs.version }}"
+            }
+
+  upsert-static-airflow-metadata:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_CONNECTION_ID: github
+      SLACK_CONNECTION_ID: slack
+      SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/install-aws-cli
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+
+      - name: Upsert connections and static variables
+        uses: ./.github/actions/aws-secretsmanager-upsert-secrets
+        with:
+          config: |
+            {
+              "${{ secrets.MWAA_VARIABLES_SECRET_PATH }}/GITHUB_CONNECTION_ID": "${{ env.GITHUB_CONNECTION_ID }}",
+              "${{ secrets.MWAA_CONNECTIONS_SECRET_PATH }}/${{ env.GITHUB_CONNECTION_ID }}": {
+                "conn_type": "http",
+                "schema": "http",
+                "host": "${{ secrets.GITHUB_REST_API_HOST }}",
+                "port": ${{ secrets.GITHUB_REST_API_PORT }}
+              },
+              "${{ secrets.MWAA_VARIABLES_SECRET_PATH }}/SLACK_CONNECTION_ID": "${{ env.SLACK_CONNECTION_ID }}",
+              "${{ secrets.MWAA_CONNECTIONS_SECRET_PATH }}/${{ env.SLACK_CONNECTION_ID }}": {
+                "conn_type": "slack",
+                "password": "${{ secrets.SLACK_BOT_USER_OAUTH_TOKEN }}"
+              },
+              "${{ secrets.MWAA_VARIABLES_SECRET_PATH }}/SLACK_CHANNEL_ID": "${{ env.SLACK_CHANNEL_ID }}"
+            }
+
   sync-dags:
-    needs: [detect-changes, push-images]
+    needs: [detect-changes, push-images, upsert-static-airflow-metadata]
     if: |
       always()
-      && needs.detect-changes.outputs.dags_changed == 'true'
+      && needs.detect-changes.outputs.dags-changed == 'true'
       && (needs.push-images.result == 'success' || needs.push-images.result == 'skipped')
+      && needs.upsert-static-airflow-metadata.result == 'success'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+
+      - name: Get Airflow data
+        uses: ./.github/actions/aws-ssm-get-parameters
+        with:
+          string-names: |
+            AIRFLOW_CONTAINER_NAME, ${{ secrets.PARAMETER_PATH }}/mwaa/container
+            AIRFLOW_DAGS_DIRECTORY_PATH, ${{ secrets.PARAMETER_PATH }}/mwaa/container/dags-directory-path
+
       - name: Sync DAGs
         run: |
-          $airflow_container_persisted_directory = "/opt/airflow"
-          $airflow_container_dag_directory_path  = "$airflow_container_persisted_directory/dags"
-          docker exec $airflow_container_name rsync -archive --delete /dags $airflow_container_dag_directory_path
+          docker exec "${AIRFLOW_CONTAINER_NAME}" rsync --recursive --delete --times --delay-updates /dags/ "${AIRFLOW_DAGS_DIRECTORY_PATH}/"
+          docker exec "${AIRFLOW_CONTAINER_NAME}" airflow dags reserialize

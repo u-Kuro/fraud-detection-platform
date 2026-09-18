@@ -35,15 +35,15 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
 
+      - name: Login to Amazon ECR
+        id: ecr-login
+        uses: ./.github/actions/amazon-ecr-login
+
       - name: Create ECR repository
         run: |
           if ! aws ecr describe-repositories --repository-names "${IMAGE_NAME}" 2>/dev/null; then
             aws ecr create-repository --repository-name "${IMAGE_NAME}"
           fi
-
-      - name: Login to Amazon ECR
-        id: ecr-login
-        uses: ./.github/actions/amazon-ecr-login
 
       - name: Extract metadata
         id: meta

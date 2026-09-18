@@ -1,5 +1,5 @@
 #!/bin/sh
-set -e -u
+set -eu
 
 # install curl and jq
 apk add --no-cache curl jq 1> /dev/null
