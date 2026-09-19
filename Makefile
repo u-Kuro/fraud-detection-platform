@@ -10,6 +10,7 @@ endif
 
 ifeq ($(PLATFORM), "windows")
     SHELL_CMD          := "pwsh"
+    SHELL_FLAGS		   := -ExecutionPolicy Bypass
     SCRIPT_EXTENSION   := "ps1"
     SCRIPT_FLAG		   := "-File"
     COMMAND_FLAG	   := "-Command"
@@ -22,6 +23,7 @@ ifeq ($(PLATFORM), "windows")
     endif
 else
     SHELL_CMD          := "/bin/bash"
+    SHELL_FLAGS		   := ""
     SCRIPT_EXTENSION   := "sh"
     SCRIPT_FLAG  	   := ""
     COMMAND_FLAG 	   := "-c"
@@ -36,17 +38,17 @@ endef
 .PHONY: init down up
 
 init:
-	@$(SHELL_CMD) $(SCRIPT_FLAG) "$(SCRIPTS)/infrastructure/$(SCRIPT_EXTENSION)/init.$(SCRIPT_EXTENSION)"
+	@$(SHELL_CMD) $(SHELL_FLAGS) $(SCRIPT_FLAG) "$(SCRIPTS)/infrastructure/$(SCRIPT_EXTENSION)/init.$(SCRIPT_EXTENSION)"
 
 down: init
-	@$(SHELL_CMD) $(SCRIPT_FLAG) "$(SCRIPTS)/infrastructure/$(SCRIPT_EXTENSION)/down.$(SCRIPT_EXTENSION)" \
+	@$(SHELL_CMD) $(SHELL_FLAGS) $(SCRIPT_FLAG) "$(SCRIPTS)/infrastructure/$(SCRIPT_EXTENSION)/down.$(SCRIPT_EXTENSION)" \
 		$(call FORMAT_SCRIPT_ARGUMENTS,SHELL_CMD,$(SHELL_CMD)) \
 		$(call FORMAT_SCRIPT_ARGUMENTS,SCRIPT_EXTENSION,$(SCRIPT_EXTENSION)) \
 		$(call FORMAT_SCRIPT_ARGUMENTS,SCRIPT_FLAG,$(SCRIPT_FLAG)) \
 		$(call FORMAT_SCRIPT_ARGUMENTS,COMMAND_FLAG,$(COMMAND_FLAG))
 
 up: init down
-	@$(SHELL_CMD) $(SCRIPT_FLAG) "$(SCRIPTS)/infrastructure/$(SCRIPT_EXTENSION)/up.$(SCRIPT_EXTENSION)" \
+	@$(SHELL_CMD) $(SHELL_FLAGS) $(SCRIPT_FLAG) "$(SCRIPTS)/infrastructure/$(SCRIPT_EXTENSION)/up.$(SCRIPT_EXTENSION)" \
 		$(call FORMAT_SCRIPT_ARGUMENTS,SHELL_CMD,$(SHELL_CMD)) \
 		$(call FORMAT_SCRIPT_ARGUMENTS,SCRIPT_EXTENSION,$(SCRIPT_EXTENSION)) \
 		$(call FORMAT_SCRIPT_ARGUMENTS,SCRIPT_FLAG,$(SCRIPT_FLAG)) \
