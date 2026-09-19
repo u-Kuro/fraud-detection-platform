@@ -9,7 +9,7 @@ else
 endif
 
 ifeq ($(PLATFORM), "windows")
-    SHELL_CMD          := "pwsh.exe"
+    SHELL_CMD          := "pwsh"
     SCRIPT_EXTENSION   := "ps1"
     SCRIPT_FLAG		   := "-File"
     COMMAND_FLAG	   := "-Command"

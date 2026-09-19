@@ -126,9 +126,9 @@ module "rds" {
 
   # OS
   # /configurations
-  SHELL_CMD = var.SHELL_CMD
+  SHELL_CMD        = var.SHELL_CMD
   SCRIPT_EXTENSION = var.SCRIPT_EXTENSION
-  SCRIPT_FLAG = var.SCRIPT_FLAG
+  SCRIPT_FLAG      = var.SCRIPT_FLAG
 
   # RDS
   # /postgres
@@ -202,7 +202,7 @@ module "eks" {
 
   # Docker Network
   # /configurations
-  main_network_name    = module.main_docker_network.name
+  main_network_name = module.main_docker_network.name
 
   # EKS
   # /teams
@@ -217,9 +217,9 @@ module "eks" {
 
   # OS
   # /configurations
-  SHELL_CMD = var.SHELL_CMD
+  SHELL_CMD        = var.SHELL_CMD
   SCRIPT_EXTENSION = var.SCRIPT_EXTENSION
-  SCRIPT_FLAG = var.SCRIPT_FLAG
+  SCRIPT_FLAG      = var.SCRIPT_FLAG
 
   # Secrets Manager
   # /teams
@@ -306,8 +306,8 @@ module "mwaa" {
 
   # Docker Network
   # /configurations
-  main_network_name     = module.main_docker_network.name
-  main_network_gateway  = module.main_docker_network.gateway
+  main_network_name    = module.main_docker_network.name
+  main_network_gateway = module.main_docker_network.gateway
 
   # Local Files
   # /paths
@@ -329,9 +329,9 @@ module "mwaa" {
 
   # OS
   # /configurations
-  SHELL_CMD = var.SHELL_CMD
+  SHELL_CMD        = var.SHELL_CMD
   SCRIPT_EXTENSION = var.SCRIPT_EXTENSION
-  SCRIPT_FLAG = var.SCRIPT_FLAG
+  SCRIPT_FLAG      = var.SCRIPT_FLAG
 
   # S3
   # /mwaa
