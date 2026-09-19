@@ -80,7 +80,7 @@ $null = docker cp $aws_configurations_for_docker_file_path "${airflow_container_
 $null = docker cp $aws_credentials_for_docker_file_path "${airflow_container_name}:${airflow_container_aws_credentials_path}"
 
 # Allow host.docker.internal for Linux OS (non-persistent)
-$null = docker exec $airflow_container_name sh -c "echo '$main_network_gateway host.docker.internal' >> /etc/hosts"
+$null = docker exec -u root $airflow_container_name sh -c "echo '$main_network_gateway host.docker.internal' >> /etc/hosts"
 
 # Get Airflow container host port
 $airflow_container_host_port = $airflow_container_ports[0].PSobject.Properties.Value[0].HostPort

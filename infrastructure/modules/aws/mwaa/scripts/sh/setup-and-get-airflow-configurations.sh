@@ -75,7 +75,7 @@ docker cp "${aws_configurations_for_docker_file_path}" "${airflow_container_name
 docker cp "${aws_credentials_for_docker_file_path}" "${airflow_container_name}:${airflow_container_aws_credentials_path}" 1>/dev/null
 
 # Allow host.docker.internal for Linux OS (non-persistent)
-docker exec "${airflow_container_name}" sh -c "echo '${main_network_gateway} host.docker.internal' >> /etc/hosts" 1>/dev/null
+docker exec -u root "${airflow_container_name}" sh -c "echo '${main_network_gateway} host.docker.internal' >> /etc/hosts" 1>/dev/null
 
 # Get Airflow container host port
 airflow_container_host_port=$(printf "%s" "${airflow_container_ports}" | jq --raw-output 'to_entries[0].value[0].HostPort')
