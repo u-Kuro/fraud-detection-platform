@@ -57,7 +57,7 @@ airflow_container_dag_directory_path="${airflow_container_persisted_directory}/d
 airflow_container_requirements_file_path="${airflow_container_persisted_directory}/requirements.txt"
 docker exec "${airflow_container_name}" mkdir -p "${airflow_container_persisted_directory}" 1>/dev/null
 docker cp "${airflow_requirements_file_path}" "${airflow_container_name}:${airflow_container_requirements_file_path}" 1>/dev/null
-docker exec "${airflow_container_name}" pip install -r "${airflow_container_requirements_file_path}" --constraint "${airflow_python_packages_constraint_url}" -qq 1>/dev/null
+docker exec "${airflow_container_name}" sh -c "pip install -r ${airflow_container_requirements_file_path} --constraint ${airflow_python_packages_constraint_url} -qq" 1>/dev/null
 
 # Copy kubeconfig to Airflow container for K3s access
 airflow_container_kubeconfig_file_path="${airflow_container_persisted_directory}/kubeconfig.yaml"
