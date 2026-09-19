@@ -3,7 +3,7 @@ Set-StrictMode -Version Latest
 $PSNativeCommandUseErrorActionPreference = $true
 $ErrorActionPreference = "Stop"
 
-$main_network_name = $env:MAIN_NETWORK_NAME
+$main_network_name = $Env:MAIN_NETWORK_NAME
 
 $main_network_json_configurations = (docker inspect $main_network_name | ConvertFrom-Json)[0]
 $main_network_containers          = $main_network_json_configurations.Containers

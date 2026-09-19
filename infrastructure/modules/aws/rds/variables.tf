@@ -6,6 +6,12 @@ variable "iam_rds_role_name" { type = string }
 # /configurations
 variable "main_network_name" { type = string }
 
+# OS
+# /configurations
+variable "SHELL_CMD" { type = string }
+variable "SCRIPT_EXTENSION" { type = string }
+variable "SCRIPT_FLAG" { type = string }
+
 # RDS
 # /service
 # /postgres

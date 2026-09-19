@@ -49,6 +49,25 @@ variable "mlflow_flask_server_secret_key" {
   sensitive = true
 }
 
+# OS
+# /configurations
+variable "SHELL_CMD" {
+  type    = string
+  default = "/bin/sh"
+}
+variable "SCRIPT_EXTENSION" {
+  type    = string
+  default = "sh"
+}
+variable "SCRIPT_FLAG" {
+  type    = string
+  default = ""
+}
+variable "COMMAND_FLAG" {
+  type    = string
+  default = "-c"
+}
+
 # sslip.io
 # /dns
 variable "sslip_io_public_wildcard_dns_domain" {

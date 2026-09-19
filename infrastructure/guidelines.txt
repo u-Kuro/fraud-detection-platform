@@ -7,7 +7,7 @@ terraform apply -target="module.ministack_container.docker_container.ministack" 
 terraform apply -target="module.eks.data.external.k3s_configuration" -auto-approve -parallelism=1
 terraform apply -auto-approve -parallelism=1
 
-$env:KUBECONFIG = "C:\Projects\Personal\Practice\fraud_detection\infrastructure\local_files\kubeconfig_for_localhost.yaml"
+$Env:KUBECONFIG = "C:\Projects\Personal\Practice\fraud_detection\infrastructure\local_files\kubeconfig_for_localhost.yaml"
 
 kubectl run curl-debug `
   --image=alpine/curl `
@@ -1001,7 +1001,7 @@ replicaset.apps/traefik-755657f889   1         1         1       26s
     aws --endpoint-url http://localhost:4566 elbv2 describe-load-balancers
 
   Set kubeconfig in a new terminal:
-    $env:KUBECONFIG = 'C:\Users\MSILAP~1\AppData\Local\Temp\ministack-kubeconfig.yaml'
+    $Env:KUBECONFIG = 'C:\Users\MSILAP~1\AppData\Local\Temp\ministack-kubeconfig.yaml'
 ```
 
 ECR + EKS
@@ -1113,7 +1113,7 @@ $tempKubeconfig = [System.IO.Path]::GetTempFileName()
     $tempKubeconfig,
     (($rawKubeconfig -join "`n") -replace "https://127\.0\.0\.1:${k3sInternalPort}", "https://127.0.0.1:${k3sHostPort}")
 )
-$env:KUBECONFIG = $tempKubeconfig
+$Env:KUBECONFIG = $tempKubeconfig
 
 
 # ── 8. Write registries.yaml into k3s container ──────────────────────

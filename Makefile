@@ -1,19 +1,44 @@
 ifeq ($(OS),Windows_NT)
-    SHELL := pwsh.exe
+    ifdef MSYSTEM
+        PLATFORM := unix
+    else
+        PLATFORM := windows
+    endif
 else
-    SHELL := pwsh
+    PLATFORM := unix
 endif
-.SHELLFLAGS := -NoProfile -NonInteractive -Command
+
+ifeq ($(PLATFORM),windows)
+    SHELL_CMD        := pwsh.exe
+    SCRIPT_EXTENSION := ps1
+    SCRIPT_FLAG		 := -File
+    COMMAND_FLAG	 := -Command
+
+    DOCKER_OS := $(shell docker info --format "{{.OSType}}" 2>$$null)
+    ifeq ($(DOCKER_OS),windows)
+        DOCKER_SOCK := //./pipe/docker_engine
+    else
+        DOCKER_SOCK := /var/run/docker.sock
+    endif
+else
+    SHELL_CMD        := /bin/bash
+    SCRIPT_EXTENSION := sh
+    SCRIPT_FLAG  	 :=
+    COMMAND_FLAG 	 := -c
+    DOCKER_SOCK 	 := /var/run/docker.sock
+endif
 
 SCRIPTS := ./tools/scripts
 
 .PHONY: init down up
 
 init:
-	@& '$(SCRIPTS)/infrastructure/init.ps1'
+	@$(SHELL_CMD) $(SCRIPT_FLAG) "$(SCRIPTS)/infrastructure/$(SCRIPT_EXTENSION)/init.$(SCRIPT_EXTENSION)"
 
 down: init
-	@& '$(SCRIPTS)/infrastructure/down.ps1'
+	@$(SHELL_CMD) $(SCRIPT_FLAG) "$(SCRIPTS)/infrastructure/$(SCRIPT_EXTENSION)/down.$(SCRIPT_EXTENSION)" \
+		"$(SHELL_CMD)" "$(SCRIPT_EXTENSION)" "$(SCRIPT_FLAG)" "$(COMMAND_FLAG)"
 
 up: init down
-	@& '$(SCRIPTS)/infrastructure/up.ps1'
+	@$(SHELL_CMD) $(SCRIPT_FLAG) "$(SCRIPTS)/infrastructure/$(SCRIPT_EXTENSION)/up.$(SCRIPT_EXTENSION)" \
+		"$(SHELL_CMD)" "$(SCRIPT_EXTENSION)" "$(SCRIPT_FLAG)" "$(COMMAND_FLAG)"

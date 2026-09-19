@@ -54,8 +54,7 @@ if (-not $airflow_container_name) {
 
 # Get Airflow container configurations
 $airflow_container_json_configurations = (docker inspect $airflow_container_name | ConvertFrom-Json)[0]
-$airflow_container_network_settings    = $airflow_container_json_configurations.NetworkSettings
-$airflow_container_ports               = $airflow_container_network_settings.Ports
+$airflow_container_ports               = $airflow_container_json_configurations.NetworkSettings.Ports
 $airflow_container_persisted_directory = "/opt/airflow"
 $airflow_container_dag_directory_path  = "$airflow_container_persisted_directory/dags"
 

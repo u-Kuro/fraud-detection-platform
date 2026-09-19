@@ -23,7 +23,7 @@ runs:
         while IFS= read -r -d '' key && IFS= read -r -d '' value; do
           printf "%s" "${value}" > "${temporary_file}"
         
-          if aws secretsmanager describe-secret --secret-id "${key}" >/dev/null 2>&1; then
+          if aws secretsmanager describe-secret --secret-id "${key}" &>/dev/null; then
             aws secretsmanager put-secret-value \
               --secret-id "${key}" \
               --secret-string "file://${temporary_file}"

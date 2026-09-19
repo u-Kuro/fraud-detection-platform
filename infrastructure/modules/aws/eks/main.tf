@@ -53,11 +53,10 @@ resource "aws_eks_node_group" "main" {
 }
 # Setup and get MiniStack's EKS configurations
 data "external" "k3s_configuration" {
-  program = ["pwsh", "-File", "${path.module}/scripts/setup-and-get-k3s-configurations.ps1"]
+  program = [var.SHELL_CMD, var.SCRIPT_FLAG, "${path.module}/scripts/${var.SCRIPT_EXTENSION}/setup-and-get-k3s-configurations.${var.SCRIPT_EXTENSION}"]
 
   query = {
     main_network_name                  = var.main_network_name
-    main_network_gateway               = var.main_network_gateway
     eks_cluster_endpoint               = aws_eks_cluster.main.endpoint # https://10.232.0.3:6443 or https://localhost:16443
     k3s_registries_file_path           = var.local_files_eks_registries_file_path
     kubeconfig_for_localhost_file_path = var.local_files_kubeconfig_for_localhost_file_path

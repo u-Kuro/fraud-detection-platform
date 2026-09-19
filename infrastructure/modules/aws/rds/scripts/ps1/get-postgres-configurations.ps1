@@ -39,8 +39,7 @@ if (-not $postgres_container_name) {
 
 # Get Postgres container configurations
 $postgres_container_json_configurations = (docker inspect $postgres_container_name | ConvertFrom-Json)[0]
-$postgres_container_network_settings    = $postgres_container_json_configurations.NetworkSettings
-$postgres_container_ports               = $postgres_container_network_settings.Ports
+$postgres_container_ports               = $postgres_container_json_configurations.NetworkSettings.Ports
 
 # Get Postgres container host port
 $postgres_container_host_port = $postgres_container_ports[0].PSobject.Properties.Value[0].HostPort
