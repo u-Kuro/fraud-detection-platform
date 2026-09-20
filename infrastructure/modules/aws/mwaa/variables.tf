@@ -37,12 +37,6 @@ variable "ministack_container_port" { type = number }
 # /teams
 variable "mwaa_teams" { type = set(string) }
 
-# OS
-# /configurations
-variable "SHELL_CMD" { type = string }
-variable "SCRIPT_EXTENSION" { type = string }
-variable "SCRIPT_FLAG" { type = string }
-
 # S3
 # /mwaa
 variable "s3_teams_mwaa_bucket_names" { type = map(string) }

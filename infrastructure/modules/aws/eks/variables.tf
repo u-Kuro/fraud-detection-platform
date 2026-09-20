@@ -24,12 +24,6 @@ variable "local_files_kubeconfig_for_localhost_file_path" { type = string }
 variable "local_files_kubeconfig_for_docker_file_path" { type = string }
 variable "local_files_eks_registries_file_path" { type = string }
 
-# OS
-# /configurations
-variable "SHELL_CMD" { type = string }
-variable "SCRIPT_EXTENSION" { type = string }
-variable "SCRIPT_FLAG" { type = string }
-
 # Secrets Manager
 # /teams
 variable "secrets_manager_teams_secret_paths" { type = map(string) }

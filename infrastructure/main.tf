@@ -124,12 +124,6 @@ module "rds" {
   # /configurations
   main_network_name = module.main_docker_network.name
 
-  # OS
-  # /configurations
-  SHELL_CMD        = var.SHELL_CMD
-  SCRIPT_EXTENSION = var.SCRIPT_EXTENSION
-  SCRIPT_FLAG      = var.SCRIPT_FLAG
-
   # RDS
   # /postgres
   rds_postgres_admin_username = var.rds_postgres_admin_username
@@ -214,12 +208,6 @@ module "eks" {
   local_files_kubeconfig_for_localhost_file_path = local_sensitive_file.kubeconfig_for_localhost.filename
   local_files_kubeconfig_for_docker_file_path    = local_sensitive_file.kubeconfig_for_docker.filename
   local_files_eks_registries_file_path           = local_sensitive_file.eks_registries.filename
-
-  # OS
-  # /configurations
-  SHELL_CMD        = var.SHELL_CMD
-  SCRIPT_EXTENSION = var.SCRIPT_EXTENSION
-  SCRIPT_FLAG      = var.SCRIPT_FLAG
 
   # Secrets Manager
   # /teams
@@ -326,12 +314,6 @@ module "mwaa" {
   # MWAA
   # /teams
   mwaa_teams = local.mwaa_teams
-
-  # OS
-  # /configurations
-  SHELL_CMD        = var.SHELL_CMD
-  SCRIPT_EXTENSION = var.SCRIPT_EXTENSION
-  SCRIPT_FLAG      = var.SCRIPT_FLAG
 
   # S3
   # /mwaa

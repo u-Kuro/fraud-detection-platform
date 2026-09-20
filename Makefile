@@ -1,55 +1,104 @@
+# Prevent MSYS/MinGW conversion of Unix paths to Windows paths
+export MSYS_NO_PATHCONV 		 := 1
+# Project
+export ROOT_DIRECTORY			 := $(CURDIR)
+# Scripts
+SCRIPT_DIRECTORY     	   		 := tools/scripts
+MAKEFILE_SCRIPT_DIRECTORY  	 	 := $(SCRIPT_DIRECTORY)/makefile
+INFRASTRUCTURE_SCRIPT_DIRECTORY  := $(SCRIPT_DIRECTORY)/infrastructure
+# Infrastructure
+export INFRASTRUCTURE_DOCKERFILE := infrastructure/Dockerfile
+export INFRASTRUCTURE_IMAGE 	 := fraud-detection-platform-infrastructure
+
 ifeq ($(OS), Windows_NT)
     ifdef MSYSTEM
-        PLATFORM := "unix"
+        PLATFORM  := unix
     else
-        PLATFORM := "windows"
+        PLATFORM  := windows
     endif
 else
-    PLATFORM := "unix"
+    PLATFORM  := unix
 endif
 
-ifeq ($(PLATFORM), "windows")
-    SHELL_CMD          := "pwsh"
-    SHELL_FLAGS		   := -ExecutionPolicy Bypass
-    SCRIPT_EXTENSION   := "ps1"
-    SCRIPT_FLAG		   := "-File"
-    COMMAND_FLAG	   := "-Command"
-
-    DOCKER_OS := $(shell docker info --format "{{.OSType}}")
-    ifeq ($(DOCKER_OS), "windows")
-        DOCKER_SOCK := "//./pipe/docker_engine"
-    else
-        DOCKER_SOCK := "/var/run/docker.sock"
-    endif
+ifeq ($(PLATFORM), windows)
+    SCRIPT_RUNNER    := pwsh -NoProfile -ExecutionPolicy Bypass -File
+	SCRIPT_FOLDER	 := pwsh
+    SCRIPT_EXTENSION := ps1
+	DOCKER_OS 		 := $(shell docker info --format "{{.OSType}}")
+	ifeq ($(DOCKER_OS), windows)
+		export DOCKER_SOCK := //./pipe/docker_engine
+	else
+		export DOCKER_SOCK := /var/run/docker.sock
+	endif
 else
-    SHELL_CMD          := "/bin/bash"
-    SHELL_FLAGS		   := ""
-    SCRIPT_EXTENSION   := "sh"
-    SCRIPT_FLAG  	   := ""
-    COMMAND_FLAG 	   := "-c"
-    DOCKER_SOCK 	   := "/var/run/docker.sock"
+    SCRIPT_RUNNER      := /bin/bash
+	SCRIPT_FOLDER	   := bash
+    SCRIPT_EXTENSION   := sh
+	export DOCKER_SOCK := /var/run/docker.sock
 endif
 
-SCRIPTS := "./tools/scripts"
-define FORMAT_SCRIPT_ARGUMENTS
-$(if $(filter "windows", $(PLATFORM)),"-$(1):$(2)","$(2)")
+# Script Runner
+define RUN_BASH_SCRIPT
+$(SCRIPT_RUNNER) "$(1)/$(2).sh"
+endef
+define RUN_SCRIPT
+$(SCRIPT_RUNNER) "$(1)/$(SCRIPT_FOLDER)/$(2).$(SCRIPT_EXTENSION)"
 endef
 
-.PHONY: init down up
+define FORMAT_SCRIPT_ARGUMENTS
+$(if $(filter $(PLATFORM),windows),"-$(1):$(2)","$(2)")
+endef
 
-init:
-	@$(SHELL_CMD) $(SHELL_FLAGS) $(SCRIPT_FLAG) "$(SCRIPTS)/infrastructure/$(SCRIPT_EXTENSION)/init.$(SCRIPT_EXTENSION)"
+# > Makefile
+define RUN_MAKEFILE_SCRIPT
+$(call RUN_SCRIPT,$(MAKEFILE_SCRIPT_DIRECTORY),$(1))
+endef
 
-down: init
-	@$(SHELL_CMD) $(SHELL_FLAGS) $(SCRIPT_FLAG) "$(SCRIPTS)/infrastructure/$(SCRIPT_EXTENSION)/down.$(SCRIPT_EXTENSION)" \
-		$(call FORMAT_SCRIPT_ARGUMENTS,SHELL_CMD,$(SHELL_CMD)) \
-		$(call FORMAT_SCRIPT_ARGUMENTS,SCRIPT_EXTENSION,$(SCRIPT_EXTENSION)) \
-		$(call FORMAT_SCRIPT_ARGUMENTS,SCRIPT_FLAG,$(SCRIPT_FLAG)) \
-		$(call FORMAT_SCRIPT_ARGUMENTS,COMMAND_FLAG,$(COMMAND_FLAG))
+define SAFE_RUN_MAKEFILE_SCRIPT
+$(if $(filter $(IS_INSIDE_FRAUD_DETECTION_PLATFORM_DOCKER),true),make,$(call RUN_MAKEFILE_SCRIPT,$(1)))
+endef
 
-up: init down
-	@$(SHELL_CMD) $(SHELL_FLAGS) $(SCRIPT_FLAG) "$(SCRIPTS)/infrastructure/$(SCRIPT_EXTENSION)/up.$(SCRIPT_EXTENSION)" \
-		$(call FORMAT_SCRIPT_ARGUMENTS,SHELL_CMD,$(SHELL_CMD)) \
-		$(call FORMAT_SCRIPT_ARGUMENTS,SCRIPT_EXTENSION,$(SCRIPT_EXTENSION)) \
-		$(call FORMAT_SCRIPT_ARGUMENTS,SCRIPT_FLAG,$(SCRIPT_FLAG)) \
-		$(call FORMAT_SCRIPT_ARGUMENTS,COMMAND_FLAG,$(COMMAND_FLAG))
+define BUILD_IMAGE
+$(if $(filter $(IS_INSIDE_FRAUD_DETECTION_PLATFORM_DOCKER),true),,$(call RUN_MAKEFILE_SCRIPT,build-image) $(call FORMAT_SCRIPT_ARGUMENTS,DOCKERFILE,$(1)) $(call FORMAT_SCRIPT_ARGUMENTS,IMAGE,$(2)))
+endef
+
+# > Makefile
+define RUN_INFRASTRUCTURE_SCRIPT
+$(call RUN_BASH_SCRIPT,$(INFRASTRUCTURE_SCRIPT_DIRECTORY),$(1))
+endef
+
+.PHONY: init down up \
+	build-infrastructure-image \
+	init-infrastructure down-infrastructure up-infrastructure \
+	terraform-init terraform-destroy terraform-apply
+
+build-infrastructure-image:
+	$(call BUILD_IMAGE,infrastructure/Dockerfile,fraud-detection-platform-infrastructure)
+
+init: up-infrastructure
+
+init-infrastructure: build-infrastructure-image
+	$(call SAFE_RUN_MAKEFILE_SCRIPT,run-infrastructure-phony) terraform-init
+
+down-infrastructure: build-infrastructure-image
+	$(call SAFE_RUN_MAKEFILE_SCRIPT,run-infrastructure-phony) terraform-destroy
+
+up-infrastructure: build-infrastructure-image
+	$(call SAFE_RUN_MAKEFILE_SCRIPT,run-infrastructure-phony) terraform-apply
+
+terraform-init:
+	$(call RUN_INFRASTRUCTURE_SCRIPT,init)
+
+terraform-destroy: terraform-init
+	@$(call RUN_INFRASTRUCTURE_SCRIPT,down)
+
+terraform-apply: terraform-init terraform-destroy
+	@$(call RUN_INFRASTRUCTURE_SCRIPT,up)
+
+log:
+	$(info CHECK=$(CHECK)|)
+#    $(info SCRIPT_RUNNER          = $(SCRIPT_RUNNER))
+#    $(info SCRIPT_FOLDER = $(SCRIPT_FOLDER))
+#    $(info SCRIPT_EXTENSION        = $(SCRIPT_EXTENSION))
+#    $(info DOCKER_OS        = $(DOCKER_OS))
+#    $(info DOCKER_SOCK     = $(DOCKER_SOCK))

@@ -53,7 +53,7 @@ resource "aws_eks_node_group" "main" {
 }
 # Setup and get MiniStack's EKS configurations
 data "external" "k3s_configuration" {
-  program = [var.SHELL_CMD, var.SCRIPT_FLAG, "${path.module}/scripts/${var.SCRIPT_EXTENSION}/setup-and-get-k3s-configurations.${var.SCRIPT_EXTENSION}"]
+  program = ["/bin/bash", "${path.module}/scripts/setup-and-get-k3s-configurations.sh"]
 
   query = {
     main_network_name                  = var.main_network_name

@@ -34,7 +34,7 @@ resource "aws_iam_role_policy" "rds" {
 }
 # Get MiniStack's Postgres container configurations
 data "external" "postgres_configuration" {
-  program = [var.SHELL_CMD, var.SCRIPT_FLAG, "${path.module}/scripts/${var.SCRIPT_EXTENSION}/get-postgres-configurations.${var.SCRIPT_EXTENSION}"]
+  program = ["/bin/bash", "${path.module}/scripts/get-postgres-configurations.sh"]
 
   query = {
     main_network_name     = var.main_network_name
