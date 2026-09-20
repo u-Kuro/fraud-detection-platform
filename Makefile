@@ -1,14 +1,15 @@
 # Prevent MSYS/MinGW conversion of Unix paths to Windows paths
-export MSYS_NO_PATHCONV 		 := 1
+export MSYS_NO_PATHCONV 		 		:= 1
 # Project
-export ROOT_DIRECTORY			 := $(CURDIR)
+export ROOT_DIRECTORY			 		:= $(CURDIR)
+export FRAUD_DETECTION_PLATFORM_NETWORK := fraud-detection-platform-network
 # Scripts
-SCRIPT_DIRECTORY     	   		 := tools/scripts
-MAKEFILE_SCRIPT_DIRECTORY  	 	 := $(SCRIPT_DIRECTORY)/makefile
-INFRASTRUCTURE_SCRIPT_DIRECTORY  := $(SCRIPT_DIRECTORY)/infrastructure
+SCRIPT_DIRECTORY     	   		 		:= tools/scripts
+MAKEFILE_SCRIPT_DIRECTORY  	 	 		:= $(SCRIPT_DIRECTORY)/makefile
+INFRASTRUCTURE_SCRIPT_DIRECTORY  		:= $(SCRIPT_DIRECTORY)/infrastructure
 # Infrastructure
-export INFRASTRUCTURE_DOCKERFILE := infrastructure/Dockerfile
-export INFRASTRUCTURE_IMAGE 	 := fraud-detection-platform-infrastructure
+export INFRASTRUCTURE_DOCKERFILE 		:= infrastructure/Dockerfile
+export INFRASTRUCTURE_IMAGE 	 		:= fraud-detection-platform-infrastructure
 
 ifeq ($(OS), Windows_NT)
     ifdef MSYSTEM

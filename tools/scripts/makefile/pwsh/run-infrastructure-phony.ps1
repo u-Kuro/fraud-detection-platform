@@ -9,6 +9,7 @@ $ErrorActionPreference = "Stop"
 $WORKING_DIRECTORY = "/app"
 
 docker run --rm `
+    --network "${Env:FRAUD_DETECTION_PLATFORM_NETWORK}" `
     --volume "${Env:ROOT_DIRECTORY}:${WORKING_DIRECTORY}" `
     --volume "${Env:DOCKER_SOCK}:/var/run/docker.sock" `
     "${Env:INFRASTRUCTURE_IMAGE}" `

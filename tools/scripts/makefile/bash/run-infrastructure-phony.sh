@@ -7,6 +7,7 @@ WORKING_DIRECTORY=/app
 HOST_UID="$(id -u)"
 HOST_GID="$(id -g)"
 DOCKER_RUN_ARGUMENTS=(
+    --network "${FRAUD_DETECTION_PLATFORM_NETWORK}"
     --volume "${ROOT_DIRECTORY}:${WORKING_DIRECTORY}"
     --volume "${DOCKER_SOCK}:/var/run/docker.sock"
     --user "${HOST_UID}:${HOST_GID}"
@@ -18,12 +19,7 @@ if [[ -S /var/run/docker.sock ]]; then
     fi
 fi
 
-#echo "$PWD - here"
-#cat /app/Makefile
-
-set -x
 docker run --rm \
     "${DOCKER_RUN_ARGUMENTS[@]}" \
     "${INFRASTRUCTURE_IMAGE}" \
     "make ${MAKEFILE_PHONY}"
-set +x
