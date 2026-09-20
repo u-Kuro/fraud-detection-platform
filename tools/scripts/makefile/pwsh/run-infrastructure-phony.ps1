@@ -9,7 +9,9 @@ $ErrorActionPreference = "Stop"
 $WORKING_DIRECTORY = "/app"
 
 docker run --rm `
-    --network "${Env:FRAUD_DETECTION_PLATFORM_NETWORK}" `
+    --network "host" `
+    --add-host "host.docker.internal:host-gateway" `
+    --add-host "api.host.docker.internal:host-gateway" `
     --volume "${Env:ROOT_DIRECTORY}:${WORKING_DIRECTORY}" `
     --volume "${Env:DOCKER_SOCK}:/var/run/docker.sock" `
     "${Env:INFRASTRUCTURE_IMAGE}" `

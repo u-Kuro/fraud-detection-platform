@@ -7,7 +7,9 @@ WORKING_DIRECTORY=/app
 HOST_UID="$(id -u)"
 HOST_GID="$(id -g)"
 DOCKER_RUN_ARGUMENTS=(
-    --network "${FRAUD_DETECTION_PLATFORM_NETWORK}"
+    --network "host"
+    --add-host "host.docker.internal:host-gateway"
+    --add-host "api.host.docker.internal:host-gateway"
     --volume "${ROOT_DIRECTORY}:${WORKING_DIRECTORY}"
     --volume "${DOCKER_SOCK}:/var/run/docker.sock"
     --user "${HOST_UID}:${HOST_GID}"

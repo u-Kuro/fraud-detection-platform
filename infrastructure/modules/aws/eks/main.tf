@@ -56,11 +56,12 @@ data "external" "k3s_configuration" {
   program = ["/bin/bash", "${path.module}/scripts/setup-and-get-k3s-configurations.sh"]
 
   query = {
-    main_network_name                  = var.main_network_name
-    eks_cluster_endpoint               = aws_eks_cluster.main.endpoint # https://10.232.0.3:6443 or https://localhost:16443
-    k3s_registries_file_path           = var.local_files_eks_registries_file_path
-    kubeconfig_for_localhost_file_path = var.local_files_kubeconfig_for_localhost_file_path
-    kubeconfig_for_docker_file_path    = var.local_files_kubeconfig_for_docker_file_path
+    main_network_name                             = var.main_network_name
+    eks_cluster_endpoint                          = aws_eks_cluster.main.endpoint # https://10.232.0.3:6443 or https://localhost:16443
+    k3s_registries_file_path                      = var.local_files_eks_registries_file_path
+    kubeconfig_for_docker_file_path               = var.local_files_kubeconfig_for_docker_file_path
+    kubeconfig_for_localhost_file_path            = var.local_files_kubeconfig_for_localhost_file_path
+    kubeconfig_for_docker_host_internal_file_path = var.local_files_kubeconfig_for_docker_host_internal_file_path
   }
 
   depends_on = [

@@ -205,9 +205,10 @@ module "eks" {
 
   # Local Files
   # /paths
-  local_files_kubeconfig_for_localhost_file_path = local_sensitive_file.kubeconfig_for_localhost.filename
-  local_files_kubeconfig_for_docker_file_path    = local_sensitive_file.kubeconfig_for_docker.filename
-  local_files_eks_registries_file_path           = local_sensitive_file.eks_registries.filename
+  local_files_kubeconfig_for_docker_file_path               = local_sensitive_file.kubeconfig_for_docker.filename
+  local_files_kubeconfig_for_localhost_file_path            = local_sensitive_file.kubeconfig_for_localhost.filename
+  local_files_kubeconfig_for_docker_host_internal_file_path = local_sensitive_file.kubeconfig_for_docker_host_internal.filename
+  local_files_eks_registries_file_path                      = local_sensitive_file.eks_registries.filename
 
   # Secrets Manager
   # /teams
@@ -221,8 +222,9 @@ module "eks" {
     module.iam,
     module.main_docker_network,
     module.ministack_container,
-    local_sensitive_file.kubeconfig_for_localhost,
     local_sensitive_file.kubeconfig_for_docker,
+    local_sensitive_file.kubeconfig_for_localhost,
+    local_sensitive_file.kubeconfig_for_docker_host_internal,
     local_sensitive_file.eks_registries,
     module.ssm,
     module.secrets_manager,

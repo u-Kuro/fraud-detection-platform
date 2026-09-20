@@ -9,5 +9,6 @@ output "host_url" { value = "http://localhost:${data.external.k3s_configuration.
 
 # Local Files
 # /paths
-output "local_files_kubeconfig_for_localhost_file_path" { value = data.external.k3s_configuration.result.kubeconfig_for_localhost_file_path }
 output "local_files_kubeconfig_for_docker_file_path" { value = data.external.k3s_configuration.result.kubeconfig_for_docker_file_path }
+output "local_files_kubeconfig_for_localhost_file_path" { value = data.external.k3s_configuration.result.kubeconfig_for_localhost_file_path }
+output "local_files_kubeconfig_for_docker_host_internal_file_path" { value = data.external.k3s_configuration.result.kubeconfig_for_docker_host_internal_file_path }

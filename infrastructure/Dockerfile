@@ -1,8 +1,10 @@
-FROM hashicorp/terraform:1.16
+FROM hashicorp/terraform:1.16.3
 
 RUN apk add --no-cache \
     aws-cli=2.34.63-r0 \
     bash=5.3.9-r1 \
+    jq=1.8.2-r0 \
+    sed=4.9-r2 \
     docker-cli=29.5.3-r1 \
     docker-cli-buildx=0.34.1-r1 \
     helm=3.19.0-r8 \

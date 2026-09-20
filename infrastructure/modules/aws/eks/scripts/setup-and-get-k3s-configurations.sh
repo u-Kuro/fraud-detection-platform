@@ -3,11 +3,12 @@ set -euo pipefail
 
 # Get inputs
 query=$(cat)
-main_network_name=$(printf "%s" "${query}"                  | jq --raw-output '.main_network_name')
-eks_cluster_endpoint=$(printf "%s" "${query}"               | jq --raw-output '.eks_cluster_endpoint')
-k3s_registries_file_path=$(printf "%s" "${query}"           | jq --raw-output '.k3s_registries_file_path')
-kubeconfig_for_localhost_file_path=$(printf "%s" "${query}" | jq --raw-output '.kubeconfig_for_localhost_file_path')
-kubeconfig_for_docker_file_path=$(printf "%s" "${query}"    | jq --raw-output '.kubeconfig_for_docker_file_path')
+main_network_name=$(printf "%s" "${query}"                             | jq --raw-output '.main_network_name')
+eks_cluster_endpoint=$(printf "%s" "${query}"                          | jq --raw-output '.eks_cluster_endpoint')
+k3s_registries_file_path=$(printf "%s" "${query}"                      | jq --raw-output '.k3s_registries_file_path')
+kubeconfig_for_docker_file_path=$(printf "%s" "${query}"               | jq --raw-output '.kubeconfig_for_docker_file_path')
+kubeconfig_for_localhost_file_path=$(printf "%s" "${query}"            | jq --raw-output '.kubeconfig_for_localhost_file_path')
+kubeconfig_for_docker_host_internal_file_path=$(printf "%s" "${query}" | jq --raw-output '.kubeconfig_for_docker_host_internal_file_path')
 
 # Validate inputs values
 validate_required() {
@@ -17,11 +18,12 @@ validate_required() {
         exit 1
     fi
 }
-validate_required "main_network_name"                  "${main_network_name}"
-validate_required "eks_cluster_endpoint"               "${eks_cluster_endpoint}"
-validate_required "k3s_registries_file_path"           "${k3s_registries_file_path}"
-validate_required "kubeconfig_for_localhost_file_path" "${kubeconfig_for_localhost_file_path}"
-validate_required "kubeconfig_for_docker_file_path"    "${kubeconfig_for_docker_file_path}"
+validate_required "main_network_name"                             "${main_network_name}"
+validate_required "eks_cluster_endpoint"                          "${eks_cluster_endpoint}"
+validate_required "k3s_registries_file_path"                      "${k3s_registries_file_path}"
+validate_required "kubeconfig_for_docker_file_path"               "${kubeconfig_for_docker_file_path}"
+validate_required "kubeconfig_for_localhost_file_path"            "${kubeconfig_for_localhost_file_path}"
+validate_required "kubeconfig_for_docker_host_internal_file_path" "${kubeconfig_for_docker_host_internal_file_path}"
 
 # Get main network configurations
 main_network_json_configurations=$(docker inspect "${main_network_name}"    | jq '.[0]')
@@ -118,13 +120,17 @@ docker exec "${k3s_container_name}" sh -c 'kubectl config set-cluster $(kubectl 
 # Get raw kubeconfig file in K3s container
 raw_kubeconfig=$(docker exec "${k3s_container_name}" cat "${k3s_container_configuration_files_directory_path}/k3s.yaml")
 
-# Write kubeconfig for localhost in defined file
-printf "%s" "${raw_kubeconfig//https:\/\/127.0.0.1:"${k3s_container_port}"/https:\/\/127.0.0.1:"${k3s_container_host_port}"}" \
-    > "${kubeconfig_for_localhost_file_path}"
-
 # Write kubeconfig for docker in defined file
 printf "%s" "${raw_kubeconfig//https:\/\/127.0.0.1:"${k3s_container_port}"/https:\/\/"${k3s_container_name}":"${k3s_container_port}"}" \
     > "${kubeconfig_for_docker_file_path}"
+
+# Write kubeconfig for localhost in defined file
+printf "%s" "${raw_kubeconfig//https:\/\/127.0.0.1:"${k3s_container_port}"/https:\/\/localhost:"${k3s_container_host_port}"}" \
+    > "${kubeconfig_for_localhost_file_path}"
+
+# Write kubeconfig for docker's host gateway in defined file
+printf "%s" "${raw_kubeconfig//https:\/\/127.0.0.1:"${k3s_container_port}"/https:\/\/host.docker.internal:"${k3s_container_host_port}"}" \
+    > "${kubeconfig_for_docker_host_internal_file_path}"
 
 # Copy registries.yaml into K3s container to redirect requests to ECR
 docker exec "${k3s_container_name}" mkdir -p "${k3s_container_configuration_files_directory_path}" 1>/dev/null
@@ -134,7 +140,7 @@ docker cp "${k3s_registries_file_path}" "${k3s_container_name}:${k3s_container_c
 docker restart "${k3s_container_name}" 1>/dev/null
 
 # Wait until it restarts successfully
-export KUBECONFIG="${kubeconfig_for_localhost_file_path}"
+export KUBECONFIG="${kubeconfig_for_docker_host_internal_file_path}"
 max_wait=300; elapsed=0; k3s_ready=false
 while true; do
     sleep 5
@@ -156,13 +162,15 @@ fi
 kubectl wait --for=condition=Ready nodes --all --timeout=5m 1>/dev/null
 
 jq --null-input --compact-output \
-    --arg k3s_container_ip                   "${k3s_container_ip}" \
-    --arg k3s_container_host_port            "${k3s_container_host_port}" \
-    --arg kubeconfig_for_localhost_file_path "${kubeconfig_for_localhost_file_path}" \
-    --arg kubeconfig_for_docker_file_path    "${kubeconfig_for_docker_file_path}" \
+    --arg k3s_container_ip                              "${k3s_container_ip}" \
+    --arg k3s_container_host_port                       "${k3s_container_host_port}" \
+    --arg kubeconfig_for_docker_file_path               "${kubeconfig_for_docker_file_path}" \
+    --arg kubeconfig_for_localhost_file_path            "${kubeconfig_for_localhost_file_path}" \
+    --arg kubeconfig_for_docker_host_internal_file_path "${kubeconfig_for_docker_host_internal_file_path}" \
     '{
-        k3s_container_ip:                   $k3s_container_ip,
-        k3s_container_host_port:            $k3s_container_host_port,
-        kubeconfig_for_localhost_file_path: $kubeconfig_for_localhost_file_path,
-        kubeconfig_for_docker_file_path:    $kubeconfig_for_docker_file_path
+        k3s_container_ip:                              $k3s_container_ip,
+        k3s_container_host_port:                       $k3s_container_host_port,
+        kubeconfig_for_docker_file_path:               $kubeconfig_for_docker_file_path,
+        kubeconfig_for_localhost_file_path:            $kubeconfig_for_localhost_file_path,
+        kubeconfig_for_docker_host_internal_file_path: $kubeconfig_for_docker_host_internal_file_path
     }'

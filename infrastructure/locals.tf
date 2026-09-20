@@ -19,10 +19,11 @@ locals {
 
   # Local files
   # /paths
-  local_files_directory_path         = "${path.root}/local_files"
-  helm_directory_path                = "${path.root}/.helm"
-  kubeconfig_for_localhost_file_path = "${local.local_files_directory_path}/kubeconfig_for_localhost.yaml"
-  kubeconfig_file_path               = "${local.local_files_directory_path}/kubeconfig.yaml"
+  local_files_directory_path                    = "${path.root}/local_files"
+  helm_directory_path                           = "${path.root}/.helm"
+  kubeconfig_file_path                          = "${local.local_files_directory_path}/kubeconfig.yaml"
+  kubeconfig_for_localhost_file_path            = "${local.local_files_directory_path}/kubeconfig_for_localhost.yaml"
+  kubeconfig_for_docker_host_internal_file_path = "${local.local_files_directory_path}/kubeconfig_for_docker_host_internal.yaml"
 
   # MWAA
   # /urls
@@ -86,22 +87,28 @@ resource "local_sensitive_file" "eks_registries" {
     }
   })
 }
-# Initialize kubeconfig file to access K8s cluster locally
-resource "local_sensitive_file" "kubeconfig_for_localhost" {
-  filename        = local.kubeconfig_for_localhost_file_path
-  file_permission = "0600"
-  content         = fileexists(local.kubeconfig_for_localhost_file_path) ? sensitive(file(local.kubeconfig_for_localhost_file_path)) : ""
-}
 # Initialize kubeconfig file to access K8s cluster in docker network
 resource "local_sensitive_file" "kubeconfig_for_docker" {
   filename        = local.kubeconfig_file_path
   file_permission = "0600"
   content         = fileexists(local.kubeconfig_file_path) ? sensitive(file(local.kubeconfig_file_path)) : ""
 }
+# Initialize kubeconfig file to access K8s cluster in localhost
+resource "local_sensitive_file" "kubeconfig_for_localhost" {
+  filename        = local.kubeconfig_for_localhost_file_path
+  file_permission = "0600"
+  content         = fileexists(local.kubeconfig_for_localhost_file_path) ? sensitive(file(local.kubeconfig_for_localhost_file_path)) : ""
+}
+# Initialize kubeconfig file to access K8s cluster in docker's host gateway
+resource "local_sensitive_file" "kubeconfig_for_docker_host_internal" {
+  filename        = local.kubeconfig_for_docker_host_internal_file_path
+  file_permission = "0600"
+  content         = fileexists(local.kubeconfig_for_docker_host_internal_file_path) ? sensitive(file(local.kubeconfig_for_docker_host_internal_file_path)) : ""
+}
 # Initialize MWAA python package requirements
 resource "local_sensitive_file" "mwaa_requirements" {
   filename        = "${local.local_files_directory_path}/requirements.txt"
-  file_permission = "0600"
+  file_permission = "0644"
   content         = <<-EOT
     apache-airflow==3.3.1
     apache-airflow-providers-amazon==9.34.0

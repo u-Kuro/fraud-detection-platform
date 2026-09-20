@@ -20,8 +20,9 @@ variable "eks_teams_namespaces" { type = map(string) }
 
 # Local Files
 # /paths
-variable "local_files_kubeconfig_for_localhost_file_path" { type = string }
 variable "local_files_kubeconfig_for_docker_file_path" { type = string }
+variable "local_files_kubeconfig_for_localhost_file_path" { type = string }
+variable "local_files_kubeconfig_for_docker_host_internal_file_path" { type = string }
 variable "local_files_eks_registries_file_path" { type = string }
 
 # Secrets Manager

@@ -8,17 +8,17 @@ provider "aws" {
 
   # Routes requests to local aws emulator (MiniStack container)
   endpoints {
-    ec2            = module.ministack_container.url
-    ecr            = module.ministack_container.url
-    elbv2          = module.ministack_container.url
-    eks            = module.ministack_container.url
-    iam            = module.ministack_container.url
-    mwaa           = module.ministack_container.url
-    rds            = module.ministack_container.url
-    s3             = module.ministack_container.url
-    secretsmanager = module.ministack_container.url
-    ssm            = module.ministack_container.url
-    sts            = module.ministack_container.url
+    ec2            = module.ministack_container.host_docker_internal_url
+    ecr            = module.ministack_container.host_docker_internal_url
+    elbv2          = module.ministack_container.host_docker_internal_url
+    eks            = module.ministack_container.host_docker_internal_url
+    iam            = module.ministack_container.host_docker_internal_url
+    mwaa           = module.ministack_container.host_docker_internal_url
+    rds            = module.ministack_container.host_docker_internal_url
+    s3             = module.ministack_container.host_docker_internal_url
+    secretsmanager = module.ministack_container.host_docker_internal_url
+    ssm            = module.ministack_container.host_docker_internal_url
+    sts            = module.ministack_container.host_docker_internal_url
   }
 
   # Forces S3 URLs to use "http://localhost:4566/bucket-name" (path-style)
@@ -40,7 +40,7 @@ resource "terraform_data" "configure_local_aws" {
       AWS_ACCESS_KEY_ID     = var.aws_admin_access_key
       AWS_SECRET_ACCESS_KEY = var.aws_admin_secret_key
       AWS_DEFAULT_REGION    = var.aws_admin_region
-      AWS_ENDPOINT_URL      = module.ministack_container.url
+      AWS_ENDPOINT_URL      = module.ministack_container.host_docker_internal_url
     }
   }
   depends_on = [
@@ -63,10 +63,10 @@ provider "postgresql" {
 }
 # Connect to K3s spawned by EKS from MiniStack
 provider "kubernetes" {
-  config_path = local_sensitive_file.kubeconfig_for_docker.filename
+  config_path = local_sensitive_file.kubeconfig_for_docker_host_internal.filename
 }
 provider "kubectl" {
-  config_path      = local_sensitive_file.kubeconfig_for_docker.filename
+  config_path      = local_sensitive_file.kubeconfig_for_docker_host_internal.filename
   load_config_file = true
   lazy_load        = true
 }
@@ -76,6 +76,6 @@ provider "helm" {
   repository_config_path = "${local.helm_directory_path}/repositories.yaml"
   repository_cache       = "${local.helm_directory_path}/cache"
   kubernetes = {
-    config_path = local_sensitive_file.kubeconfig_for_docker.filename
+    config_path = local_sensitive_file.kubeconfig_for_docker_host_internal.filename
   }
 }
