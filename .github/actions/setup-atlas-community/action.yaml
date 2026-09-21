@@ -4,4 +4,13 @@ runs:
   using: composite
   steps:
     - shell: bash
-      run: curl --silent --fail --location https://atlasgo.sh | CI=true sh -s -- --community
+      run: |
+        set -euo pipefail
+
+        ATLAS_DIRECTORY="${RUNNER_TEMP}/atlas"
+        mkdir --parents "${ATLAS_DIRECTORY}"
+
+        ATLAS_INSTALLER="${ATLAS_DIRECTORY}/atlasgo.sh"
+        curl --silent --fail --location --output "${ATLAS_INSTALLER}" "https://atlasgo.sh"
+
+        CI=true sh "${ATLAS_INSTALLER}" --community

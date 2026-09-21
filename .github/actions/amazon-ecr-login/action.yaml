@@ -18,6 +18,8 @@ runs:
     - id: login
       shell: bash
       run: |
+        set -euo pipefail
+        
         REGISTRY="ministack:4566"
         PASSWORD=$(aws ecr get-login-password)
         AUTH=$(printf "AWS:%s" "${PASSWORD}" | base64 --wrap=0)

@@ -1,4 +1,3 @@
-# .github/actions/aws-secretsmanager-upsert-secrets/action.yml
 name: AWS Secrets Manager Upsert Secrets
 description: Loops over a JSON to upsert secrets.
 inputs:

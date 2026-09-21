@@ -71,21 +71,27 @@ runs:
                 --query "Parameter.Value" \
                 --with-decryption \
                 --output text > "${temporary_file}"
-  
-              read_file_raw parameter_value "${temporary_file}"
-  
-              while IFS= read -r parameter_value_line; do
-                if [[ -n "${parameter_value_line}" ]]; then
-                  echo "::add-mask::${parameter_value_line}"
-                fi
-              done <<< "${parameter_value}"
             else
               aws ssm get-parameter \
                 --name "${parameter_name}" \
                 --query "Parameter.Value" \
                 --output text > "${temporary_file}"
-  
-              read_file_raw parameter_value "${temporary_file}"
+            fi
+        
+            # Workaround: `aws ssm get-parameter --output text > "${temporary_file}"` produces a trailing new line
+            last_byte="$(tail --bytes=1 "${temporary_file}" | od --address-radix=n --output-duplicates --format=x1 | tr --delete ' ')"
+            if [[ "${last_byte}" == "0a" ]]; then
+              truncate --size=-1 "${temporary_file}"
+            fi
+      
+            read_file_raw parameter_value "${temporary_file}"
+        
+            if [[ "${is_secure}" == true ]]; then
+              while IFS= read -r parameter_value_line; do
+                if [[ -n "${parameter_value_line}" ]]; then
+                  echo "::add-mask::${parameter_value_line}"
+                fi
+              done <<< "${parameter_value}"
             fi
     
             {

@@ -196,6 +196,17 @@ jobs:
 
       - name: Sync DAGs
         run: |
-          # try sh -c first for permissions before -u root
-          docker exec "${AIRFLOW_CONTAINER_NAME}" rsync --recursive --delete --times --delay-updates ${{ github.workspace }}/dags/ "${AIRFLOW_DAGS_DIRECTORY_PATH}/"
+          set -euo pipefail
+          
+          TEMPORARY_DAGS_FOLDER=/tmp/dags
+
+          docker exec "${AIRFLOW_CONTAINER_NAME}" rm --recursive --force "${TEMPORARY_DAGS_FOLDER}"
+          trap 'docker exec "${AIRFLOW_CONTAINER_NAME}" rm --recursive --force "${TEMPORARY_DAGS_FOLDER}"' EXIT
+
+          docker exec "${AIRFLOW_CONTAINER_NAME}" rm --recursive --force "${AIRFLOW_DAGS_DIRECTORY_PATH}"
+
+          docker exec "${AIRFLOW_CONTAINER_NAME}" mkdir --parents "${TEMPORARY_DAGS_FOLDER}"
+          docker cp "${GITHUB_WORKSPACE}/dags/." "${AIRFLOW_CONTAINER_NAME}:${TEMPORARY_DAGS_FOLDER}"
+
+          docker exec "${AIRFLOW_CONTAINER_NAME}" rsync --recursive --delete --times --delay-updates "${TEMPORARY_DAGS_FOLDER}/" "${AIRFLOW_DAGS_DIRECTORY_PATH}/"
           docker exec "${AIRFLOW_CONTAINER_NAME}" airflow dags reserialize

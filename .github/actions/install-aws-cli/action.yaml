@@ -5,6 +5,8 @@ runs:
   steps:
     - shell: bash
       run: |
+        set -euo pipefail
+        
         VERSION="2.36.32"
         
         AWS_DIRECTORY="${RUNNER_TEMP}/aws-cli"
