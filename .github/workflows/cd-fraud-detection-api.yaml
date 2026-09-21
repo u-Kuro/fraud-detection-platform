@@ -130,4 +130,4 @@ jobs:
             ${{ env.K8S_PATH }}/deployment.yaml
             ${{ env.K8S_PATH }}/service.yaml
             ${{ env.K8S_PATH }}/ingress-route.yaml
-          images: ${{ steps.aws-credentials.outputs.aws-account-id }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/${{ env.IMAGE_NAME }}:${{ needs.build.outputs.image-tag }}
+          images: ${{ steps.aws-credentials.outputs.aws-account-id }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/${{ env.IMAGE_NAME }}:${{ needs.push.outputs.image-tag }}
