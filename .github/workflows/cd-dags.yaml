@@ -178,6 +178,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+      - uses: ./.github/actions/install-aws-cli
 
       - name: Get Airflow data
         uses: ./.github/actions/aws-ssm-get-parameters
