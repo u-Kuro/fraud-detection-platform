@@ -191,8 +191,8 @@ jobs:
         uses: ./.github/actions/aws-ssm-get-parameters
         with:
           string-names: |
-            AIRFLOW_CONTAINER_NAME, ${{ secrets.PARAMETER_PATH }}/mwaa/container
-            AIRFLOW_DAGS_DIRECTORY_PATH, ${{ secrets.PARAMETER_PATH }}/mwaa/container/dags-directory-path
+            AIRFLOW_CONTAINER_NAME, /${{ secrets.PARAMETER_PATH }}/mwaa/container
+            AIRFLOW_DAGS_DIRECTORY_PATH, /${{ secrets.PARAMETER_PATH }}/mwaa/container/dags-directory-path
 
       - name: Sync DAGs
         run: |
