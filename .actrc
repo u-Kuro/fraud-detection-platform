@@ -8,7 +8,7 @@
 --env AWS_ENDPOINT_URL=http://ministack:4566
 
 # Allow changes to docker daemon
---privileged
+--container-options --privileged
 
 # Allow dorny/paths-filter to read .git history in nektos/act
 --bind
