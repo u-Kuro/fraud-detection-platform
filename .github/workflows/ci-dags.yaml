@@ -50,6 +50,7 @@ jobs:
     if: needs.detect-changes.outputs.images-changes != '[]'
     runs-on: ubuntu-latest
     strategy:
+      max-parallel: 1
       matrix:
         image: ${{ fromJson(needs.detect-changes.outputs.images-changes) }}
     steps:
