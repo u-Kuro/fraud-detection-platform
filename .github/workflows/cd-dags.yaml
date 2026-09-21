@@ -197,5 +197,5 @@ jobs:
       - name: Sync DAGs
         run: |
           # try sh -c first for permissions before -u root
-          docker exec "${AIRFLOW_CONTAINER_NAME}" rsync --recursive --delete --times --delay-updates /dags/ "${AIRFLOW_DAGS_DIRECTORY_PATH}/"
+          docker exec "${AIRFLOW_CONTAINER_NAME}" rsync --recursive --delete --times --delay-updates ${{ github.workspace }}/dags/ "${AIRFLOW_DAGS_DIRECTORY_PATH}/"
           docker exec "${AIRFLOW_CONTAINER_NAME}" airflow dags reserialize
