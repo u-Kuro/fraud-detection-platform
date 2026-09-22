@@ -197,28 +197,24 @@ kubectl get pod mlflow-797688fbd8-mztcm -n mlflow -o jsonpath='{.spec.volumes}'
 # 16. Exec in (only works if container stays up long enough)
 kubectl exec -it mlflow-797688fbd8-mztcm -n mlflow -- /bin/sh
 
-docker network rm ministack-network
-docker volume rm ministack
+docker network rm fraud-detection-platform-network
 Start-Sleep -Seconds 5
 clear
-docker network create ministack-network
+docker network create fraud-detection-platform-network
 docker run -d `
   --name ministack `
-  --network ministack-network `
+  --network fraud-detection-platform-network `
   -p 4566:4566 `
-  -e DOCKER_NETWORK=ministack-network `
-  -e PERSIST_STATE=1 `
-  -e LOCALSTACK_PERSISTENCE=1 `
-  -e S3_PERSIST=1 `
-  -e RDS_PERSIST=1 `
-  -e MWAA_PERSIST=1 `
-  -e DSQL_PERSIST=1 `
-  -e DSQL_STRICT=1 `
+  -e DOCKER_NETWORK=fraud-detection-platform-network `
   -e LOG_LEVEL=DEBUG `
   -v /var/run/docker.sock:/var/run/docker.sock `
-  ministackorg/ministack
+  ministackorg/ministack:1.5
 Start-Sleep -Seconds 5
 Invoke-RestMethod -Uri "http://localhost:4566/_ministack/health"
+
+
+
+
 .\test-eks-traefik-ingressroute.ps1
 
 steps:

@@ -12,16 +12,17 @@ runs:
         CONFIG: ${{ inputs.config }}
       run: |
         set -euo pipefail
-        
+
         printf "%s" "${CONFIG}" | jq empty
-        
+
         temporary_file=$(mktemp --tmpdir="${RUNNER_TEMP}")
         chmod 600 "${temporary_file}"
         trap 'rm --force "${temporary_file}"' EXIT
-        
+
         while IFS= read -r -d '' key && IFS= read -r -d '' value; do
+
           printf "%s" "${value}" > "${temporary_file}"
-        
+
           if aws secretsmanager describe-secret --secret-id "${key}" &>/dev/null; then
             aws secretsmanager put-secret-value \
               --secret-id "${key}" \
@@ -31,4 +32,13 @@ runs:
               --name "${key}" \
               --secret-string "file://${temporary_file}"
           fi
-        done < <(printf "%s" "${CONFIG}" | jq --raw-output0 'to_entries[] | (.key, .value)')
+        done < <(
+          printf "%s" "${CONFIG}" |
+            jq --join-output '
+              to_entries[] |
+              .key,
+              "\u0000",
+              (.value | if type == "string" then . else tojson end),
+              "\u0000"
+            '
+        )

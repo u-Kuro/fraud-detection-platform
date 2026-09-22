@@ -100,6 +100,7 @@ locals {
   mwaa_variables_postgres_connection_id_name = "POSTGRES_CONNECTION_ID"
 
   mwaa_variables_s3_connection_id_name = "S3_CONNECTION_ID"
+  mwaa_variables_s3_bucket = "S3_BUCKET"
 
   # GitHub (team created)
   # github = "GITHUB_CONNECTION_ID"
