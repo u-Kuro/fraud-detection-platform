@@ -90,7 +90,7 @@ resource "local_sensitive_file" "eks_registries" {
 # Initialize kubeconfig file to access K8s cluster in docker network
 resource "local_sensitive_file" "kubeconfig_for_docker" {
   filename        = local.kubeconfig_file_path
-  file_permission = "0600"
+  file_permission = "0640"
   content         = fileexists(local.kubeconfig_file_path) ? sensitive(file(local.kubeconfig_file_path)) : ""
 }
 # Initialize kubeconfig file to access K8s cluster in localhost

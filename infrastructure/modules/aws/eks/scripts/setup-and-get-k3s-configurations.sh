@@ -125,7 +125,7 @@ printf "%s" "${raw_kubeconfig//https:\/\/127.0.0.1:"${k3s_container_port}"/https
     > "${kubeconfig_for_docker_file_path}"
 
 # Write kubeconfig for localhost in defined file
-printf "%s" "${raw_kubeconfig//https:\/\/127.0.0.1:"${k3s_container_port}"/https:\/\/localhost:"${k3s_container_host_port}"}" \
+printf "%s" "${raw_kubeconfig//https:\/\/127.0.0.1:"${k3s_container_port}"/https:\/\/127.0.0.1:"${k3s_container_host_port}"}" \
     > "${kubeconfig_for_localhost_file_path}"
 
 # Write kubeconfig for docker's host gateway in defined file

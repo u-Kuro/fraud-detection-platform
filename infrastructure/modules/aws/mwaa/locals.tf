@@ -27,7 +27,7 @@ locals {
 resource "local_sensitive_file" "mwaa_teams_aws_config" {
   for_each        = aws_mwaa_environment.teams
   filename        = "${var.local_files_directory_path}/aws/${each.key}/config"
-  file_permission = "0600"
+  file_permission = "0640"
   content         = <<-EOF
     [default]
     region = ${var.iam_admin_region}
@@ -39,7 +39,7 @@ resource "local_sensitive_file" "mwaa_teams_aws_config" {
 resource "local_sensitive_file" "mwaa_teams_aws_credentials" {
   for_each        = aws_mwaa_environment.teams
   filename        = "${var.local_files_directory_path}/aws/${each.key}/credentials"
-  file_permission = "0600"
+  file_permission = "0640"
   content         = <<-EOF
     [default]
     aws_access_key_id = ${var.iam_teams_usernames[each.key]}
