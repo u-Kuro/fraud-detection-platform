@@ -24,19 +24,3 @@ make up
 act push -W .github/workflows/cd-migrate.yaml
 act push -W .github/workflows/cd-dags.yaml
 
-$key = "airflow/connections/mle/slack"
-aws secretsmanager get-secret-value `
---secret-id "${key}" `
---query SecretString `
---output text
-aws secretsmanager get-secret-value `
---secret-id "${key}" `
---query SecretString `
---output text | Convertfrom-json 
-
-
-$key = "airflow/variables/mle/SLACK_CHANNEL_ID"
-aws secretsmanager get-secret-value `
---secret-id "${key}" `
---query SecretString `
---output text

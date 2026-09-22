@@ -21,115 +21,115 @@ env:
   AWS_PAGER: ""
 
 jobs:
-#  detect-changes:
-#    runs-on: ubuntu-latest
-#    outputs:
-#      images-changes: ${{ steps.image-filter.outputs.changes }}
-#      dags-changed: ${{ steps.dags-filter.outputs.dags }}
-#    steps:
-#      - uses: actions/checkout@v7
-#        with:
-#          fetch-depth: 0 # Allow dorny/paths-filter to get the whole history in nektos/act
-#
-#      - name: Get initial commit
-#        id: initial-commit
-#        run: echo "sha=$(git rev-list --max-parents=0 HEAD)" >> ${GITHUB_OUTPUT}
-#
-#      - uses: dorny/paths-filter@v4
-#        id: image-filter
-#        with:
-#          filters: .github/config/paths-filter/dags/cd/image-filter.yaml
-#          base: ${{ steps.initial-commit.outputs.sha }} # Set dorny/paths-filter base to first commit to always proceed to succeeding jobs in nektos/act
-#
-#      - uses: dorny/paths-filter@v4
-#        id: dags-filter
-#        with:
-#          filters: .github/config/paths-filter/dags/cd/dags-filter.yaml
-#          base: ${{ steps.initial-commit.outputs.sha }} # Set dorny/paths-filter base to first commit to always proceed to succeeding jobs in nektos/act
-#
-#  push-images:
-#    needs: detect-changes
-#    if: needs.detect-changes.outputs.images-changes != '[]'
-#    runs-on: ubuntu-latest
-#    strategy:
-#      max-parallel: 1
-#      matrix:
-#        image: ${{ fromJson(needs.detect-changes.outputs.images-changes) }}
-#    steps:
-#      - uses: actions/checkout@v7
-#      - uses: ./.github/actions/setup-buildx-action
-#      - uses: ./.github/actions/install-aws-cli
-#
-#      - name: Resolve Dockerfile path
-#        id: dockerfile-path
-#        env:
-#          IMAGE: ${{ matrix.image }}
-#        run: |
-#          FOLDER="${IMAGE//-/_}"
-#          echo "path=services/dags_images/${FOLDER}/Dockerfile" >> $GITHUB_OUTPUT
-#
-#      - name: Configure AWS credentials
-#        id: aws-credentials
-#        uses: aws-actions/configure-aws-credentials@v6
-#        with:
-#          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
-#
-#      - name: Login to Amazon ECR
-#        id: ecr-login
-#        uses: ./.github/actions/amazon-ecr-login
-#
-#      - name: Create ECR repository
-#        env:
-#          IMAGE_NAME: ${{ matrix.image }}
-#        run: |
-#          if ! aws ecr describe-repositories --repository-names "${IMAGE_NAME}" 2>/dev/null; then
-#            aws ecr create-repository --repository-name "${IMAGE_NAME}"
-#          fi
-#
-#      - name: Extract metadata
-#        id: meta
-#        uses: docker/metadata-action@v6
-#        env:
-#          GITHUB_TOKEN: ${{ github.token }}
-#        with:
-#          images: ${{ steps.ecr-login.outputs.registry }}/${{ matrix.image }}
-#          tags: |
-#            type=sha,prefix=sha-,format=short
-#            type=raw,value=latest,enable={{is_default_branch}}
-#
-#      - name: Build and push
-#        uses: docker/build-push-action@v7
-#        with:
-#          context: .
-#          file: ${{ steps.dockerfile-path.outputs.path }}
-#          target: runtime
-#          push: true
-#          tags: ${{ steps.meta.outputs.tags }}
-#          labels: ${{ steps.meta.outputs.labels }}
-#          cache-from: type=gha,scope=${{ matrix.image }}
-#          cache-to: type=gha,mode=max,scope=${{ matrix.image }}
-#          sbom: true
-#          provenance: mode=max
-#
-#      - name: Resolve secret ID of Airflow image variable
-#        id: image-secret-id
-#        env:
-#          MWAA_VARIABLES_SECRET_PATH: ${{ secrets.MWAA_VARIABLES_SECRET_PATH }}
-#          IMAGE: ${{ matrix.image }}
-#        run: |
-#          ENVIRONMENT_NAME="${IMAGE//-/_}"
-#          ENVIRONMENT_NAME="${ENVIRONMENT_NAME^^}"
-#          echo "secret-id=${MWAA_VARIABLES_SECRET_PATH}/${ENVIRONMENT_NAME}" >> "${GITHUB_OUTPUT}"
-#
-#      - name: Upsert Airflow image variable
-#        uses: ./.github/actions/aws-secretsmanager-upsert-secrets
-#        with:
-#          config: |
-#            {
-#              "${{ steps.image-secret-id.outputs.secret-id }}": "${{ steps.aws-credentials.outputs.aws-account-id }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/${{ matrix.image }}:${{ steps.meta.outputs.version }}"
-#            }
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      images-changes: ${{ steps.image-filter.outputs.changes }}
+      dags-changed: ${{ steps.dags-filter.outputs.dags }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # Allow dorny/paths-filter to get the whole history in nektos/act
+
+      - name: Get initial commit
+        id: initial-commit
+        run: echo "sha=$(git rev-list --max-parents=0 HEAD)" >> ${GITHUB_OUTPUT}
+
+      - uses: dorny/paths-filter@v4
+        id: image-filter
+        with:
+          filters: .github/config/paths-filter/dags/cd/image-filter.yaml
+          base: ${{ steps.initial-commit.outputs.sha }} # Set dorny/paths-filter base to first commit to always proceed to succeeding jobs in nektos/act
+
+      - uses: dorny/paths-filter@v4
+        id: dags-filter
+        with:
+          filters: .github/config/paths-filter/dags/cd/dags-filter.yaml
+          base: ${{ steps.initial-commit.outputs.sha }} # Set dorny/paths-filter base to first commit to always proceed to succeeding jobs in nektos/act
+
+  push-images:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.images-changes != '[]'
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 1
+      matrix:
+        image: ${{ fromJson(needs.detect-changes.outputs.images-changes) }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/setup-buildx-action
+      - uses: ./.github/actions/install-aws-cli
+
+      - name: Resolve Dockerfile path
+        id: dockerfile-path
+        env:
+          IMAGE: ${{ matrix.image }}
+        run: |
+          FOLDER="${IMAGE//-/_}"
+          echo "path=services/dags_images/${FOLDER}/Dockerfile" >> $GITHUB_OUTPUT
+
+      - name: Configure AWS credentials
+        id: aws-credentials
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+
+      - name: Login to Amazon ECR
+        id: ecr-login
+        uses: ./.github/actions/amazon-ecr-login
+
+      - name: Create ECR repository
+        env:
+          IMAGE_NAME: ${{ matrix.image }}
+        run: |
+          if ! aws ecr describe-repositories --repository-names "${IMAGE_NAME}" 2>/dev/null; then
+            aws ecr create-repository --repository-name "${IMAGE_NAME}"
+          fi
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v6
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          images: ${{ steps.ecr-login.outputs.registry }}/${{ matrix.image }}
+          tags: |
+            type=sha,prefix=sha-,format=short
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build and push
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ${{ steps.dockerfile-path.outputs.path }}
+          target: runtime
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha,scope=${{ matrix.image }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.image }}
+          sbom: true
+          provenance: mode=max
+
+      - name: Resolve secret ID of Airflow image variable
+        id: image-secret-id
+        env:
+          MWAA_VARIABLES_SECRET_PATH: ${{ secrets.MWAA_VARIABLES_SECRET_PATH }}
+          IMAGE: ${{ matrix.image }}
+        run: |
+          ENVIRONMENT_NAME="${IMAGE//-/_}"
+          ENVIRONMENT_NAME="${ENVIRONMENT_NAME^^}"
+          echo "secret-id=${MWAA_VARIABLES_SECRET_PATH}/${ENVIRONMENT_NAME}" >> "${GITHUB_OUTPUT}"
+
+      - name: Upsert Airflow image variable
+        uses: ./.github/actions/aws-secretsmanager-upsert-secrets
+        with:
+          config: |
+            {
+              "${{ steps.image-secret-id.outputs.secret-id }}": "${{ steps.aws-credentials.outputs.aws-account-id }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/${{ matrix.image }}:${{ steps.meta.outputs.version }}"
+            }
 
   upsert-static-airflow-metadata:
     runs-on: ubuntu-latest
@@ -167,45 +167,45 @@ jobs:
               "${{ secrets.MWAA_VARIABLES_SECRET_PATH }}/SLACK_CHANNEL_ID": "${{ secrets.SLACK_CHANNEL_ID }}"
             }
 
-#  sync-dags:
-#    needs: [detect-changes, push-images, upsert-static-airflow-metadata]
-#    if: |
-#      always()
-#      && needs.detect-changes.outputs.dags-changed == 'true'
-#      && (needs.push-images.result == 'success' || needs.push-images.result == 'skipped')
-#      && needs.upsert-static-airflow-metadata.result == 'success'
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/checkout@v7
-#      - uses: ./.github/actions/install-aws-cli
-#
-#      - name: Configure AWS credentials
-#        uses: aws-actions/configure-aws-credentials@v6
-#        with:
-#          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
-#
-#      - name: Get Airflow data
-#        uses: ./.github/actions/aws-ssm-get-parameters
-#        with:
-#          string-names: |
-#            AIRFLOW_CONTAINER_NAME, /${{ secrets.PARAMETER_PATH }}/mwaa/container
-#            AIRFLOW_DAGS_DIRECTORY_PATH, /${{ secrets.PARAMETER_PATH }}/mwaa/container/dags-directory-path
-#
-#      - name: Sync DAGs
-#        run: |
-#          set -euo pipefail
-#
-#          TEMPORARY_DAGS_FOLDER=/tmp/dags
-#
-#          docker exec "${AIRFLOW_CONTAINER_NAME}" rm --recursive --force "${TEMPORARY_DAGS_FOLDER}"
-#          trap 'docker exec "${AIRFLOW_CONTAINER_NAME}" rm --recursive --force "${TEMPORARY_DAGS_FOLDER}"' EXIT
-#
-#          docker exec "${AIRFLOW_CONTAINER_NAME}" rm --recursive --force "${AIRFLOW_DAGS_DIRECTORY_PATH}"
-#
-#          docker exec "${AIRFLOW_CONTAINER_NAME}" mkdir --parents "${TEMPORARY_DAGS_FOLDER}"
-#          docker cp "${GITHUB_WORKSPACE}/dags/." "${AIRFLOW_CONTAINER_NAME}:${TEMPORARY_DAGS_FOLDER}"
-#
-#          docker exec "${AIRFLOW_CONTAINER_NAME}" rsync --recursive --delete --times --delay-updates "${TEMPORARY_DAGS_FOLDER}/" "${AIRFLOW_DAGS_DIRECTORY_PATH}/"
-#          docker exec "${AIRFLOW_CONTAINER_NAME}" airflow dags reserialize
+  sync-dags:
+    needs: [detect-changes, push-images, upsert-static-airflow-metadata]
+    if: |
+      always()
+      && needs.detect-changes.outputs.dags-changed == 'true'
+      && (needs.push-images.result == 'success' || needs.push-images.result == 'skipped')
+      && needs.upsert-static-airflow-metadata.result == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/install-aws-cli
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+
+      - name: Get Airflow data
+        uses: ./.github/actions/aws-ssm-get-parameters
+        with:
+          string-names: |
+            AIRFLOW_CONTAINER_NAME, /${{ secrets.PARAMETER_PATH }}/mwaa/container
+            AIRFLOW_DAGS_DIRECTORY_PATH, /${{ secrets.PARAMETER_PATH }}/mwaa/container/dags-directory-path
+
+      - name: Sync DAGs
+        run: |
+          set -euo pipefail
+
+          TEMPORARY_DAGS_FOLDER=/tmp/dags
+
+          docker exec "${AIRFLOW_CONTAINER_NAME}" rm --recursive --force "${TEMPORARY_DAGS_FOLDER}"
+          trap 'docker exec "${AIRFLOW_CONTAINER_NAME}" rm --recursive --force "${TEMPORARY_DAGS_FOLDER}"' EXIT
+
+          docker exec "${AIRFLOW_CONTAINER_NAME}" rm --recursive --force "${AIRFLOW_DAGS_DIRECTORY_PATH}"
+
+          docker exec "${AIRFLOW_CONTAINER_NAME}" mkdir --parents "${TEMPORARY_DAGS_FOLDER}"
+          docker cp "${GITHUB_WORKSPACE}/dags/." "${AIRFLOW_CONTAINER_NAME}:${TEMPORARY_DAGS_FOLDER}"
+
+          docker exec "${AIRFLOW_CONTAINER_NAME}" rsync --recursive --delete --times --delay-updates "${TEMPORARY_DAGS_FOLDER}/" "${AIRFLOW_DAGS_DIRECTORY_PATH}/"
+          docker exec "${AIRFLOW_CONTAINER_NAME}" airflow dags reserialize
