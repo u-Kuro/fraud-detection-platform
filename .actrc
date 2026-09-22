@@ -1,6 +1,9 @@
 # Set image for runner
 --platform ubuntu-latest=catthehacker/ubuntu:act-24.04
 
+# Use the cached runner image
+--pull=false
+
 # Set main docker network
 --network fraud-detection-platform-network
 
