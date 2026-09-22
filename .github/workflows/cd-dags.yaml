@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       images-changes: ${{ steps.image-filter.outputs.changes }}
-      dags-changed: ${{ steps.dags_images-filter.outputs.dags_images }}
+      dags-changed: ${{ steps.dags-filter.outputs.dags }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -38,13 +38,13 @@ jobs:
       - uses: dorny/paths-filter@v4
         id: image-filter
         with:
-          filters: .github/config/paths-filter/dags_images/cd/image-filter.yaml
+          filters: .github/config/paths-filter/dags/cd/image-filter.yaml
           base: ${{ steps.initial-commit.outputs.sha }} # Set dorny/paths-filter base to first commit to always proceed to succeeding jobs in nektos/act
 
       - uses: dorny/paths-filter@v4
-        id: dags_images-filter
+        id: dags-filter
         with:
-          filters: .github/config/paths-filter/dags_images/cd/dags_images-filter.yaml
+          filters: .github/config/paths-filter/dags/cd/dags-filter.yaml
           base: ${{ steps.initial-commit.outputs.sha }} # Set dorny/paths-filter base to first commit to always proceed to succeeding jobs in nektos/act
 
   push-images:
