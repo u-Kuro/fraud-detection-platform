@@ -37,20 +37,20 @@ ____
 
 clear
 # archive
-docker build -t test-archive -f services/dags/archive/Dockerfile --target test-dev . -q
+docker build -t test-archive -f services/dags_images/archive/Dockerfile --target test-dev .
 docker run -it --rm test-archive
 
 # drift_check
-docker build -t test-drift-check -f services/dags/drift_check/Dockerfile --target test-dev . -q
+docker build -t test-drift-check -f services/dags_images/drift_check/Dockerfile --target test-dev .
 docker run -it --rm test-drift-check
 
-# fraud_detection_api
-docker build -t test-fraud-detection -f services/fraud_detection_api/Dockerfile --target test-dev . -q
-docker run -it --rm test-fraud-detection
-
 # train_model
-docker build -t test-train-model -f services/dags/train_model/Dockerfile --target test-dev . -q
+docker build -t test-train-model -f services/dags_images/train_model/Dockerfile --target test-dev .
 docker run -it --rm test-train-model
+
+# fraud_detection_api
+docker build -t test-fraud-detection -f services/fraud_detection_api/Dockerfile --target test-dev .
+docker run -it --rm test-fraud-detection
 
 # dags
 docker build -t test-dags -f tests/dags/Dockerfile --target test-dev . -q

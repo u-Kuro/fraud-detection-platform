@@ -5,7 +5,7 @@ WORKDIR /app
 ENV UV_LINK_MODE=copy
 ENV UV_COMPILE_BYTECODE=1
 ENV PYTHONUNBUFFERED=1
-ENV PYTHONPATH=/app
+ENV PYTHONPATH=/app:/app/dags
 ENV PATH="/app/.venv/bin:$PATH"
 
 COPY --from=ghcr.io/astral-sh/uv:0.12.6 /uv /usr/local/bin/uv
@@ -14,7 +14,7 @@ COPY pyproject.toml uv.lock ./
 
 RUN uv sync --frozen --only-group dags --only-group test --no-install-project
 
-COPY dags .
+COPY dags ./dags
 COPY tests/dags_tests ./dags_tests
 
 FROM test-base AS test-dev

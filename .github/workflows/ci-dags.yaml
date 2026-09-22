@@ -63,7 +63,7 @@ jobs:
           IMAGE: ${{ matrix.image }}
         run: |
           FOLDER="${IMAGE//-/_}"
-          echo "path=services/dags/${FOLDER}/Dockerfile" >> $GITHUB_OUTPUT
+          echo "path=services/dags_images/${FOLDER}/Dockerfile" >> $GITHUB_OUTPUT
 
       - name: Test
         uses: docker/build-push-action@v7
