@@ -2,13 +2,13 @@ from datetime import datetime
 
 from airflow.sdk import dag
 
-from dags.model_lifecycle_orchestrator.check_training_need.modules.configs.airflow.task_ids import DispatchTrainingApprovalTaskIDs, NoActionTaskIDs
-from dags.model_lifecycle_orchestrator.check_training_need.repositories.postgres.model_deployments import has_active_model_deployment, get_active_model_deployment
-from dags.model_lifecycle_orchestrator.check_training_need.services.tasks import invalidate_expired_challenger_model, drift_check, has_drift, dispatch_training_approval, no_action
-from dags.shared.modules.configs.airflow.dag_ids import DAGIDs
-from dags.shared.modules.configs.project import ProjectConfig
-from dags.shared.modules.utilities.airflow.airflow import sequence
-from dags.shared.services.slack import slack_failure_alert
+from model_lifecycle_orchestrator.check_training_need.modules.configs.airflow.task_ids import DispatchTrainingApprovalTaskIDs, NoActionTaskIDs
+from model_lifecycle_orchestrator.check_training_need.repositories.postgres.model_deployments import has_active_model_deployment, get_active_model_deployment
+from model_lifecycle_orchestrator.check_training_need.services.tasks import invalidate_expired_challenger_model, drift_check, has_drift, dispatch_training_approval, no_action
+from dags_shared.modules.configs.airflow.dag_ids import DAGIDs
+from dags_shared.modules.configs.project import ProjectConfig
+from dags_shared.modules.utilities.airflow.airflow import sequence
+from dags_shared.services.slack import slack_failure_alert
 
 @dag(
     dag_id=DAGIDs.check_training_need,

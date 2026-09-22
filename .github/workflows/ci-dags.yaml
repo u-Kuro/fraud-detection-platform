@@ -5,9 +5,9 @@ on:
     branches: [main]
     paths:
       - dags/**
-      - tests/dags/**
-      - services/dags/**
-      - services/shared/**
+      - tests/dags_tests/**
+      - services/dags_images/**
+      - services/services_shared/**
       - pyproject.toml
       - uv.lock
 
@@ -87,7 +87,7 @@ jobs:
         uses: docker/build-push-action@v7
         with:
           context: .
-          file: tests/dags/Dockerfile
+          file: tests/dags_tests/Dockerfile
           target: test
           push: false
           cache-from: type=gha,scope=dags

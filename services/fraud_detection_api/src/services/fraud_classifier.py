@@ -1,9 +1,9 @@
 import pandas
 
-from services.fraud_detection_api.src.modules.configs.fraud_classifier import FraudClassifierConfig
-from services.fraud_detection_api.src.modules.schemas.inferences.fraud_classification import FraudClassificationRequest, FraudClassificationOutput
-from services.fraud_detection_api.src.repositories.mlflow.models import MlflowModel
-from services.shared.src.modules.schemas.models_dataset.fraud_classification import FraudClassificationFeaturesKeys
+from fraud_detection_api.src.modules.configs.fraud_classifier import FraudClassifierConfig
+from fraud_detection_api.src.modules.schemas.inferences.fraud_classification import FraudClassificationRequest, FraudClassificationOutput
+from fraud_detection_api.src.repositories.mlflow.models import MlflowModel
+from services_shared.src.modules.schemas.models_dataset.fraud_classification import FraudClassificationFeaturesKeys
 
 class FraudClassifier(MlflowModel):
     def __init__(self, *args, **kwargs):

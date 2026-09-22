@@ -4,13 +4,13 @@ from uuid import uuid4, UUID
 import pytest
 from pytest_mock import MockerFixture
 
-from services.fraud_detection_api.src.modules.configs.fraud_classifier import FraudClassifierConfig
-from services.fraud_detection_api.src.modules.schemas.inferences.fraud_classification import FraudClassificationRequest
-from services.fraud_detection_api.src.modules.schemas.mlflow import DeployedModel
-from services.fraud_detection_api.src.repositories.mlflow.models import MlflowModel
-from services.fraud_detection_api.src.services.fraud_classifier import FraudClassifier
-from services.shared.src.modules.schemas.models_dataset.fraud_classification import FraudClassificationFeaturesKeys
-from services.shared.src.modules.schemas.postgres.transaction_inferences import TransactionInferences
+from fraud_detection_api.src.modules.configs.fraud_classifier import FraudClassifierConfig
+from fraud_detection_api.src.modules.schemas.inferences.fraud_classification import FraudClassificationRequest
+from fraud_detection_api.src.modules.schemas.mlflow import DeployedModel
+from fraud_detection_api.src.repositories.mlflow.models import MlflowModel
+from fraud_detection_api.src.services.fraud_classifier import FraudClassifier
+from services_shared.src.modules.schemas.models_dataset.fraud_classification import FraudClassificationFeaturesKeys
+from services_shared.src.modules.schemas.postgres.transaction_inferences import TransactionInferences
 
 class TestFraudClassifier:
     @staticmethod

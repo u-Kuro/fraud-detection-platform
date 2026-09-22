@@ -1,4 +1,4 @@
-from services.fraud_detection_api.src.modules.schemas.status import StatusResponse
+from fraud_detection_api.src.modules.schemas.status import StatusResponse
 
 class TestStatusResponse:
     @staticmethod

@@ -3,7 +3,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, field_validator, Field, StrictFloat, StrictBool
 
-from services.fraud_detection_api.src.modules.schemas.mlflow import DeployedModel
+from fraud_detection_api.src.modules.schemas.mlflow import DeployedModel
 
 class FraudClassificationRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")

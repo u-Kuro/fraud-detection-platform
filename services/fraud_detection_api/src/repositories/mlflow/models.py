@@ -1,7 +1,7 @@
 import mlflow
 from mlflow.pyfunc import PyFuncModel
 
-from services.fraud_detection_api.src.modules.schemas.mlflow import DeployedModel
+from fraud_detection_api.src.modules.schemas.mlflow import DeployedModel
 
 class MlflowModel:
     def __init__(self, deployed_model: DeployedModel):

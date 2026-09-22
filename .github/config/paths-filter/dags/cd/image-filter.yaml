@@ -1,24 +1,24 @@
 # cd/image-filter
 archive:
-  - services/dags/archive/**
-  - '!services/dags/archive/tests/**'
-  - services/shared/**
-  - '!services/shared/tests/**'
+  - services/dags_images/archive/**
+  - '!services/dags_images/archive/tests/**'
+  - services/services_shared/**
+  - '!services/services_shared/tests/**'
   - pyproject.toml
   - uv.lock
 
 drift-check:
-  - services/dags/drift_check/**
-  - '!services/dags/drift_check/tests/**'
-  - services/shared/**
-  - '!services/shared/tests/**'
+  - services/dags_images/drift_check/**
+  - '!services/dags_images/drift_check/tests/**'
+  - services/services_shared/**
+  - '!services/services_shared/tests/**'
   - pyproject.toml
   - uv.lock
 
 train-model:
-  - services/dags/train_model/**
-  - '!services/dags/train_model/tests/**'
-  - services/shared/**
-  - '!services/shared/tests/**'
+  - services/dags_images/train_model/**
+  - '!services/dags_images/train_model/tests/**'
+  - services/services_shared/**
+  - '!services/services_shared/tests/**'
   - pyproject.toml
   - uv.lock

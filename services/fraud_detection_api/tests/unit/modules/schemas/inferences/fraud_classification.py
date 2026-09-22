@@ -4,10 +4,10 @@ from uuid import uuid4, UUID
 import pytest
 from pydantic import ValidationError
 
-from services.fraud_detection_api.src.modules.schemas.inferences.fraud_classification import FraudClassificationRequest, FraudClassificationResponse, FraudClassificationOutput
-from services.fraud_detection_api.tests.unit.modules.schemas.mlflow import TestDeployedModel
-from services.shared.src.modules.schemas.models_dataset.fraud_classification import FraudClassificationFeaturesKeys
-from services.shared.src.modules.schemas.postgres.transaction_inferences import TransactionInferences
+from fraud_detection_api.src.modules.schemas.inferences.fraud_classification import FraudClassificationRequest, FraudClassificationResponse, FraudClassificationOutput
+from fraud_detection_api.tests.unit.modules.schemas.mlflow import TestDeployedModel
+from services_shared.src.modules.schemas.models_dataset.fraud_classification import FraudClassificationFeaturesKeys
+from services_shared.src.modules.schemas.postgres.transaction_inferences import TransactionInferences
 
 class TestFraudClassificationRequest:
     @staticmethod

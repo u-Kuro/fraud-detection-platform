@@ -3,10 +3,10 @@ from concurrent.futures import ThreadPoolExecutor
 
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
 
-from services.fraud_detection_api.src.modules.schemas.inferences.fraud_classification import FraudClassificationResponse, FraudClassificationRequest
-from services.fraud_detection_api.src.repositories.postgres.transaction_inferences import insert_transaction_inference
-from services.fraud_detection_api.src.services.dependencies import get_executor, get_model
-from services.fraud_detection_api.src.services.fraud_classifier import FraudClassifier
+from fraud_detection_api.src.modules.schemas.inferences.fraud_classification import FraudClassificationResponse, FraudClassificationRequest
+from fraud_detection_api.src.repositories.postgres.transaction_inferences import insert_transaction_inference
+from fraud_detection_api.src.services.dependencies import get_executor, get_model
+from fraud_detection_api.src.services.fraud_classifier import FraudClassifier
 
 router = APIRouter(prefix="/predict", tags=["predict"])
 

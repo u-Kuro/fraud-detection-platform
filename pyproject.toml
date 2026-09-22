@@ -114,59 +114,48 @@ dev = [
 ]
 
 [tool.pytest.ini_options]
-#pythonpath = ["."]
-#testpaths = [
-#    "services/dags/archive/tests",
-#    "services/dags/drift_check/tests",
-#    "services/dags/fraud_detection_api/tests",
-#    "services/dags/train_model/tests",
-#    "services/shared/tests",
-#    "tests/dags",
-#]
 python_files = ["[a-z]*.py"]
-#python_functions = ["test_*"]
-#python_classes = ["Test*"]
 env = [
-    # services/shared — MLflow
+    # services/services_shared — MLflow
     "MLFLOW_WORKSPACE=test-0123456789",
     "MLFLOW_TRACKING_URI=http://localhost:4566",
-    # services/shared — S3
+    # services/services_shared — S3
     "S3_BUCKET_NAME=test-bucket",
-    # services/shared — Slack
+    # services/services_shared — Slack
     "SLACK_BOT_USER_OAUTH_TOKEN=test-slack-bot-token",
     "SLACK_APP_LEVEL_TOKEN=test-slack-app-token",
     "SLACK_SIGNING_SECRET=test-slack-signing-secret",
     "SLACK_CHANNEL_ID=C000000000",
-    # services/shared — MWAA
+    # services/services_shared — MWAA
     "AWS_DEFAULT_REGION=us-east-1",
     "MWAA_ENVIRONMENT_NAME=test-mwaa-environment",
-    # services/dags/archive
+    # services/dags_images/archive
     "TRANSACTION_INFERENCES_ISO_DATETIME_CUTOFF=2025-01-01T00:00:00+00:00",
-    # services/dags/drift_check
+    # services/dags_images/drift_check
     "ACTIVE_MODEL_DEPLOYMENT_MLFLOW_RUN_ID=test-run-id-000000000000",
-    # dags/shared — ECR (AIRFLOW_VAR_ prefix)
+    # dags/dags_shared — ECR (AIRFLOW_VAR_ prefix)
     "AIRFLOW_VAR_DRIFT_CHECK_IMAGE=000000000000.dkr.ecr.us-east-1.amazonaws.com/drift-check:test",
     "AIRFLOW_VAR_TRAIN_MODEL_IMAGE=000000000000.dkr.ecr.us-east-1.amazonaws.com/train-model:test",
     "AIRFLOW_VAR_ARCHIVE_IMAGE=000000000000.dkr.ecr.us-east-1.amazonaws.com/archive:test",
-    # dags/shared — GitHub (AIRFLOW_VAR_ prefix)
+    # dags/dags_shared — GitHub (AIRFLOW_VAR_ prefix)
     "AIRFLOW_VAR_GITHUB_CONNECTION_ID=github_default",
-    # dags/shared — K8s (AIRFLOW_VAR_ prefix)
+    # dags/dags_shared — K8s (AIRFLOW_VAR_ prefix)
     "AIRFLOW_VAR_K8S_CONNECTION_ID=kubernetes_default",
     "AIRFLOW_VAR_K8S_NAMESPACE=airflow",
     "AIRFLOW_VAR_K8S_BASE_CONFIG_MAP_NAME=base-config-map",
     "AIRFLOW_VAR_K8S_BASE_SECRET_NAME=base-secret",
     "AIRFLOW_VAR_K8S_DOCKER_REGISTRY_SECRET_NAME=docker-registry-secret",
-    # dags/shared — MLflow (AIRFLOW_VAR_ prefix)
+    # dags/dags_shared — MLflow (AIRFLOW_VAR_ prefix)
     "AIRFLOW_VAR_MLFLOW_TRACKING_URI=http://localhost:5000",
     "AIRFLOW_VAR_MLFLOW_TRACKING_USERNAME=mlflow",
     "AIRFLOW_VAR_MLFLOW_TRACKING_PASSWORD=mlflow",
     "AIRFLOW_VAR_MLFLOW_WORKSPACE=default",
-    # dags/shared — Postgres (AIRFLOW_VAR_ prefix)
+    # dags/dags_shared — Postgres (AIRFLOW_VAR_ prefix)
     "AIRFLOW_VAR_POSTGRES_CONNECTION_ID=postgres_default",
-    # dags/shared — S3 (AIRFLOW_VAR_ prefix)
+    # dags/dags_shared — S3 (AIRFLOW_VAR_ prefix)
     "AIRFLOW_VAR_S3_CONNECTION_ID=aws_default",
     "AIRFLOW_VAR_S3_BUCKET=mle",
-    # dags/shared — Slack (AIRFLOW_VAR_ prefix)
+    # dags/dags_shared — Slack (AIRFLOW_VAR_ prefix)
     "AIRFLOW_VAR_SLACK_CONNECTION_ID=slack_default",
     "AIRFLOW_VAR_SLACK_CHANNEL_ID=C000000000",
 ]

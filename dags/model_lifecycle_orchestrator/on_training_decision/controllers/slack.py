@@ -3,10 +3,10 @@ from uuid import UUID
 
 from airflow.sdk import task
 
-from dags.model_lifecycle_orchestrator.on_training_decision.modules.schemas.airflow.tasks import ModelDeploymentWorkflowForPromotion, TrainingDecision
-from dags.model_lifecycle_orchestrator.on_training_decision.modules.schemas.airflow.xcom import TrainModelResult
-from dags.shared.services.slack import slack_client, create_blocks
-from dags.shared.modules.environment.slack import slack_environment
+from model_lifecycle_orchestrator.on_training_decision.modules.schemas.airflow.tasks import ModelDeploymentWorkflowForPromotion, TrainingDecision
+from model_lifecycle_orchestrator.on_training_decision.modules.schemas.airflow.xcom import TrainModelResult
+from dags_shared.services.slack import slack_client, create_blocks
+from dags_shared.modules.environment.slack import slack_environment
 
 @task
 def initialize_promotion_approval(train_model_result: TrainModelResult) -> ModelDeploymentWorkflowForPromotion:

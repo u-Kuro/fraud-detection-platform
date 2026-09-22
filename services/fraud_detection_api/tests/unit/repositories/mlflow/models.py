@@ -1,7 +1,7 @@
 import pytest
 
-from services.fraud_detection_api.src.modules.schemas.mlflow import DeployedModel
-from services.fraud_detection_api.src.repositories.mlflow.models import MlflowModel
+from fraud_detection_api.src.modules.schemas.mlflow import DeployedModel
+from fraud_detection_api.src.repositories.mlflow.models import MlflowModel
 
 class TestMlflowModel:
     @staticmethod

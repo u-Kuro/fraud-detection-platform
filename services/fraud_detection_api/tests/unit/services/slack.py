@@ -1,6 +1,6 @@
 from unittest.mock import MagicMock
 
-from services.fraud_detection_api.src.services.slack import update_message
+from fraud_detection_api.src.services.slack import update_message
 
 def test_update_message():
     update_message(

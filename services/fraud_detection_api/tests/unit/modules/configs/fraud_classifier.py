@@ -1,5 +1,5 @@
-from services.fraud_detection_api.src.modules.configs.fraud_classifier import FraudClassifierConfig
-from services.fraud_detection_api.src.modules.schemas.mlflow import DeployedModel
+from fraud_detection_api.src.modules.configs.fraud_classifier import FraudClassifierConfig
+from fraud_detection_api.src.modules.schemas.mlflow import DeployedModel
 
 class TestFraudClassifierConfig:
     def test_values(self):

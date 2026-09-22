@@ -4,7 +4,7 @@ from uuid import uuid4, UUID
 import pytest
 from pydantic import ValidationError
 
-from services.fraud_detection_api.src.modules.schemas.slack import TrainingValue, PromotionValue
+from fraud_detection_api.src.modules.schemas.slack import TrainingValue, PromotionValue
 
 class TestTrainingValue:
     @staticmethod

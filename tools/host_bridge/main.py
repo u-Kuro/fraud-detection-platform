@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 
 import uvicorn
 from fastapi import FastAPI
-from tools.host_bridge.controllers.routers import act
+from host_bridge.controllers.routers import act
 
 @asynccontextmanager
 async def lifespan(_):

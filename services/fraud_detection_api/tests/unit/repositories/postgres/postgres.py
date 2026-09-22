@@ -1,5 +1,6 @@
 from sqlalchemy.orm import sessionmaker
-from services.fraud_detection_api.src.repositories.postgres.postgres import sql_session
+
+from fraud_detection_api.src.repositories.postgres.postgres import sql_session
 
 def test_sql_session_instance():
     assert isinstance(sql_session, sessionmaker)

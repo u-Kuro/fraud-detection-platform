@@ -2,7 +2,7 @@ import subprocess
 
 from fastapi import APIRouter, Request, Response
 
-from tools.host_bridge.modules.configs.project import ProjectConfig
+from host_bridge.modules.configs.project import ProjectConfig
 
 router = APIRouter(prefix="/repos", tags=["act"])
 

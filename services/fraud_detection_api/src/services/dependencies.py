@@ -4,8 +4,8 @@ from fastapi import HTTPException
 from sqlalchemy import select
 from starlette.requests import Request
 
-from services.fraud_detection_api.src.repositories.postgres.postgres import sql_session
-from services.fraud_detection_api.src.services.fraud_classifier import FraudClassifier
+from fraud_detection_api.src.repositories.postgres.postgres import sql_session
+from fraud_detection_api.src.services.fraud_classifier import FraudClassifier
 
 async def get_executor(request: Request) -> ThreadPoolExecutor:
     executor = request.app.state.executor

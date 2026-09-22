@@ -5,7 +5,7 @@ on:
     branches: [main]
     paths:
       - services/fraud_detection_api/**
-      - services/shared/**
+      - services/services_shared/**
       - pyproject.toml
       - uv.lock
 

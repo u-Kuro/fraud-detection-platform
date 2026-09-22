@@ -1,11 +1,11 @@
 from slack_bolt import Ack
 from slack_sdk import WebClient
 
-from services.fraud_detection_api.src.services.slack import slack_app
-from services.fraud_detection_api.src.modules.schemas.slack import TrainingValue
-from services.fraud_detection_api.src.services.mwaa import trigger_airflow_dag
-from services.fraud_detection_api.src.services.idempotency import slack_action_store
-from services.fraud_detection_api.src.services.slack import update_message
+from fraud_detection_api.src.services.slack import slack_app
+from fraud_detection_api.src.modules.schemas.slack import TrainingValue
+from fraud_detection_api.src.services.mwaa import trigger_airflow_dag
+from fraud_detection_api.src.services.idempotency import slack_action_store
+from fraud_detection_api.src.services.slack import update_message
 
 @slack_app.state("approve_training")
 def approve_training(

@@ -1,9 +1,9 @@
 from sqlalchemy import select
 
-from services.fraud_detection_api.src.modules.schemas.mlflow import DeployedModel
-from services.fraud_detection_api.src.repositories.postgres.postgres import sql_session
-from services.shared.src.modules.configs.postgres import PostgresConfig
-from services.shared.src.modules.schemas.postgres.model_deployments import ModelDeployments
+from fraud_detection_api.src.modules.schemas.mlflow import DeployedModel
+from fraud_detection_api.src.repositories.postgres.postgres import sql_session
+from services_shared.src.modules.configs.postgres import PostgresConfig
+from services_shared.src.modules.schemas.postgres.model_deployments import ModelDeployments
 
 def get_active_model_deployment() -> DeployedModel:
     with sql_session.begin() as session:

@@ -2,13 +2,13 @@ from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperato
 from airflow.sdk import task, get_current_context, task_group
 from kubernetes.client import models
 
-from dags.model_lifecycle_orchestrator.on_training_decision.modules.schemas.airflow.xcom import TrainModelResult
-from dags.model_lifecycle_orchestrator.on_training_decision.modules.schemas.airflow.tasks import TrainingDecision
-from dags.model_lifecycle_orchestrator.on_training_decision.repositories.postgres.model_deployment_workflows import update_approved_training_workflow, delete_rejected_training_workflow
-from dags.shared.modules.environment.ecr import ecr_environment
-from dags.shared.modules.environment.k8s import k8s_environment
-from dags.shared.modules.schemas.airflow import TaskContext
-from dags.shared.modules.utilities.airflow.airflow import sequence
+from model_lifecycle_orchestrator.on_training_decision.modules.schemas.airflow.xcom import TrainModelResult
+from model_lifecycle_orchestrator.on_training_decision.modules.schemas.airflow.tasks import TrainingDecision
+from model_lifecycle_orchestrator.on_training_decision.repositories.postgres.model_deployment_workflows import update_approved_training_workflow, delete_rejected_training_workflow
+from dags_shared.modules.environment.ecr import ecr_environment
+from dags_shared.modules.environment.k8s import k8s_environment
+from dags_shared.modules.schemas.airflow import TaskContext
+from dags_shared.modules.utilities.airflow.airflow import sequence
 
 @task
 def get_training_decision() -> TrainingDecision:

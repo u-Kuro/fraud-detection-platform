@@ -1,10 +1,10 @@
 from sqlalchemy import select, insert
 
-from services.fraud_detection_api.src.modules.schemas.inferences.fraud_classification import FraudClassificationOutput
-from services.fraud_detection_api.src.repositories.postgres.postgres import sql_session
-from services.shared.src.modules.configs.postgres import PostgresConfig
-from services.shared.src.modules.schemas.postgres.model_deployments import ModelDeployments
-from services.shared.src.modules.schemas.postgres.transaction_inferences import TransactionInferences
+from fraud_detection_api.src.modules.schemas.inferences.fraud_classification import FraudClassificationOutput
+from fraud_detection_api.src.repositories.postgres.postgres import sql_session
+from services_shared.src.modules.configs.postgres import PostgresConfig
+from services_shared.src.modules.schemas.postgres.model_deployments import ModelDeployments
+from services_shared.src.modules.schemas.postgres.transaction_inferences import TransactionInferences
 
 def insert_transaction_inference(
     transaction_inference: FraudClassificationOutput,

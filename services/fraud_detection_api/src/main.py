@@ -3,10 +3,10 @@ from contextlib import asynccontextmanager
 from multiprocessing import cpu_count
 
 from fastapi import FastAPI
-from services.fraud_detection_api.src.services.slack import start_socket_mode
-from services.fraud_detection_api.src.modules.configs.fraud_classifier import FraudClassifierConfig
-from services.fraud_detection_api.src.services.fraud_classifier import FraudClassifier
-from services.fraud_detection_api.src.controllers.routers import predict
+from fraud_detection_api.src.services.slack import start_socket_mode
+from fraud_detection_api.src.modules.configs.fraud_classifier import FraudClassifierConfig
+from fraud_detection_api.src.services.fraud_classifier import FraudClassifier
+from fraud_detection_api.src.controllers.routers import predict
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):

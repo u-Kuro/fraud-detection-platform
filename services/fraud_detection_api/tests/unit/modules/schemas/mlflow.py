@@ -1,4 +1,4 @@
-from services.fraud_detection_api.src.modules.schemas.mlflow import DeployedModel
+from fraud_detection_api.src.modules.schemas.mlflow import DeployedModel
 
 class TestDeployedModel:
     @staticmethod
