@@ -5,8 +5,8 @@ from airflow.sdk import task
 
 from dags.model_lifecycle_orchestrator.check_training_need.modules.schemas.airflow.tasks import ExpiredAndReservedModelDeploymentWorkflows, ModelDeploymentWorkflowForTraining
 from dags.model_lifecycle_orchestrator.check_training_need.modules.schemas.airflow.xcom import DriftCheckResult
+from dags.shared.modules.configs.slack import SlackConfig
 from dags.shared.services.slack import create_blocks, slack_client
-from dags.shared.modules.environment.slack import slack_environment
 
 @task
 def invalidate_expired_promotion_approval(data: ExpiredAndReservedModelDeploymentWorkflows | None):
@@ -14,7 +14,7 @@ def invalidate_expired_promotion_approval(data: ExpiredAndReservedModelDeploymen
 
     slack_client.chat_update(
         ts=data.expired.slack_promotion_approval_message_ts,
-        channel=slack_environment.SLACK_CHANNEL_ID,
+        channel=SlackConfig.slack_channel_id(),
         blocks=[
             {
                 "type": "section",
@@ -47,7 +47,7 @@ def invalidate_old_training_approval(
 
     slack_client.chat_update(
         ts=model_deployment_workflow_for_training.slack_training_approval_message_ts,
-        channel=slack_environment.SLACK_CHANNEL_ID,
+        channel=SlackConfig.slack_channel_id(),
         blocks=[
             {
                 "type": "section",
@@ -130,7 +130,7 @@ def initialize_training_approval(
     assert drift_result is not None
 
     response = slack_client.chat_postMessage(
-        channel=slack_environment.SLACK_CHANNEL_ID,
+        channel=SlackConfig.slack_channel_id(),
         blocks=build_training_approval_blocks_initializing(
             drift_result=drift_result
         )
@@ -264,7 +264,7 @@ def update_training_approval(
 
     slack_client.chat_update(
         ts=model_deployment_workflow_for_training.slack_training_approval_message_ts,
-        channel=slack_environment.SLACK_CHANNEL_ID,
+        channel=SlackConfig.slack_channel_id(),
         blocks=build_training_approval_blocks(
             workflow_id=model_deployment_workflow_for_training.id,
             drift_result=drift_result,

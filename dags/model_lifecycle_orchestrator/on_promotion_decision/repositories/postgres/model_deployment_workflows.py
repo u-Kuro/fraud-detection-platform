@@ -13,7 +13,7 @@ def update_approved_promotion_workflow(promotion_decision: PromotionDecision):
             update(ModelDeploymentWorkflows)
             .where(
                 ModelDeploymentWorkflows.id == promotion_decision.model_deployment_workflow.id,
-                ModelDeploymentWorkflows.project_id == PostgresConfig.project_id
+                ModelDeploymentWorkflows.project_id == PostgresConfig.project_id()
             )
             .values({
                 ModelDeploymentWorkflows.promotion_approved.key: True
@@ -27,6 +27,6 @@ def delete_rejected_promotion_workflow(data: PromotionDecision):
             delete(ModelDeploymentWorkflows)
             .where(
                 ModelDeploymentWorkflows.id == data.model_deployment_workflow,
-                ModelDeploymentWorkflows.project_id == PostgresConfig.project_id
+                ModelDeploymentWorkflows.project_id == PostgresConfig.project_id()
             )
         )

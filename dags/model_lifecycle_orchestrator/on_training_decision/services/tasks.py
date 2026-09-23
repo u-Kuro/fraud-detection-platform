@@ -5,8 +5,8 @@ from kubernetes.client import models
 from dags.model_lifecycle_orchestrator.on_training_decision.modules.schemas.airflow.xcom import TrainModelResult
 from dags.model_lifecycle_orchestrator.on_training_decision.modules.schemas.airflow.tasks import TrainingDecision
 from dags.model_lifecycle_orchestrator.on_training_decision.repositories.postgres.model_deployment_workflows import update_approved_training_workflow, delete_rejected_training_workflow
-from dags.shared.modules.environment.ecr import ecr_environment
-from dags.shared.modules.environment.k8s import k8s_environment
+from dags.shared.modules.configs.ecr import ECRConfig
+from dags.shared.modules.configs.k8s import K8sConfig
 from dags.shared.modules.schemas.airflow import TaskContext
 from dags.shared.modules.utilities.airflow.airflow import sequence
 
@@ -33,24 +33,24 @@ def train_model_operator() -> KubernetesPodOperator:
     return KubernetesPodOperator(
         task_id=train_model_operator.__name__,
         name=train_model_operator.__name__,
-        namespace=k8s_environment.K8S_NAMESPACE,
-        kubernetes_conn_id=k8s_environment.K8S_CONNECTION_ID,
-        image=ecr_environment.TRAIN_MODEL_IMAGE,
+        namespace=K8sConfig.k8s_namespace(),
+        kubernetes_conn_id=K8sConfig.k8s_connection_id(),
+        image=ECRConfig.train_model_image(),
         image_pull_policy="Always",
         image_pull_secrets=[
             models.V1LocalObjectReference(
-                name=k8s_environment.K8S_DOCKER_REGISTRY_SECRET_NAME
+                name=K8sConfig.k8s_docker_registry_secret_name()
             )
         ],
         env_from=[
             models.V1EnvFromSource(
                 config_map_ref=models.V1ConfigMapEnvSource(
-                    name=k8s_environment.K8S_BASE_CONFIG_MAP_NAME
+                    name=K8sConfig.k8s_base_config_map_name()
                 )
             ),
             models.V1EnvFromSource(
                 secret_ref=models.V1SecretEnvSource(
-                    name=k8s_environment.K8S_BASE_SECRET_NAME
+                    name=K8sConfig.k8s_base_secret_name()
                 )
             ),
         ],

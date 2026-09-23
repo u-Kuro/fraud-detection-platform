@@ -11,8 +11,8 @@ from dags.model_lifecycle_orchestrator.check_training_need.modules.schemas.airfl
 from dags.model_lifecycle_orchestrator.check_training_need.repositories.mlflow.registered_model import replace_expired_model, delete_expired_model
 from dags.model_lifecycle_orchestrator.check_training_need.repositories.mlflow.run import delete_expired_mlflow_run
 from dags.model_lifecycle_orchestrator.check_training_need.repositories.postgres.model_deployment_workflows import has_expired_promote_pending_workflow_with_replacement, delete_expired_promote_pending_workflow, update_train_pending_workflow, check_current_model_deployment_workflows, initialize_train_pending_workflow, reinitialize_train_pending_workflow, get_expired_model_deployment_workflow_with_its_replacement, get_current_model_deployment_workflow_for_training
-from dags.shared.modules.environment.ecr import ecr_environment
-from dags.shared.modules.environment.k8s import k8s_environment
+from dags.shared.modules.configs.ecr import ECRConfig
+from dags.shared.modules.configs.k8s import K8sConfig
 from dags.shared.modules.schemas.airflow import TaskContext
 from dags.shared.modules.utilities.airflow.airflow import sequence
 
@@ -40,13 +40,13 @@ def drift_check_operator(active_model_deployment_mlflow_run_id: str) -> Kubernet
     return KubernetesPodOperator(
         task_id=drift_check_operator.__name__,
         name=drift_check_operator.__name__,
-        namespace=k8s_environment.K8S_NAMESPACE,
-        kubernetes_conn_id=k8s_environment.K8S_CONNECTION_ID,
-        image=ecr_environment.DRIFT_CHECK_IMAGE,
+        namespace=K8sConfig.k8s_namespace(),
+        kubernetes_conn_id=K8sConfig.k8s_connection_id(),
+        image=ECRConfig.drift_check_image(),
         image_pull_policy="Always",
         image_pull_secrets=[
             models.V1LocalObjectReference(
-                name=k8s_environment.K8S_DOCKER_REGISTRY_SECRET_NAME
+                name=K8sConfig.k8s_docker_registry_secret_name()
             )
         ],
         env_vars=[
@@ -58,12 +58,12 @@ def drift_check_operator(active_model_deployment_mlflow_run_id: str) -> Kubernet
         env_from=[
             models.V1EnvFromSource(
                 config_map_ref=models.V1ConfigMapEnvSource(
-                    name=k8s_environment.K8S_BASE_CONFIG_MAP_NAME
+                    name=K8sConfig.k8s_base_config_map_name()
                 )
             ),
             models.V1EnvFromSource(
                 secret_ref=models.V1SecretEnvSource(
-                    name=k8s_environment.K8S_BASE_SECRET_NAME
+                    name=K8sConfig.k8s_base_secret_name()
                 )
             ),
         ],

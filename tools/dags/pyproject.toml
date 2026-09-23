@@ -1,0 +1,70 @@
+[project]
+name = "dags"
+version = "1.0.0"
+requires-python = "==3.12.13"
+
+[dependency-groups]
+dags = [
+    "apache-airflow>=3.3.1",
+    "apache-airflow-providers-amazon>=9.34.0",
+    "apache-airflow-providers-cncf-kubernetes>=10.21.0",
+    "apache-airflow-providers-http>=6.0.5",
+    "apache-airflow-providers-postgres>=7.0.1",
+    "apache-airflow-providers-slack>=9.10.2",
+    "mlflow-skinny>=3.15.2",
+    "pydantic>=2.13.4",
+    "pydantic-settings>=2.15.0",
+]
+test = [
+    "pytest>=9.1.1",
+    "pytest-env>=1.7.0",
+    "pytest-mock>=3.15.1",
+]
+
+[tool.uv]
+required-version = "0.12.6"
+default-groups = ["dags", "test"]
+constraint-dependencies = [
+    # Apache Airflow 3.3.1-python3.12 constraints (https://raw.githubusercontent.com/apache/airflow/refs/tags/constraints-3.3.1/constraints-3.12.txt)
+    "apache-airflow==3.3.1",
+    "apache-airflow-providers-amazon==9.34.0",
+    "apache-airflow-providers-cncf-kubernetes==10.21.0",
+    "apache-airflow-providers-http==6.0.5",
+    "apache-airflow-providers-postgres==7.0.1",
+    "apache-airflow-providers-slack==9.10.2",
+    "pydantic==2.13.4",
+    "pydantic-settings==2.15.0",
+    # MLflow constraints
+    "mlflow==3.15.2",
+    "mlflow-skinny==3.15.2",
+]
+
+[tool.pytest.ini_options]
+python_files = ["[a-z]*.py"]
+env = [
+    # dags/shared/modules/configs/ecr.py
+    "AIRFLOW_VAR_archive_image=000000000000.dkr.ecr.us-east-1.amazonaws.com/archive:test",
+    "AIRFLOW_VAR_drift_check_image=000000000000.dkr.ecr.us-east-1.amazonaws.com/drift-check:test",
+    "AIRFLOW_VAR_train_model_image=000000000000.dkr.ecr.us-east-1.amazonaws.com/train-model:test",
+    # dags/shared/modules/configs/github.py
+    "AIRFLOW_VAR_github_connection_id=github-connection-default",
+    # dags/shared/modules/configs/k8s.py
+    "AIRFLOW_VAR_k8s_base_config_map_name=base-config-map",
+    "AIRFLOW_VAR_k8s_base_secret_name=base-secret",
+    "AIRFLOW_VAR_k8s_connection_id=kubernetes-connection-default",
+    "AIRFLOW_VAR_k8s_docker_registry_secret_name=docker-registry-secret",
+    "AIRFLOW_VAR_k8s_namespace=k8s-namespace-default",
+    # dags/shared/modules/configs/mlflow.py
+    "AIRFLOW_VAR_mlflow_tracking_uri=http://localhost:0000",
+    "AIRFLOW_VAR_mlflow_tracking_username=mlflow-username-default",
+    "AIRFLOW_VAR_mlflow_tracking_password=mlflow-password-default",
+    "AIRFLOW_VAR_mlflow_workspace=mlflow-workspace-default",
+    # dags/shared/modules/configs/postgres.py
+    "AIRFLOW_VAR_postgres_connection_id=postgres-connection-default",
+    # dags/shared/modules/configs/s3.py
+    "AIRFLOW_VAR_s3_bucket=s3-bucket-default",
+    "AIRFLOW_VAR_s3_connection_id=s3-connection-default",
+    # dags/shared/modules/configs/slack.py
+    "AIRFLOW_VAR_slack_channel_id=C000000000",
+    "AIRFLOW_VAR_slack_connection_id=slack-connection-default",
+]

@@ -8,10 +8,9 @@ from kubernetes.client import models
 from dags.model_lifecycle_orchestrator.on_promotion_decision.modules.configs.k8s.environments import ArchiveEnvironmentKeys
 from dags.model_lifecycle_orchestrator.on_promotion_decision.modules.schemas.airflow.tasks import PromotionDecision, PromotedModelDeployment
 from dags.model_lifecycle_orchestrator.on_promotion_decision.repositories.postgres.model_deployment_workflows import update_approved_promotion_workflow, delete_rejected_promotion_workflow
+from dags.shared.modules.configs.ecr import ECRConfig
 from dags.shared.modules.configs.github import GitHubConfig
-from dags.shared.modules.environment.ecr import ecr_environment
-from dags.shared.modules.environment.github import github_environment
-from dags.shared.modules.environment.k8s import k8s_environment
+from dags.shared.modules.configs.k8s import K8sConfig
 from dags.shared.modules.schemas.airflow import TaskContext
 
 @task
@@ -36,11 +35,11 @@ def check_promotion_decision(promotion_decision: PromotionDecision) -> str:
 def apply_model_deployment() -> HttpOperator:
     return HttpOperator(
         task_id=apply_model_deployment.__name__,
-        http_conn_id=github_environment.GITHUB_CONNECTION_ID,
+        http_conn_id=GitHubConfig.github_connection_id(),
         endpoint=f"repos/{GitHubConfig.owner}/{GitHubConfig.repository}/actions/workflows/cd-fraud-detection-api.yaml/dispatches",
         method="POST",
         headers={
-            "Authorization": f"Bearer {github_environment.GITHUB_CONNECTION_ID}",
+            "Authorization": f"Bearer {GitHubConfig.github_token()}",
             "Accept": "application/vnd.github.v3+json",
         },
         # Data unused for nektos/act
@@ -58,13 +57,13 @@ def archive_transaction_inferences_used_for_deployed_model(transaction_inference
     return KubernetesPodOperator(
         task_id=archive_transaction_inferences_used_for_deployed_model.__name__,
         name=archive_transaction_inferences_used_for_deployed_model.__name__,
-        namespace=k8s_environment.K8S_NAMESPACE,
-        kubernetes_conn_id=k8s_environment.K8S_CONNECTION_ID,
-        image=ecr_environment.ARCHIVE_IMAGE,
+        namespace=K8sConfig.k8s_namespace(),
+        kubernetes_conn_id=K8sConfig.k8s_connection_id(),
+        image=ECRConfig.archive_image(),
         image_pull_policy="Always",
         image_pull_secrets=[
             models.V1LocalObjectReference(
-                name=k8s_environment.K8S_DOCKER_REGISTRY_SECRET_NAME
+                name=K8sConfig.k8s_docker_registry_secret_name()
             )
         ],
         env_vars=[
@@ -76,12 +75,12 @@ def archive_transaction_inferences_used_for_deployed_model(transaction_inference
         env_from=[
             models.V1EnvFromSource(
                 config_map_ref=models.V1ConfigMapEnvSource(
-                    name=k8s_environment.K8S_BASE_CONFIG_MAP_NAME
+                    name=K8sConfig.k8s_base_config_map_name()
                 )
             ),
             models.V1EnvFromSource(
                 secret_ref=models.V1SecretEnvSource(
-                    name=k8s_environment.K8S_BASE_SECRET_NAME
+                    name=K8sConfig.k8s_base_secret_name()
                 )
             ),
         ],

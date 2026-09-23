@@ -1,0 +1,47 @@
+[project]
+name = "notebooks"
+version = "1.0.0"
+requires-python = "==3.12.13"
+
+[dependency-groups]
+data_processing = [
+    "imbalanced-learn>=0.14.2",
+    "numpy>=2.5.2",
+    "pandas>=2.3.3",
+]
+modeling = [
+    "imbalanced-learn>=0.14.2",
+    "optuna>=4.9.0",
+    "scikit-learn>=1.9.0",
+    "xgboost>=3.4.1",
+]
+visualization = [
+    "kaleido>=1.3.0",
+    "matplotlib>=3.11.1",
+    "seaborn>=0.13.2",
+]
+repositories = [
+    "mlflow>=3.15.2",
+    "psycopg2-binary>=2.9.12",
+    "sqlalchemy>=2.0.52",
+]
+notebook = [
+    "ipykernel>=7.3.0",
+]
+
+[tool.uv]
+default-groups = [
+    "data_processing",
+    "modeling",
+    "visualization",
+    "repositories",
+    "notebook",
+]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[tool.uv.sources]
+torch.index = "pytorch-cpu"

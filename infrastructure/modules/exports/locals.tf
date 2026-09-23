@@ -86,24 +86,24 @@ locals {
   mwaa_connections_postgres_connection_id = "postgres"
   mwaa_connections_s3_connection_id       = "s3"
   # /variables (Prefixed with AIRFLOW_VAR_ so Fixed won't work)
-  mwaa_variables_k8s_connection_id_name          = "K8S_CONNECTION_ID"
-  mwaa_variables_k8s_namespace                   = "K8S_NAMESPACE"
-  mwaa_variables_k8s_base_config_map_name        = "K8S_BASE_CONFIG_MAP_NAME"
-  mwaa_variables_k8s_base_secret_name            = "K8S_BASE_SECRET_NAME"
-  mwaa_variables_k8s_docker_registry_secret_name = "K8S_DOCKER_REGISTRY_SECRET_NAME"
+  mwaa_variables_k8s_connection_id_name          = "k8s_connection_id"
+  mwaa_variables_k8s_namespace                   = "k8s_namespace"
+  mwaa_variables_k8s_base_config_map_name        = "k8s_base_config_map_name"
+  mwaa_variables_k8s_base_secret_name            = "k8s_base_secret_name"
+  mwaa_variables_k8s_docker_registry_secret_name = "k8s_docker_registry_secret_name"
 
-  mwaa_variables_mlflow_tracking_uri      = "MLFLOW_TRACKING_URI"
-  mwaa_variables_mlflow_tracking_username = "MLFLOW_TRACKING_USERNAME"
-  mwaa_variables_mlflow_tracking_password = "MLFLOW_TRACKING_PASSWORD"
-  mwaa_variables_mlflow_workspace         = "MLFLOW_WORKSPACE"
+  mwaa_variables_mlflow_tracking_uri      = "mlflow_tracking_uri"
+  mwaa_variables_mlflow_tracking_username = "mlflow_tracking_username"
+  mwaa_variables_mlflow_tracking_password = "mlflow_tracking_password"
+  mwaa_variables_mlflow_workspace         = "mlflow_workspace"
 
-  mwaa_variables_postgres_connection_id_name = "POSTGRES_CONNECTION_ID"
+  mwaa_variables_postgres_connection_id_name = "postgres_connection_id"
 
-  mwaa_variables_s3_connection_id_name = "S3_CONNECTION_ID"
-  mwaa_variables_s3_bucket = "S3_BUCKET"
+  mwaa_variables_s3_connection_id_name = "s3_connection_id"
+  mwaa_variables_s3_bucket = "s3_bucket"
 
   # GitHub (team created)
-  # github = "GITHUB_CONNECTION_ID"
+  # github = "github_connection_id"
   # github = jsonencode({
   #  "conn_type": "http",
   #  "host": "api.github.com",
@@ -119,14 +119,14 @@ locals {
   # })
 
   # Slack (team created)
-  # slack = "SLACK_CONNECTION_ID"
+  # slack = "slack_connection_id"
   # slack = jsonencode({
   #   "conn_type": "slack",
-  #   "password": "YOUR_SLACK_BOT_USER_OAUTH_TOKEN"
+  #   "password": "your_slack_bot_user_oauth_token"
   # })
 
   # Slack (team created)
   # slack_ids = {
-  #   channel_id = "SLACK_CHANNEL_ID"
+  #   channel_id = "slack_channel_id"
   # }
 }

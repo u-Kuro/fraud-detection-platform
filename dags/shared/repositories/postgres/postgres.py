@@ -2,10 +2,10 @@ from airflow.providers.postgres.hooks.postgres import PostgresHook
 from sqlalchemy import NullPool
 from sqlalchemy.orm import sessionmaker
 
-from dags.shared.modules.environment.postgres import postgres_environment
+from dags.shared.modules.configs.postgres import PostgresConfig
 
 sql_session: sessionmaker = sessionmaker(
-    PostgresHook(postgres_conn_id=postgres_environment.POSTGRES_CONNECTION_ID)
+    PostgresHook(postgres_conn_id=PostgresConfig.postgres_connection_id())
     .get_sqlalchemy_engine(
         engine_kwargs={
             "poolclass": NullPool

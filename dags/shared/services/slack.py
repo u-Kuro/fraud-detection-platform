@@ -2,16 +2,16 @@ from airflow.providers.slack.hooks.slack import SlackHook
 from airflow.sdk import get_current_context
 from slack_sdk import WebClient
 
-from dags.shared.modules.environment.slack import slack_environment
+from dags.shared.modules.configs.slack import SlackConfig
 from dags.shared.modules.schemas.airflow import TaskContext
 
-slack_client: WebClient = SlackHook(slack_conn_id=slack_environment.SLACK_CONNECTION_ID).client
+slack_client: WebClient = SlackHook(slack_conn_id=SlackConfig.slack_connection_id()).client
 
 def slack_failure_alert():
     context = TaskContext(get_current_context())
     ti = context.task_instance
     slack_client.chat_postMessage(
-        channel=slack_environment.SLACK_CHANNEL_ID,
+        channel=SlackConfig.slack_channel_id(),
         blocks=create_blocks(
             title="⚠️ Task Failed",
             body=(

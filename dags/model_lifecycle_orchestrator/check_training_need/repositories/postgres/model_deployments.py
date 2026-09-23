@@ -15,7 +15,7 @@ def get_active_model_deployment() -> ActiveModelDeployment | None:
         mlflow_run_id = session.execute(
             select(ModelDeployments.mlflow_run_id)
             .where(
-                ModelDeployments.project_id == PostgresConfig.project_id,
+                ModelDeployments.project_id == PostgresConfig.project_id(),
                 ModelDeployments.active.is_(True)
             )
             .limit(1)

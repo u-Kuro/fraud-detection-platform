@@ -116,9 +116,9 @@ jobs:
           secret-name: ${{ env.SECRET_NAME }}
           string-data: |
             {
-              "SLACK_CHANNEL_ID": "${{ secrets.SLACK_CHANNEL_ID }}",
-              "SLACK_BOT_USER_OAUTH_TOKEN": "${{ secrets.SLACK_BOT_USER_OAUTH_TOKEN }}",
               "SLACK_APP_LEVEL_TOKEN": "${{ secrets.SLACK_APP_LEVEL_TOKEN }}",
+              "SLACK_BOT_USER_OAUTH_TOKEN": "${{ secrets.SLACK_BOT_USER_OAUTH_TOKEN }}",
+              "SLACK_CHANNEL_ID": "${{ secrets.SLACK_CHANNEL_ID }}",
               "SLACK_SIGNING_SECRET": "${{ secrets.SLACK_SIGNING_SECRET }}"
             }
 

@@ -2,22 +2,28 @@ FROM python:3.12.13-slim AS base
 
 WORKDIR /app
 
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+
 ENV UV_LINK_MODE=copy
 ENV UV_COMPILE_BYTECODE=1
-ENV PYTHONUNBUFFERED=1
-ENV PYTHONPATH=/app
+ENV UV_PYTHON_PREFERENCE=only-system
+ENV UV_PROJECT_ENVIRONMENT=/app/.venv
+
 ENV PATH="/app/.venv/bin:$PATH"
 
 COPY --from=ghcr.io/astral-sh/uv:0.12.6 /uv /usr/local/bin/uv
 
-COPY pyproject.toml uv.lock ./
+COPY services/dags_images/pyproject.toml    ./pyproject.toml
+COPY uv.lock                                ./
 
-COPY services/dags_images/train_model   ./train_model
-COPY services/shared                    ./shared
+COPY services/dags_images/train_model       ./train_model
+COPY services/shared                        ./shared
 
 FROM base AS test-base
 
-RUN uv sync --frozen --only-group train_model --only-group test --no-install-project
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --only-group test_train_model --locked
 
 COPY tests/services/dags_images/train_model     ./tests/services/dags_images/train_model
 COPY tests/services/shared                      ./tests/services/shared
@@ -28,15 +34,18 @@ COPY tests/services/dags_images/__init__.py     ./tests/services/dags_images/__i
 
 FROM test-base AS test-dev
 
-CMD ["python", "-m", "pytest", "tests", "--verbose"]
+CMD ["uv", "run", "pytest", "tests", "--verbose"]
 
 FROM test-base AS test
 
-RUN python -m pytest tests --quiet
+RUN uv run pytest tests --quiet
 
 FROM base AS runtime
 
-RUN uv sync --frozen --only-group train_model --no-install-project
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --only-group train_model --frozen --no-editable
+
+RUN rm --force /usr/local/bin/uv
 
 RUN useradd --create-home app_user && chown --recursive app_user /app
 USER app_user

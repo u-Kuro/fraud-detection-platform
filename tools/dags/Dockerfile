@@ -2,17 +2,23 @@ FROM python:3.12.13-slim AS test-base
 
 WORKDIR /app
 
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+
 ENV UV_LINK_MODE=copy
 ENV UV_COMPILE_BYTECODE=1
-ENV PYTHONUNBUFFERED=1
-ENV PYTHONPATH=/app
+ENV UV_PYTHON_PREFERENCE=only-system
+ENV UV_PROJECT_ENVIRONMENT=/app/.venv
+
 ENV PATH="/app/.venv/bin:$PATH"
 
 COPY --from=ghcr.io/astral-sh/uv:0.12.6 /uv /usr/local/bin/uv
 
-COPY pyproject.toml uv.lock ./
+COPY tools/dags/pyproject.toml  ./pyproject.toml
+COPY uv.lock                    ./
 
-RUN uv sync --frozen --only-group dags --only-group test --no-install-project
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --locked
 
 COPY dags               ./dags
 COPY tests/dags         ./tests/dags
@@ -21,8 +27,8 @@ COPY tests/__init__.py  ./tests/__init__.py
 
 FROM test-base AS test-dev
 
-CMD ["python", "-m", "pytest", "tests", "--verbose"]
+CMD ["uv", "run", "pytest", "tests", "--verbose"]
 
 FROM test-base AS test
 
-RUN python -m pytest tests --quiet
+RUN uv run pytest tests --quiet

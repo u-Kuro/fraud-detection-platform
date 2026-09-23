@@ -1,3 +1,6 @@
+
+uv sync --all-packages --all-groups
+
 make up
 act push -W .github/workflows/delete/test-push.yaml
 
@@ -53,5 +56,7 @@ docker build -t test-fraud-detection -f services/fraud_detection_api/Dockerfile 
 docker run -it --rm test-fraud-detection
 
 # dags
-docker build -t test-dags -f tests/dags/Dockerfile --target test-dev .
+docker build -t test-dags -f tools/dags/Dockerfile --target test-dev .
 docker run -it --rm test-dags
+
+
