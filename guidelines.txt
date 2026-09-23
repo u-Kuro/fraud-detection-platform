@@ -53,5 +53,5 @@ docker build -t test-fraud-detection -f services/fraud_detection_api/Dockerfile 
 docker run -it --rm test-fraud-detection
 
 # dags
-docker build -t test-dags -f tests/dags/Dockerfile --target test-dev . -q
+docker build -t test-dags -f tests/dags/Dockerfile --target test-dev .
 docker run -it --rm test-dags
