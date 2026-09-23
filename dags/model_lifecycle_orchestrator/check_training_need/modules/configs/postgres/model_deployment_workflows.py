@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from enum import StrEnum
 
-from dags_shared.modules.schemas.postgres.model_deployment_workflows import ModelDeploymentWorkflows
+from dags.shared.modules.schemas.postgres.model_deployment_workflows import ModelDeploymentWorkflows
 
 @dataclass(frozen=True)
 class ModelDeploymentWorkflowsConfig:

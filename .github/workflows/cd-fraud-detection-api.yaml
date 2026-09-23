@@ -5,7 +5,9 @@ on:
     branches: [main]
     paths:
       - services/fraud_detection_api/**
-      - services/services_shared/**
+      - tests/services/fraud_detection_api/**
+      - services/shared/**
+      - tests/services/shared/**
       - pyproject.toml
       - uv.lock
   workflow_dispatch:
@@ -123,7 +125,7 @@ jobs:
       - name: Deploy
         uses: azure/k8s-deploy@v7
         env:
-          K8S_PATH: services/fraud_detection_api/k8s
+          K8S_PATH: services/fraud_detection_api/.k8s
         with:
           namespace: ${{ secrets.NAMESPACE }}
           manifests: |

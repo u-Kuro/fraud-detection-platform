@@ -1,11 +1,11 @@
 from airflow.sdk import task
 from sqlalchemy import update, delete
 
-from model_lifecycle_orchestrator.on_training_decision.modules.schemas.airflow.tasks import TrainingDecision, ModelDeploymentWorkflowForPromotion
-from model_lifecycle_orchestrator.on_training_decision.modules.schemas.airflow.xcom import TrainModelResult
-from dags_shared.modules.configs.postgres import PostgresConfig
-from dags_shared.modules.schemas.postgres.model_deployment_workflows import ModelDeploymentWorkflows
-from dags_shared.repositories.postgres.postgres import sql_session
+from dags.model_lifecycle_orchestrator.on_training_decision.modules.schemas.airflow.tasks import TrainingDecision, ModelDeploymentWorkflowForPromotion
+from dags.model_lifecycle_orchestrator.on_training_decision.modules.schemas.airflow.xcom import TrainModelResult
+from dags.shared.modules.configs.postgres import PostgresConfig
+from dags.shared.modules.schemas.postgres.model_deployment_workflows import ModelDeploymentWorkflows
+from dags.shared.repositories.postgres.postgres import sql_session
 
 @task
 def update_approved_training_workflow(training_decision: TrainingDecision):

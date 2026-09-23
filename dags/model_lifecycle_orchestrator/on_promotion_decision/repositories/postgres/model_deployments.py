@@ -1,10 +1,10 @@
 from airflow.sdk import task
 from sqlalchemy import select, update, insert, true
 
-from model_lifecycle_orchestrator.on_promotion_decision.modules.schemas.airflow.tasks import PromotionDecision, PromotedModelDeployment
-from dags_shared.modules.schemas.postgres.model_deployment_workflows import ModelDeploymentWorkflows
-from dags_shared.modules.schemas.postgres.model_deployments import ModelDeployments
-from dags_shared.repositories.postgres.postgres import sql_session
+from dags.model_lifecycle_orchestrator.on_promotion_decision.modules.schemas.airflow.tasks import PromotionDecision, PromotedModelDeployment
+from dags.shared.modules.schemas.postgres.model_deployment_workflows import ModelDeploymentWorkflows
+from dags.shared.modules.schemas.postgres.model_deployments import ModelDeployments
+from dags.shared.repositories.postgres.postgres import sql_session
 
 @task
 def promote_model_deployment(promotion_decision_configuration: PromotionDecision) -> PromotedModelDeployment:

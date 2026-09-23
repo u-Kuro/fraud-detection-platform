@@ -1,13 +1,13 @@
 from airflow.sdk import task, TriggerRule, get_current_context
 from sqlalchemy import select
 
-from model_lifecycle_orchestrator.check_training_need.modules.configs.airflow.task_ids import DispatchTrainingApprovalTaskIDs
-from model_lifecycle_orchestrator.check_training_need.modules.schemas.airflow.tasks import  ActiveModelDeployment
-from model_lifecycle_orchestrator.check_training_need.services.tasks import drift_check
-from dags_shared.modules.configs.postgres import PostgresConfig
-from dags_shared.modules.schemas.airflow import TaskContext
-from dags_shared.modules.schemas.postgres.model_deployments import ModelDeployments
-from dags_shared.repositories.postgres.postgres import sql_session
+from dags.model_lifecycle_orchestrator.check_training_need.modules.configs.airflow.task_ids import DispatchTrainingApprovalTaskIDs
+from dags.model_lifecycle_orchestrator.check_training_need.modules.schemas.airflow.tasks import  ActiveModelDeployment
+from dags.model_lifecycle_orchestrator.check_training_need.services.tasks import drift_check
+from dags.shared.modules.configs.postgres import PostgresConfig
+from dags.shared.modules.schemas.airflow import TaskContext
+from dags.shared.modules.schemas.postgres.model_deployments import ModelDeployments
+from dags.shared.repositories.postgres.postgres import sql_session
 
 @task
 def get_active_model_deployment() -> ActiveModelDeployment | None:

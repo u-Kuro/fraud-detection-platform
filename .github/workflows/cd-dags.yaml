@@ -6,9 +6,11 @@ on:
     branches: [main]
     paths:
       - dags/**
-      - tests/dags_tests/**
+      - tests/dags/**
       - services/dags_images/**
-      - services/services_shared/**
+      - tests/services/dags_images/**
+      - services/shared/**
+      - tests/services/shared/**
       - pyproject.toml
       - uv.lock
   workflow_dispatch:

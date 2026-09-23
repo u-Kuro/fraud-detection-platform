@@ -1,5 +1,6 @@
 # Kubernetes
 **/k8s/
+**/.k8s/
 
 # Docker
 **/Dockerfile
@@ -8,6 +9,8 @@
 # Secrets & Environment
 **/.env
 **/.env.*
+**/.secrets
+**/.secrets.*
 
 # Version Control
 **/.github/

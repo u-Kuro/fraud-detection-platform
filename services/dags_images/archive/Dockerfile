@@ -12,32 +12,33 @@ COPY --from=ghcr.io/astral-sh/uv:0.12.6 /uv /usr/local/bin/uv
 
 COPY pyproject.toml uv.lock ./
 
+COPY services/dags_images/archive   ./archive
+COPY services/shared                ./shared
+
 FROM base AS test-base
 
 RUN uv sync --frozen --only-group archive --only-group test --no-install-project
 
-COPY services/dags_images/archive ./archive
-COPY services/services_shared ./services_shared
+COPY tests/services/dags_images/archive         ./tests/services/dags_images/archive
+COPY tests/services/shared                      ./tests/services/shared
+
+COPY tests/__init__.py                          ./tests/__init__.py
+COPY tests/services/__init__.py                 ./tests/services/__init__.py
+COPY tests/services/dags_images/__init__.py     ./tests/services/dags_images/__init__.py
 
 FROM test-base AS test-dev
 
-CMD ["python", "-m", "pytest", "archive/tests", "services_shared/tests", "--verbose"]
+CMD ["python", "-m", "pytest", "tests", "--verbose"]
 
 FROM test-base AS test
 
-RUN python -m pytest archive/tests services_shared/tests --quiet
+RUN python -m pytest tests --quiet
 
 FROM base AS runtime
 
 RUN uv sync --frozen --only-group archive --no-install-project
 
-COPY services/dags_images/archive/src ./archive/src
-COPY services/services_shared/src ./services_shared/src
-
-COPY services/dags_images/archive/__init__.py ./archive/__init__.py
-COPY services/services_shared/__init__.py ./services_shared/__init__.py
-
 RUN useradd --create-home app_user && chown --recursive app_user /app
 USER app_user
 
-CMD ["python", "-m", "archive.src.main"]
+CMD ["python", "-m", "archive.main"]

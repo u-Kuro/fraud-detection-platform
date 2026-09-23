@@ -3,10 +3,10 @@ from uuid import UUID
 
 from airflow.sdk import task
 
-from model_lifecycle_orchestrator.check_training_need.modules.schemas.airflow.tasks import ExpiredAndReservedModelDeploymentWorkflows, ModelDeploymentWorkflowForTraining
-from model_lifecycle_orchestrator.check_training_need.modules.schemas.airflow.xcom import DriftCheckResult
-from dags_shared.services.slack import create_blocks, slack_client
-from dags_shared.modules.environment.slack import slack_environment
+from dags.model_lifecycle_orchestrator.check_training_need.modules.schemas.airflow.tasks import ExpiredAndReservedModelDeploymentWorkflows, ModelDeploymentWorkflowForTraining
+from dags.model_lifecycle_orchestrator.check_training_need.modules.schemas.airflow.xcom import DriftCheckResult
+from dags.shared.services.slack import create_blocks, slack_client
+from dags.shared.modules.environment.slack import slack_environment
 
 @task
 def invalidate_expired_promotion_approval(data: ExpiredAndReservedModelDeploymentWorkflows | None):

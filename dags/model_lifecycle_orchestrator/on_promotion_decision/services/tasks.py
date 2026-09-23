@@ -5,14 +5,14 @@ from airflow.providers.http.operators.http import HttpOperator
 from airflow.sdk import task, get_current_context
 from kubernetes.client import models
 
-from model_lifecycle_orchestrator.on_promotion_decision.modules.configs.k8s.environments import ArchiveEnvironmentKeys
-from model_lifecycle_orchestrator.on_promotion_decision.modules.schemas.airflow.tasks import PromotionDecision, PromotedModelDeployment
-from model_lifecycle_orchestrator.on_promotion_decision.repositories.postgres.model_deployment_workflows import update_approved_promotion_workflow, delete_rejected_promotion_workflow
-from dags_shared.modules.configs.github import GitHubConfig
-from dags_shared.modules.environment.ecr import ecr_environment
-from dags_shared.modules.environment.github import github_environment
-from dags_shared.modules.environment.k8s import k8s_environment
-from dags_shared.modules.schemas.airflow import TaskContext
+from dags.model_lifecycle_orchestrator.on_promotion_decision.modules.configs.k8s.environments import ArchiveEnvironmentKeys
+from dags.model_lifecycle_orchestrator.on_promotion_decision.modules.schemas.airflow.tasks import PromotionDecision, PromotedModelDeployment
+from dags.model_lifecycle_orchestrator.on_promotion_decision.repositories.postgres.model_deployment_workflows import update_approved_promotion_workflow, delete_rejected_promotion_workflow
+from dags.shared.modules.configs.github import GitHubConfig
+from dags.shared.modules.environment.ecr import ecr_environment
+from dags.shared.modules.environment.github import github_environment
+from dags.shared.modules.environment.k8s import k8s_environment
+from dags.shared.modules.schemas.airflow import TaskContext
 
 @task
 def get_promotion_decision() -> PromotionDecision:

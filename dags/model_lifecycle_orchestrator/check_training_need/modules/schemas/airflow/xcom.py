@@ -2,7 +2,7 @@ from typing import Annotated, Any
 
 from pydantic import BaseModel, StrictBool, StrictStr, Strict, model_validator, ModelWrapValidatorHandler
 
-from model_lifecycle_orchestrator.check_training_need.modules.configs.airflow.xcom import DriftCheckXComKeys
+from dags.model_lifecycle_orchestrator.check_training_need.modules.configs.airflow.xcom import DriftCheckXComKeys
 
 class DriftCheckResult(BaseModel):
     drift_detected: StrictBool
@@ -11,9 +11,9 @@ class DriftCheckResult(BaseModel):
     @model_validator(mode="wrap")
     @classmethod
     def parse_xcom(cls, value: Any, handler: ModelWrapValidatorHandler) -> "DriftCheckResult":
-        from dags_shared.modules.schemas.airflow import TaskContext
+        from dags.shared.modules.schemas.airflow import TaskContext
         if isinstance(value, TaskContext):
-            from model_lifecycle_orchestrator.check_training_need.services.tasks import drift_check_operator
+            from dags.model_lifecycle_orchestrator.check_training_need.services.tasks import drift_check_operator
             context = value
             task_instance = context.task_instance
             task_id = context.resolve_task_id(drift_check_operator.__name__)

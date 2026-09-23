@@ -3,8 +3,8 @@ from typing import Any
 
 from pydantic import BaseModel, StrictStr, StrictInt, StrictFloat, model_validator, ModelWrapValidatorHandler
 
-from model_lifecycle_orchestrator.on_training_decision.modules.configs.airflow.xcom import TrainModelXComKeys
-from dags_shared.modules.schemas.airflow import TaskContext
+from dags.model_lifecycle_orchestrator.on_training_decision.modules.configs.airflow.xcom import TrainModelXComKeys
+from dags.shared.modules.schemas.airflow import TaskContext
 
 class TrainModelResult(BaseModel):
     model_trained_at_datetime: datetime
@@ -22,7 +22,7 @@ class TrainModelResult(BaseModel):
     @classmethod
     def parse_xcom(cls, value: Any, handler: ModelWrapValidatorHandler) -> "TrainModelResult":
         if isinstance(value, TaskContext):
-            from model_lifecycle_orchestrator.on_training_decision.services.tasks import train_model_operator
+            from dags.model_lifecycle_orchestrator.on_training_decision.services.tasks import train_model_operator
             context = value
             task_instance = context.task_instance
             task_id = context.resolve_task_id(train_model_operator.__name__)

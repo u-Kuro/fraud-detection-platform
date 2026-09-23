@@ -1,0 +1,37 @@
+# Docker
+**/Dockerfile
+**/*.dockerignore
+
+# Secrets & Environment
+**/.env
+**/.env.*
+**/.secrets
+**/.secrets.*
+
+# Version Control
+**/.github/
+**/.git/
+**/.gitignore
+**/.gitattributes
+
+# Python Cache
+**/.venv/
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+**/*.pyd
+**/*.egg-info/
+**/.mypy_cache/
+**/.pytest_cache/
+**/.ruff_cache/
+
+# IDE & Editor
+**/.idea/
+**/.vscode/
+
+# OS
+**/.DS_Store
+**/Thumbs.db
+
+# Logs
+**/*.log
