@@ -10,6 +10,7 @@ from sklearn.preprocessing import RobustScaler
 from xgboost import XGBClassifier
 
 from shared.modules.configs.mlflow import MLflowConfig
+from tests.unit.modules.utilities.system import get_safe_cpu_count
 from train_model.modules.configs.hyperparameters import XGBHyperparametersSampler
 from train_model.modules.configs.training import TrainingConfig
 from train_model.modules.schemas.preprocessing import PreprocessOutputs
@@ -38,7 +39,7 @@ def train_model(
                     **best_model_hyperparameters,
                     scale_pos_weight=preprocess_outputs.original_y_train_positive_scale,
                     random_state=TrainingConfig.random_state,
-                    n_jobs=-1,
+                    n_jobs=get_safe_cpu_count(),
                     verbosity=2,
                 ),
             ),
@@ -68,7 +69,7 @@ def optimize_model_hyperparameters(
                     **hyperparameters_sampler().resolve(trial),
                     scale_pos_weight=preprocessed_output.original_y_train_positive_scale,
                     random_state=TrainingConfig.random_state,
-                    n_jobs=-1,
+                    n_jobs=get_safe_cpu_count(),
                     verbosity=2,
                 ),
             ),

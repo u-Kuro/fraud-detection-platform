@@ -29,14 +29,16 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --package train_model --locked
 
 COPY services/dags_images/train_model/tests             ./dags_images/train_model/tests
+COPY services/shared/tests                              ./shared/tests
 
 FROM test-base AS test-dev
 
-CMD ["uv", "run", "--directory", "dags_images/train_model", "pytest", "--verbose"]
+CMD ["sh", "-c", "uv run --directory dags_images/train_model pytest --verbose && uv run --directory shared pytest --verbose"]
 
 FROM test-base AS test
 
 RUN uv run --directory dags_images/train_model pytest --quiet
+RUN uv run --directory shared                  pytest --quiet
 
 FROM base AS runtime
 

@@ -17,8 +17,33 @@ act pull_request -W .github/workflows/ci-dags.yaml -e .github/events/pull-reques
 act push -W .github/workflows/cd-dags.yaml
 
 ----
-make up
 
+clear
+make up
+pause
+
+clear
+act pull_request -W .github/workflows/ci-migrate.yaml -e .github/events/pull-request.json
+pause
+
+clear
 act push -W .github/workflows/cd-migrate.yaml
+pause
+
+clear
+act pull_request -W .github/workflows/ci-fraud-detection-api.yaml -e .github/events/pull-request.json
+pause
+
+clear
+act push -W .github/workflows/cd-fraud-detection-api.yaml
+pause
+
+clear
+act pull_request -W .github/workflows/ci-dags.yaml -e .github/events/pull-request.json
+pause
+
+clear
 act push -W .github/workflows/cd-dags.yaml
+
+
 

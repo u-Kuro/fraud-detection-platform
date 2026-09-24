@@ -1,7 +1,5 @@
 FROM python:3.12.13-slim AS test-base
 
-FROM python:3.12.13-slim AS base
-
 WORKDIR /app
 
 ENV PYTHONUNBUFFERED=1

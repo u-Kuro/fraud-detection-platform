@@ -2111,6 +2111,7 @@ dependencies = [
     { name = "pandas" },
     { name = "pyarrow" },
     { name = "scikit-learn" },
+    { name = "shared" },
     { name = "xgboost" },
 ]
 
@@ -2137,6 +2138,7 @@ requires-dist = [
     { name = "pandas", specifier = "==2.3.3" },
     { name = "pyarrow", specifier = "==25.0.1" },
     { name = "scikit-learn", specifier = "==1.9.0" },
+    { name = "shared", editable = "shared" },
     { name = "xgboost", specifier = "==3.4.1" },
 ]
 
