@@ -86,11 +86,11 @@ locals {
   mwaa_connections_postgres_connection_id = "postgres"
   mwaa_connections_s3_connection_id       = "s3"
   # /variables (Prefixed with AIRFLOW_VAR_ so Fixed won't work)
-  mwaa_variables_k8s_connection_id_name          = "K8S_CONNECTION_ID"
-  mwaa_variables_k8s_namespace                   = "K8S_NAMESPACE"
   mwaa_variables_k8s_base_config_map_name        = "K8S_BASE_CONFIG_MAP_NAME"
   mwaa_variables_k8s_base_secret_name            = "K8S_BASE_SECRET_NAME"
+  mwaa_variables_k8s_connection_id_name          = "K8S_CONNECTION_ID"
   mwaa_variables_k8s_docker_registry_secret_name = "K8S_DOCKER_REGISTRY_SECRET_NAME"
+  mwaa_variables_k8s_namespace                   = "K8S_NAMESPACE"
 
   mwaa_variables_mlflow_tracking_uri      = "MLFLOW_TRACKING_URI"
   mwaa_variables_mlflow_tracking_username = "MLFLOW_TRACKING_USERNAME"
