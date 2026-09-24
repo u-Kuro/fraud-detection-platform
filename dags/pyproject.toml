@@ -55,28 +55,28 @@ testpaths = ["tests"]
 python_files = ["[a-z]*.py"]
 env = [
     # dags/shared/modules/configs/ecr.py
-    "AIRFLOW_VAR_archive_image=000000000000.dkr.ecr.us-east-1.amazonaws.com/archive:test",
-    "AIRFLOW_VAR_drift_check_image=000000000000.dkr.ecr.us-east-1.amazonaws.com/drift-check:test",
-    "AIRFLOW_VAR_train_model_image=000000000000.dkr.ecr.us-east-1.amazonaws.com/train-model:test",
+    "AIRFLOW_VAR_ARCHIVE_IMAGE=000000000000.dkr.ecr.us-east-1.amazonaws.com/archive:test",
+    "AIRFLOW_VAR_DRIFT_CHECK_IMAGE=000000000000.dkr.ecr.us-east-1.amazonaws.com/drift-check:test",
+    "AIRFLOW_VAR_TRAIN_MODEL_IMAGE=000000000000.dkr.ecr.us-east-1.amazonaws.com/train-model:test",
     # dags/shared/modules/configs/github.py
-    "AIRFLOW_VAR_github_connection_id=github-connection-default",
+    "AIRFLOW_VAR_GITHUB_CONNECTION_ID=github-connection-default",
     # dags/shared/modules/configs/k8s.py
-    "AIRFLOW_VAR_k8s_base_config_map_name=base-config-map",
-    "AIRFLOW_VAR_k8s_base_secret_name=base-secret",
-    "AIRFLOW_VAR_k8s_connection_id=kubernetes-connection-default",
-    "AIRFLOW_VAR_k8s_docker_registry_secret_name=docker-registry-secret",
-    "AIRFLOW_VAR_k8s_namespace=k8s-namespace-default",
+    "AIRFLOW_VAR_K8S_BASE_CONFIG_MAP_NAME=base-config-map",
+    "AIRFLOW_VAR_K8S_BASE_SECRET_NAME=base-secret",
+    "AIRFLOW_VAR_K8S_CONNECTION_ID=kubernetes-connection-default",
+    "AIRFLOW_VAR_K8S_DOCKER_REGISTRY_SECRET_NAME=docker-registry-secret",
+    "AIRFLOW_VAR_K8S_NAMESPACE=k8s-namespace-default",
     # dags/shared/modules/configs/mlflow.py
-    "AIRFLOW_VAR_mlflow_tracking_uri=http://localhost:0000",
-    "AIRFLOW_VAR_mlflow_tracking_username=mlflow-username-default",
-    "AIRFLOW_VAR_mlflow_tracking_password=mlflow-password-default",
-    "AIRFLOW_VAR_mlflow_workspace=mlflow-workspace-default",
+    "AIRFLOW_VAR_MLFLOW_TRACKING_URI=http://localhost:0000",
+    "AIRFLOW_VAR_MLFLOW_TRACKING_USERNAME=mlflow-username-default",
+    "AIRFLOW_VAR_MLFLOW_TRACKING_PASSWORD=mlflow-password-default",
+    "AIRFLOW_VAR_MLFLOW_WORKSPACE=mlflow-workspace-default",
     # dags/shared/modules/configs/postgres.py
-    "AIRFLOW_VAR_postgres_connection_id=postgres-connection-default",
+    "AIRFLOW_VAR_POSTGRES_CONNECTION_ID=postgres-connection-default",
     # dags/shared/modules/configs/s3.py
-    "AIRFLOW_VAR_s3_bucket=s3-bucket-default",
-    "AIRFLOW_VAR_s3_connection_id=s3-connection-default",
+    "AIRFLOW_VAR_S3_BUCKET=s3-bucket-default",
+    "AIRFLOW_VAR_S3_CONNECTION_ID=s3-connection-default",
     # dags/shared/modules/configs/slack.py
-    "AIRFLOW_VAR_slack_channel_id=C000000000",
-    "AIRFLOW_VAR_slack_connection_id=slack-connection-default",
+    "AIRFLOW_VAR_SLACK_CHANNEL_ID=C000000000",
+    "AIRFLOW_VAR_SLACK_CONNECTION_ID=slack-connection-default",
 ]

@@ -119,9 +119,9 @@ jobs:
           MWAA_VARIABLES_SECRET_PATH: ${{ secrets.MWAA_VARIABLES_SECRET_PATH }}
           IMAGE: ${{ matrix.image }}
         run: |
-          ENVIRONMENT_NAME="${IMAGE//-/_}"
-          ENVIRONMENT_NAME="${ENVIRONMENT_NAME,,}"
-          echo "secret-id=${MWAA_VARIABLES_SECRET_PATH}/${ENVIRONMENT_NAME}" >> "${GITHUB_OUTPUT}"
+          IMAGE_VARIABLE="${IMAGE//-/_}"
+          IMAGE_VARIABLE="${IMAGE_VARIABLE^^}"
+          echo "secret-id=${MWAA_VARIABLES_SECRET_PATH}/${IMAGE_VARIABLE}" >> "${GITHUB_OUTPUT}"
 
       - name: Upsert Airflow image variable
         uses: ./.github/actions/aws-secretsmanager-upsert-secrets
@@ -134,8 +134,8 @@ jobs:
   upsert-static-airflow-metadata:
     runs-on: ubuntu-latest
     env:
-      github_connection_id: github
-      slack_connection_id: slack
+      GITHUB_CONNECTION_ID: github
+      SLACK_CONNECTION_ID: slack
     steps:
       - uses: actions/checkout@v7
       - uses: ./.github/actions/install-aws-cli
@@ -152,19 +152,19 @@ jobs:
         with:
           config: |
             {
-              "${{ secrets.MWAA_VARIABLES_SECRET_PATH }}/github_connection_id": "${{ env.github_connection_id }}",
-              "${{ secrets.MWAA_CONNECTIONS_SECRET_PATH }}/${{ env.github_connection_id }}": {
+              "${{ secrets.MWAA_VARIABLES_SECRET_PATH }}/GITHUB_CONNECTION_ID": "${{ env.GITHUB_CONNECTION_ID }}",
+              "${{ secrets.MWAA_CONNECTIONS_SECRET_PATH }}/${{ env.GITHUB_CONNECTION_ID }}": {
                 "conn_type": "http",
                 "schema": "http",
                 "host": "${{ secrets.GITHUB_REST_API_HOST }}",
                 "port": ${{ secrets.GITHUB_REST_API_PORT }}
               },
-              "${{ secrets.MWAA_VARIABLES_SECRET_PATH }}/slack_connection_id": "${{ env.slack_connection_id }}",
-              "${{ secrets.MWAA_CONNECTIONS_SECRET_PATH }}/${{ env.slack_connection_id }}": {
+              "${{ secrets.MWAA_VARIABLES_SECRET_PATH }}/SLACK_CONNECTION_ID": "${{ env.SLACK_CONNECTION_ID }}",
+              "${{ secrets.MWAA_CONNECTIONS_SECRET_PATH }}/${{ env.SLACK_CONNECTION_ID }}": {
                 "conn_type": "slack",
                 "password": "${{ secrets.SLACK_BOT_USER_OAUTH_TOKEN }}"
               },
-              "${{ secrets.MWAA_VARIABLES_SECRET_PATH }}/slack_channel_id": "${{ secrets.SLACK_CHANNEL_ID }}"
+              "${{ secrets.MWAA_VARIABLES_SECRET_PATH }}/SLACK_CHANNEL_ID": "${{ secrets.SLACK_CHANNEL_ID }}"
             }
 
   sync-dags:

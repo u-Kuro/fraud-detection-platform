@@ -19,8 +19,8 @@ COPY dags/pyproject.toml dags/uv.lock ./
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --locked
 
-COPY dags/dags          ./dags
-COPY dags/tests         ./tests
+COPY dags/dags      ./dags
+COPY dags/tests     ./tests
 
 FROM test-base AS test-dev
 

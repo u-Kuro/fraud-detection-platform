@@ -6,7 +6,7 @@ from pytest_mock import MockerFixture
 from dags.model_lifecycle_orchestrator.check_training_need.modules.configs.airflow.xcom import DriftCheckXComKeys
 from dags.model_lifecycle_orchestrator.check_training_need.modules.schemas.airflow.xcom import DriftCheckResult
 from dags.shared.modules.schemas.airflow import TaskContext
-from tests.dags.unit.shared.modules.schemas.airflow import TestTaskContext
+from tests.unit.shared.modules.schemas.airflow import TestTaskContext
 
 class TestDriftCheckResult:
     @staticmethod

@@ -6,7 +6,7 @@ from pytest_mock import MockerFixture
 from dags.model_lifecycle_orchestrator.on_training_decision.modules.configs.airflow.xcom import TrainModelXComKeys
 from dags.model_lifecycle_orchestrator.on_training_decision.modules.schemas.airflow.xcom import TrainModelResult
 from dags.shared.modules.schemas.airflow import TaskContext
-from tests.dags.unit.shared.modules.schemas.airflow import TestTaskContext
+from tests.unit.shared.modules.schemas.airflow import TestTaskContext
 
 class TestTrainModelResult:
     @staticmethod
