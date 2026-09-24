@@ -3,10 +3,8 @@ name: CI / DAGs
 on:
   pull_request:
     branches: [main]
-    # TODO Change paths
     paths:
       - dags/**
-      - tests/dags/**
       - services/dags_images/**
       - services/shared/**
       - services/pyproject.toml
@@ -64,6 +62,7 @@ jobs:
           IMAGE: ${{ matrix.image }}
         run: |
           FOLDER="${IMAGE//-/_}"
+          FOLDER="${FOLDER,,}"
           echo "path=services/dags_images/${FOLDER}/Dockerfile" >> $GITHUB_OUTPUT
 
       - name: Test
@@ -88,7 +87,7 @@ jobs:
         uses: docker/build-push-action@v7
         with:
           context: .
-          file: tests/dags/Dockerfile
+          file: dags/Dockerfile
           target: test
           push: false
           cache-from: type=gha,scope=dags

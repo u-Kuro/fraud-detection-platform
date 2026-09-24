@@ -4,10 +4,8 @@ name: CD / DAGs
 on:
   push:
     branches: [main]
-    # TODO Change paths
     paths:
       - dags/**
-      - tests/dags/**
       - services/dags_images/**
       - services/shared/**
       - services/pyproject.toml
@@ -67,6 +65,7 @@ jobs:
           IMAGE: ${{ matrix.image }}
         run: |
           FOLDER="${IMAGE//-/_}"
+          FOLDER="${FOLDER,,}"
           echo "path=services/dags_images/${FOLDER}/Dockerfile" >> $GITHUB_OUTPUT
 
       - name: Configure AWS credentials
