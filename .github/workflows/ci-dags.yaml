@@ -3,15 +3,14 @@ name: CI / DAGs
 on:
   pull_request:
     branches: [main]
+    # TODO Change paths
     paths:
       - dags/**
       - tests/dags/**
       - services/dags_images/**
-      - tests/services/dags_images/**
       - services/shared/**
-      - tests/services/shared/**
-      - pyproject.toml
-      - uv.lock
+      - services/pyproject.toml
+      - services/uv.lock
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

@@ -1,3 +1,7 @@
+# syntax=docker/dockerfile:1-labs
+FROM scratch AS services
+COPY services/ /
+
 FROM python:3.12.13-slim AS base
 
 WORKDIR /app
@@ -10,42 +14,34 @@ ENV UV_COMPILE_BYTECODE=1
 ENV UV_PYTHON_PREFERENCE=only-system
 ENV UV_PROJECT_ENVIRONMENT=/app/.venv
 
-ENV PATH="/app/.venv/bin:$PATH"
+ENV PATH=/app/.venv/bin:$PATH
 
 COPY --from=ghcr.io/astral-sh/uv:0.12.6 /uv /usr/local/bin/uv
 
-COPY services/dags_images/pyproject.toml    ./pyproject.toml
-COPY uv.lock                                ./
+COPY --parents --from=services **/pyproject.toml uv.lock ./
 
-COPY services/dags_images/drift_check       ./drift_check
-COPY services/shared                        ./shared
+COPY services/dags_images/drift_check/drift_check       ./dags_images/drift_check/drift_check
+COPY services/shared/shared                             ./shared/shared
 
 FROM base AS test-base
 
 RUN --mount=type=cache,target=/root/.cache/uv \
-    uv sync --only-group test_drift_check
+    uv sync --package drift_check --locked
 
-COPY tests/services/dags_images/drift_check     ./tests/services/dags_images/drift_check
-COPY tests/services/shared                      ./tests/services/shared
-
-COPY tests/__init__.py                          ./tests/__init__.py
-COPY tests/services/__init__.py                 ./tests/services/__init__.py
-COPY tests/services/dags_images/__init__.py     ./tests/services/dags_images/__init__.py
+COPY services/dags_images/drift_check/tests             ./dags_images/drift_check/tests
 
 FROM test-base AS test-dev
 
-CMD ["uv", "run", "pytest", "tests", "--verbose"]
+CMD ["uv", "run", "--directory", "dags_images/drift_check", "pytest", "--verbose"]
 
 FROM test-base AS test
 
-RUN uv run pytest tests --quiet
+RUN uv run --directory dags_images/drift_check pytest --quiet
 
 FROM base AS runtime
 
 RUN --mount=type=cache,target=/root/.cache/uv \
-    uv sync --only-group drift_check \
-
-RUN rm --force /usr/local/bin/uv
+    uv sync --package drift_check --no-dev --frozen --no-editable
 
 RUN useradd --create-home app_user && chown --recursive app_user /app
 USER app_user

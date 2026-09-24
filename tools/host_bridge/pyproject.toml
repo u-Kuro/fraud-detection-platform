@@ -1,0 +1,11 @@
+[project]
+name = "host_bridge"
+version = "1.0.0"
+requires-python = "==3.12.13"
+dependencies = [
+    "fastapi==0.136.3",
+    "uvicorn==0.52.4",
+]
+
+[tool.uv]
+required-version = "0.12.6"

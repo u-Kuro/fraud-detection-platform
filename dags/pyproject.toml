@@ -2,28 +2,40 @@
 name = "dags"
 version = "1.0.0"
 requires-python = "==3.12.13"
+dependencies = [
+    "apache-airflow==3.3.1",
+    "apache-airflow-providers-amazon==9.34.0",
+    "apache-airflow-providers-cncf-kubernetes==10.21.0",
+    "apache-airflow-providers-http==6.0.5",
+    "apache-airflow-providers-postgres==7.0.1",
+    "apache-airflow-providers-slack==9.10.2",
+    "mlflow-skinny==3.15.2",
+    "pydantic==2.13.4",
+    "pydantic-settings==2.15.0",
+]
 
 [dependency-groups]
-dags = [
-    "apache-airflow>=3.3.1",
-    "apache-airflow-providers-amazon>=9.34.0",
-    "apache-airflow-providers-cncf-kubernetes>=10.21.0",
-    "apache-airflow-providers-http>=6.0.5",
-    "apache-airflow-providers-postgres>=7.0.1",
-    "apache-airflow-providers-slack>=9.10.2",
-    "mlflow-skinny>=3.15.2",
-    "pydantic>=2.13.4",
-    "pydantic-settings>=2.15.0",
-]
 test = [
-    "pytest>=9.1.1",
-    "pytest-env>=1.7.0",
-    "pytest-mock>=3.15.1",
+    "pytest==9.1.1",
+    "pytest-env==1.7.0",
+    "pytest-mock==3.15.1",
+]
+dev = [
+    { include-group = "test" },
+]
+# helpers
+lint = [
+    "ruff==0.16.5",
+]
+stubs = [
+    "boto3-stubs[mwaa,s3]==1.43.83",
+]
+type_check = [
+    "mypy==2.3.1",
 ]
 
 [tool.uv]
 required-version = "0.12.6"
-default-groups = ["dags", "test"]
 constraint-dependencies = [
     # Apache Airflow 3.3.1-python3.12 constraints (https://raw.githubusercontent.com/apache/airflow/refs/tags/constraints-3.3.1/constraints-3.12.txt)
     "apache-airflow==3.3.1",
@@ -35,11 +47,11 @@ constraint-dependencies = [
     "pydantic==2.13.4",
     "pydantic-settings==2.15.0",
     # MLflow constraints
-    "mlflow==3.15.2",
     "mlflow-skinny==3.15.2",
 ]
 
 [tool.pytest.ini_options]
+testpaths = ["tests"]
 python_files = ["[a-z]*.py"]
 env = [
     # dags/shared/modules/configs/ecr.py

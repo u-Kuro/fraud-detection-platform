@@ -5,7 +5,7 @@ import pytest
 from pydantic import ValidationError
 
 from fraud_detection_api.modules.schemas.inferences.fraud_classification import FraudClassificationRequest, FraudClassificationResponse, FraudClassificationOutput
-from tests.services.fraud_detection_api.unit.modules.schemas.mlflow import TestDeployedModel
+from tests.unit.modules.schemas.mlflow import TestDeployedModel
 from shared.modules.schemas.models_dataset.fraud_classification import FraudClassificationFeaturesKeys
 from shared.modules.schemas.postgres.transaction_inferences import TransactionInferences
 
