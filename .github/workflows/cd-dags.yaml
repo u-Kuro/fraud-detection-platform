@@ -119,7 +119,7 @@ jobs:
           MWAA_VARIABLES_SECRET_PATH: ${{ secrets.MWAA_VARIABLES_SECRET_PATH }}
           IMAGE: ${{ matrix.image }}
         run: |
-          IMAGE_VARIABLE="${IMAGE//-/_}"
+          IMAGE_VARIABLE="${IMAGE//-/_}_IMAGE"
           IMAGE_VARIABLE="${IMAGE_VARIABLE^^}"
           echo "secret-id=${MWAA_VARIABLES_SECRET_PATH}/${IMAGE_VARIABLE}" >> "${GITHUB_OUTPUT}"
 
