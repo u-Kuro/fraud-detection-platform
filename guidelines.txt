@@ -1,4 +1,23 @@
+up:
+1) infrastructure
+2) host bridge
+3) ci / cd migrate
+4) add initial data in db # TODO Continue here...
+5) ci / cd dags
+6) trigger check training need
+7) manually approve training in slack
+8) manually approve promotion in slack
+9) ci / cd fraud detection
 
+init:
+1) uv lock + uv sync
+
+down:
+1) infrastructure
+2) host bridge
+
+
+----------------
 uv sync --all-packages --all-groups
 
 make up
