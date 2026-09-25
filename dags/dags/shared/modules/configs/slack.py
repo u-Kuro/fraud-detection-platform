@@ -9,10 +9,10 @@ from dags.shared.modules.utilities.pydantic.pydantic import validated_lru_cache
 class SlackConfig:
     @classmethod
     @validated_lru_cache
-    def slack_channel_id(cls) -> StrictStr:
-        return Variable.get(cls.slack_channel_id.__name__)
+    def SLACK_CHANNEL_ID(cls) -> StrictStr:
+        return Variable.get(cls.SLACK_CHANNEL_ID.__name__)
 
     @classmethod
     @validated_lru_cache
-    def slack_connection_id(cls) -> StrictStr:
-        return Variable.get(cls.slack_connection_id.__name__)
+    def SLACK_CONNECTION_ID(cls) -> StrictStr:
+        return Variable.get(cls.SLACK_CONNECTION_ID.__name__)

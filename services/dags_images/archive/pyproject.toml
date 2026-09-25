@@ -19,7 +19,7 @@ dev = [
 ]
 
 [tool.uv.sources]
-shared = { workspace = true }
+"shared" = { workspace = true }
 
 [build-system]
 requires = ["hatchling==1.32.4"]

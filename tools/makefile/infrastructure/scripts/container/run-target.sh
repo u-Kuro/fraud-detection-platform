@@ -25,7 +25,7 @@ if [[ -S /var/run/docker.sock ]]; then
     fi
 fi
 
-docker run -it --rm \
+docker run -it --init --rm \
     "${DOCKER_RUN_ARGUMENTS[@]}" \
     "${IMAGE}" \
     "make ${MAKEFILE_TARGET}"

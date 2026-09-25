@@ -11,20 +11,20 @@ class MLflowConfig:
 
     @classmethod
     @validated_lru_cache
-    def mlflow_tracking_uri(cls) -> StrictStr:
-        return Variable.get(cls.mlflow_tracking_uri.__name__)
+    def MLFLOW_TRACKING_URI(cls) -> StrictStr:
+        return Variable.get(cls.MLFLOW_TRACKING_URI.__name__)
 
     @classmethod
     @validated_lru_cache
-    def mlflow_tracking_username(cls) -> StrictStr:
-        return Variable.get(cls.mlflow_tracking_username.__name__)
+    def MLFLOW_TRACKING_USERNAME(cls) -> StrictStr:
+        return Variable.get(cls.MLFLOW_TRACKING_USERNAME.__name__)
 
     @classmethod
     @validated_lru_cache
-    def mlflow_tracking_password(cls) -> StrictStr:
-        return Variable.get(cls.mlflow_tracking_password.__name__)
+    def MLFLOW_TRACKING_PASSWORD(cls) -> StrictStr:
+        return Variable.get(cls.MLFLOW_TRACKING_PASSWORD.__name__)
 
     @classmethod
     @validated_lru_cache
-    def mlflow_workspace(cls) -> StrictStr:
-        return Variable.get(cls.mlflow_workspace.__name__)
+    def MLFLOW_WORKSPACE(cls) -> StrictStr:
+        return Variable.get(cls.MLFLOW_WORKSPACE.__name__)

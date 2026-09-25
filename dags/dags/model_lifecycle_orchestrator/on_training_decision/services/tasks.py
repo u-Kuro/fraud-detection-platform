@@ -33,24 +33,24 @@ def train_model_operator() -> KubernetesPodOperator:
     return KubernetesPodOperator(
         task_id=train_model_operator.__name__,
         name=train_model_operator.__name__,
-        namespace=K8sConfig.k8s_namespace(),
-        kubernetes_conn_id=K8sConfig.k8s_connection_id(),
-        image=ECRConfig.train_model_image(),
+        namespace=K8sConfig.K8S_NAMESPACE(),
+        kubernetes_conn_id=K8sConfig.K8S_CONNECTION_ID(),
+        image=ECRConfig.TRAIN_MODEL_IMAGE(),
         image_pull_policy="Always",
         image_pull_secrets=[
             models.V1LocalObjectReference(
-                name=K8sConfig.k8s_docker_registry_secret_name()
+                name=K8sConfig.K8S_DOCKER_REGISTRY_SECRET_NAME()
             )
         ],
         env_from=[
             models.V1EnvFromSource(
                 config_map_ref=models.V1ConfigMapEnvSource(
-                    name=K8sConfig.k8s_base_config_map_name()
+                    name=K8sConfig.K8S_BASE_CONFIG_MAP_NAME()
                 )
             ),
             models.V1EnvFromSource(
                 secret_ref=models.V1SecretEnvSource(
-                    name=K8sConfig.k8s_base_secret_name()
+                    name=K8sConfig.K8S_BASE_SECRET_NAME()
                 )
             ),
         ],

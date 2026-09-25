@@ -7,7 +7,7 @@ $ErrorActionPreference = "Stop"
 
 $WORKING_DIRECTORY = "/app"
 
-docker run -it --rm `
+docker run -it --init --rm `
     --use-api-socket `
     --network "host" `
     --add-host "host.docker.internal:host-gateway" `

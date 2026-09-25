@@ -5,7 +5,7 @@ from sqlalchemy.orm import sessionmaker
 from dags.shared.modules.configs.postgres import PostgresConfig
 
 sql_session: sessionmaker = sessionmaker(
-    PostgresHook(postgres_conn_id=PostgresConfig.postgres_connection_id())
+    PostgresHook(postgres_conn_id=PostgresConfig.POSTGRES_CONNECTION_ID())
     .get_sqlalchemy_engine(
         engine_kwargs={
             "poolclass": NullPool

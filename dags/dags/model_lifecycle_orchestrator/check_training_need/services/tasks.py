@@ -40,13 +40,13 @@ def drift_check_operator(active_model_deployment_mlflow_run_id: str) -> Kubernet
     return KubernetesPodOperator(
         task_id=drift_check_operator.__name__,
         name=drift_check_operator.__name__,
-        namespace=K8sConfig.k8s_namespace(),
-        kubernetes_conn_id=K8sConfig.k8s_connection_id(),
-        image=ECRConfig.drift_check_image(),
+        namespace=K8sConfig.K8S_NAMESPACE(),
+        kubernetes_conn_id=K8sConfig.K8S_CONNECTION_ID(),
+        image=ECRConfig.DRIFT_CHECK_IMAGE(),
         image_pull_policy="Always",
         image_pull_secrets=[
             models.V1LocalObjectReference(
-                name=K8sConfig.k8s_docker_registry_secret_name()
+                name=K8sConfig.K8S_DOCKER_REGISTRY_SECRET_NAME()
             )
         ],
         env_vars=[
@@ -58,12 +58,12 @@ def drift_check_operator(active_model_deployment_mlflow_run_id: str) -> Kubernet
         env_from=[
             models.V1EnvFromSource(
                 config_map_ref=models.V1ConfigMapEnvSource(
-                    name=K8sConfig.k8s_base_config_map_name()
+                    name=K8sConfig.K8S_BASE_CONFIG_MAP_NAME()
                 )
             ),
             models.V1EnvFromSource(
                 secret_ref=models.V1SecretEnvSource(
-                    name=K8sConfig.k8s_base_secret_name()
+                    name=K8sConfig.K8S_BASE_SECRET_NAME()
                 )
             ),
         ],

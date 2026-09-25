@@ -11,7 +11,7 @@ from dags.shared.services.slack import slack_client, create_blocks
 @task
 def initialize_promotion_approval(train_model_result: TrainModelResult) -> ModelDeploymentWorkflowForPromotion:
     response = slack_client.chat_postMessage(
-        channel=SlackConfig.slack_channel_id(),
+        channel=SlackConfig.SLACK_CHANNEL_ID(),
         blocks=create_blocks(
             title="⚠️ Challenger Model Promotion Required",
             body=(
@@ -70,7 +70,7 @@ def update_promotion_approval(
 ):
     slack_client.chat_update(
         ts=model_deployment_workflow_for_promotion.slack_promotion_approval_message_ts,
-        channel=SlackConfig.slack_channel_id(),
+        channel=SlackConfig.SLACK_CHANNEL_ID(),
         blocks=create_blocks(
             title="⚠️ Challenger Model Promotion Required",
             body=(

@@ -9,10 +9,10 @@ from dags.shared.modules.utilities.pydantic.pydantic import validated_lru_cache
 class S3Config:
     @classmethod
     @validated_lru_cache
-    def s3_bucket(cls) -> StrictStr:
-        return Variable.get(cls.s3_bucket.__name__)
+    def S3_BUCKET(cls) -> StrictStr:
+        return Variable.get(cls.S3_BUCKET.__name__)
 
     @classmethod
     @validated_lru_cache
-    def s3_connection_id(cls) -> StrictStr:
-        return Variable.get(cls.s3_connection_id.__name__)
+    def S3_CONNECTION_ID(cls) -> StrictStr:
+        return Variable.get(cls.S3_CONNECTION_ID.__name__)

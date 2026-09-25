@@ -9,15 +9,15 @@ from dags.shared.modules.utilities.pydantic.pydantic import validated_lru_cache
 class ECRConfig:
     @classmethod
     @validated_lru_cache
-    def archive_image(cls) -> StrictStr:
-        return Variable.get(cls.archive_image.__name__)
+    def ARCHIVE_IMAGE(cls) -> StrictStr:
+        return Variable.get(cls.ARCHIVE_IMAGE.__name__)
 
     @classmethod
     @validated_lru_cache
-    def drift_check_image(cls) -> StrictStr:
-        return Variable.get(cls.drift_check_image.__name__)
+    def DRIFT_CHECK_IMAGE(cls) -> StrictStr:
+        return Variable.get(cls.DRIFT_CHECK_IMAGE.__name__)
 
     @classmethod
     @validated_lru_cache
-    def train_model_image(cls) -> StrictStr:
-        return Variable.get(cls.train_model_image.__name__)
+    def TRAIN_MODEL_IMAGE(cls) -> StrictStr:
+        return Variable.get(cls.TRAIN_MODEL_IMAGE.__name__)

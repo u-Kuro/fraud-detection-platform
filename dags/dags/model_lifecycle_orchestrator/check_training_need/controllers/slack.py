@@ -14,7 +14,7 @@ def invalidate_expired_promotion_approval(data: ExpiredAndReservedModelDeploymen
 
     slack_client.chat_update(
         ts=data.expired.slack_promotion_approval_message_ts,
-        channel=SlackConfig.slack_channel_id(),
+        channel=SlackConfig.SLACK_CHANNEL_ID(),
         blocks=[
             {
                 "type": "section",
@@ -47,7 +47,7 @@ def invalidate_old_training_approval(
 
     slack_client.chat_update(
         ts=model_deployment_workflow_for_training.slack_training_approval_message_ts,
-        channel=SlackConfig.slack_channel_id(),
+        channel=SlackConfig.SLACK_CHANNEL_ID(),
         blocks=[
             {
                 "type": "section",
@@ -130,7 +130,7 @@ def initialize_training_approval(
     assert drift_result is not None
 
     response = slack_client.chat_postMessage(
-        channel=SlackConfig.slack_channel_id(),
+        channel=SlackConfig.SLACK_CHANNEL_ID(),
         blocks=build_training_approval_blocks_initializing(
             drift_result=drift_result
         )
@@ -264,7 +264,7 @@ def update_training_approval(
 
     slack_client.chat_update(
         ts=model_deployment_workflow_for_training.slack_training_approval_message_ts,
-        channel=SlackConfig.slack_channel_id(),
+        channel=SlackConfig.SLACK_CHANNEL_ID(),
         blocks=build_training_approval_blocks(
             workflow_id=model_deployment_workflow_for_training.id,
             drift_result=drift_result,

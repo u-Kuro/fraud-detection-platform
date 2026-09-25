@@ -3,6 +3,14 @@ name = "services"
 version = "1.0.0"
 requires-python = "==3.12.13"
 
+[tool.uv]
+required-version = "0.12.6"
+workspace.members = [
+    "dags_images/*",
+    "fraud_detection_api",
+    "shared",
+]
+
 [dependency-groups]
 # helpers
 lint = [
@@ -17,19 +25,4 @@ stubs = [
 ]
 type_check = [
     "mypy==2.3.1",
-]
-dev = [
-    { include-group = "lint" },
-    { include-group = "stubs" },
-    { include-group = "type-check" },
-]
-
-[tool.uv]
-required-version = "0.12.6"
-
-[tool.uv.workspace]
-members = [
-    "dags_images/*",
-    "fraud_detection_api",
-    "shared",
 ]

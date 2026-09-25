@@ -20,7 +20,7 @@ dev = [
 ]
 
 [tool.uv.sources]
-shared = { workspace = true }
+"shared" = { workspace = true }
 
 [build-system]
 requires = ["hatchling==1.32.4"]
@@ -33,29 +33,11 @@ packages = ["fraud_detection_api"]
 testpaths = ["tests"]
 python_files = ["[a-z]*.py"]
 env = [
-#    # modules/environment/mlflow.py
-#    "MLFLOW_TRACKING_URI=http://localhost:0000",
-#    "MLFLOW_TRACKING_USERNAME=mlflow-username-default",
-#    "MLFLOW_TRACKING_PASSWORD=mlflow-password-default",
-#    "MLFLOW_WORKSPACE=mlflow-workspace-default",
     # modules/environment/mwaa.py
     "AWS_DEFAULT_REGION=aws-region-default",
-#    "AWS_ENDPOINT_URL_MWAA=http://localhost:0000",
-#    "AWS_ACCESS_KEY_ID=aws-access-default",
-#    "AWS_SECRET_ACCESS_KEY=aws-secret-default",
     "MWAA_ENVIRONMENT_NAME=mwaa-environment-default",
-#    # modules/environment/postgres.py
-#    "PGHOST=postgres-host-default",
-#    "PGPORT=0000",
-#    "PGDATABASE=postgres-database-default",
-#    "PGUSER=postgres-user-default",
-#    "PGPASSWORD=postgres-password-default",
     # modules/environment/s3.py
     "AWS_DEFAULT_REGION=aws-region-default",
-#    "AWS_ENDPOINT_URL_MWAA=http://localhost:0000",
-#    "AWS_ACCESS_KEY_ID=aws-access-default",
-#    "AWS_SECRET_ACCESS_KEY=aws-secret-default",
-#    "S3_BUCKET_NAME=s3-bucket-default",
     # modules/environment/slack.py
     "SLACK_APP_LEVEL_TOKEN=slack-app-token-default",
     "SLACK_BOT_USER_OAUTH_TOKEN=slack-bot-token-default",

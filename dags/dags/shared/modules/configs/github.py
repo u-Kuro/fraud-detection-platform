@@ -12,10 +12,10 @@ class GitHubConfig:
 
     @classmethod
     @validated_lru_cache
-    def github_connection_id(cls) -> StrictStr:
-        return Variable.get(cls.github_connection_id.__name__)
+    def GITHUB_CONNECTION_ID(cls) -> StrictStr:
+        return Variable.get(cls.GITHUB_CONNECTION_ID.__name__)
 
     @classmethod
     @validated_lru_cache
-    def github_token(cls) -> StrictStr:
+    def GITHUB_TOKEN(cls) -> StrictStr:
         return "test" # Not needed for nektos/act

@@ -7,5 +7,18 @@ dependencies = [
     "uvicorn==0.52.4",
 ]
 
+[dependency-groups]
+# helpers
+lint = [
+    "ruff==0.16.5",
+]
+type_check = [
+    "mypy==2.3.1",
+]
+
 [tool.uv]
 required-version = "0.12.6"
+default-groups = [
+    "lint",
+    "type_check",
+]

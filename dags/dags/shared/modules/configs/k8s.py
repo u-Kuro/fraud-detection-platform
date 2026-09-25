@@ -9,25 +9,25 @@ from dags.shared.modules.utilities.pydantic.pydantic import validated_lru_cache
 class K8sConfig:
     @classmethod
     @validated_lru_cache
-    def k8s_base_config_map_name(cls) -> StrictStr:
-        return Variable.get(cls.k8s_base_config_map_name.__name__)
+    def K8S_BASE_CONFIG_MAP_NAME(cls) -> StrictStr:
+        return Variable.get(cls.K8S_BASE_CONFIG_MAP_NAME.__name__)
 
     @classmethod
     @validated_lru_cache
-    def k8s_base_secret_name(cls) -> StrictStr:
-        return Variable.get(cls.k8s_base_secret_name.__name__)
+    def K8S_BASE_SECRET_NAME(cls) -> StrictStr:
+        return Variable.get(cls.K8S_BASE_SECRET_NAME.__name__)
 
     @classmethod
     @validated_lru_cache
-    def k8s_connection_id(cls) -> StrictStr:
-        return Variable.get(cls.k8s_connection_id.__name__)
+    def K8S_CONNECTION_ID(cls) -> StrictStr:
+        return Variable.get(cls.K8S_CONNECTION_ID.__name__)
 
     @classmethod
     @validated_lru_cache
-    def k8s_docker_registry_secret_name(cls) -> StrictStr:
-        return Variable.get(cls.k8s_docker_registry_secret_name.__name__)
+    def K8S_DOCKER_REGISTRY_SECRET_NAME(cls) -> StrictStr:
+        return Variable.get(cls.K8S_DOCKER_REGISTRY_SECRET_NAME.__name__)
 
     @classmethod
     @validated_lru_cache
-    def k8s_namespace(cls) -> StrictStr:
-        return Variable.get(cls.k8s_namespace.__name__)
+    def K8S_NAMESPACE(cls) -> StrictStr:
+        return Variable.get(cls.K8S_NAMESPACE.__name__)

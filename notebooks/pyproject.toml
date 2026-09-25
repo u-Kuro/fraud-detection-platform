@@ -28,6 +28,18 @@ repositories = [
 notebook = [
     "ipykernel==7.3.0",
 ]
+# helpers
+lint = [
+    "ruff==0.16.5",
+]
+stubs = [
+    "matplotlib-stubs==0.3.11",
+    "pandas-stubs==3.0.5.260730",
+    "types-seaborn==0.13.2.20260728",
+]
+type_check = [
+    "mypy==2.3.1",
+]
 
 [tool.uv]
 required-version = "0.12.6"
@@ -37,6 +49,9 @@ default-groups = [
     "visualization",
     "repositories",
     "notebook",
+    "lint",
+    "stubs",
+    "type_check",
 ]
 
 [[tool.uv.index]]

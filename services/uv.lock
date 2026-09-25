@@ -1838,15 +1838,6 @@ version = "1.0.0"
 source = { virtual = "." }
 
 [package.dev-dependencies]
-dev = [
-    { name = "boto3-stubs", extra = ["mwaa", "s3"] },
-    { name = "matplotlib-stubs" },
-    { name = "mypy" },
-    { name = "pandas-stubs" },
-    { name = "pyarrow-stubs" },
-    { name = "ruff" },
-    { name = "types-seaborn" },
-]
 lint = [
     { name = "ruff" },
 ]
@@ -1864,15 +1855,6 @@ type-check = [
 [package.metadata]
 
 [package.metadata.requires-dev]
-dev = [
-    { name = "boto3-stubs", extras = ["mwaa", "s3"], specifier = "==1.43.83" },
-    { name = "matplotlib-stubs", specifier = "==0.3.11" },
-    { name = "mypy", specifier = "==2.3.1" },
-    { name = "pandas-stubs", specifier = "==3.0.5.260730" },
-    { name = "pyarrow-stubs", specifier = "==20.0.0.20260819" },
-    { name = "ruff", specifier = "==0.16.5" },
-    { name = "types-seaborn", specifier = "==0.13.2.20260728" },
-]
 lint = [{ name = "ruff", specifier = "==0.16.5" }]
 stubs = [
     { name = "boto3-stubs", extras = ["mwaa", "s3"], specifier = "==1.43.83" },

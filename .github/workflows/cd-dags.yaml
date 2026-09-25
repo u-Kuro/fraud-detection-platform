@@ -205,7 +205,7 @@ jobs:
           docker exec "${AIRFLOW_CONTAINER_NAME}" rm --recursive --force "${AIRFLOW_DAGS_DIRECTORY_PATH}"
 
           docker exec "${AIRFLOW_CONTAINER_NAME}" mkdir --parents "${TEMPORARY_DAGS_FOLDER}"
-          docker cp "${GITHUB_WORKSPACE}/dags/." "${AIRFLOW_CONTAINER_NAME}:${TEMPORARY_DAGS_FOLDER}"
+          docker cp "${GITHUB_WORKSPACE}/dags/dags/." "${AIRFLOW_CONTAINER_NAME}:${TEMPORARY_DAGS_FOLDER}"
 
           docker exec "${AIRFLOW_CONTAINER_NAME}" rsync --recursive --delete --times --delay-updates "${TEMPORARY_DAGS_FOLDER}/" "${AIRFLOW_DAGS_DIRECTORY_PATH}/"
           docker exec "${AIRFLOW_CONTAINER_NAME}" airflow dags reserialize
