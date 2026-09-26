@@ -14,6 +14,36 @@ module "ministack_container" {
   ]
 }
 
+module "act_container" {
+  source = "./modules/docker/act"
+
+  depends_on = [
+    module.main_docker_network
+  ]
+}
+
+module "shim_container" {
+  source = "./modules/docker/shim"
+
+  # Act
+  # /configurations
+  act_image_name = module.act_container.image_name
+
+  # Docker
+  # /configurations
+  main_docker_network_name = module.main_docker_network.name
+
+  # Runner
+  # /configurations
+  RUNNER_CONTAINER_NAME = var.RUNNER_CONTAINER_NAME
+  HOST_USER             = var.HOST_USER
+
+  depends_on = [
+    module.main_docker_network,
+    module.act_container,
+  ]
+}
+
 module "iam" {
   source = "./modules/aws/iam"
 

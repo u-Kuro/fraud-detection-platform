@@ -1,9 +1,11 @@
 [project]
-name = "host_bridge"
+name = "fraud_detection_platform_shim"
 version = "1.0.0"
 requires-python = "==3.12.13"
 dependencies = [
     "fastapi==0.136.3",
+    "pydantic==2.13.4",
+    "pydantic-settings==2.15.0",
     "uvicorn==0.52.4",
 ]
 
@@ -15,10 +17,10 @@ lint = [
 type_check = [
     "mypy==2.3.1",
 ]
+dev = [
+    { include-group = "lint" },
+    { include-group = "type_check" }
+]
 
 [tool.uv]
 required-version = "0.12.6"
-default-groups = [
-    "lint",
-    "type_check",
-]

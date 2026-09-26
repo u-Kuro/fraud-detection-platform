@@ -5,7 +5,7 @@
 #
 # Custom: --config reads the file inside the act container and embeds its contents in the
 # builder creation request, so Docker Desktop passes the config into BuildKit at startup.
-# --driver-opt network attaches BuildKit to fraud-detection-platform-network where
+# --driver-opt network attaches BuildKit to fraud_detection_platform_network where
 # ministack exists as a hostname.
 name: Setup Buildx Action
 description: Sets up Docker Buildx for MiniStack, docker/setup-buildx-action can't configure MiniStack's plain HTTP registry.
@@ -18,7 +18,7 @@ runs:
         
         REGISTRY="ministack:4566"
         CONFIG="${RUNNER_TEMP}/buildkitd.toml"
-        NETWORK="fraud-detection-platform-network"
+        NETWORK="fraud_detection_platform_network"
         
         cat > "${CONFIG}" << EOF
         [registry."${REGISTRY}"]

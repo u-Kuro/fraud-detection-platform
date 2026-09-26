@@ -49,6 +49,10 @@ variable "mlflow_flask_server_secret_key" {
   sensitive = true
 }
 
+# Runner
+variable "RUNNER_CONTAINER_NAME" { type = string }
+variable "HOST_USER" { type = string }
+
 # sslip.io
 # /dns
 variable "sslip_io_public_wildcard_dns_domain" {

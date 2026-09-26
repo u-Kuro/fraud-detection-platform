@@ -1,8 +1,9 @@
 #!/bin/bash
 set -euo pipefail
 
-IMAGE="${1}"
-MAKEFILE_TARGET="${2}"
+IMAGE_NAME="${1}"
+RUNNER_CONTAINER_NAME="${2}"
+COMMAND="${3}"
 
 WORKING_DIRECTORY=/app
 HOST_UID="$(id -u)"
@@ -13,19 +14,12 @@ DOCKER_RUN_ARGUMENTS=(
     --add-host "host.docker.internal:host-gateway"
     --add-host "api.host.docker.internal:host-gateway"
     --volume "${ABSOLUTE_ROOT_DIRECTORY}:${WORKING_DIRECTORY}"
+    --env RUNNER_CONTAINER_NAME="${RUNNER_CONTAINER_NAME}"
+    --env HOST_USER="${HOST_UID}:${HOST_GID}"
     --user "${HOST_UID}:${HOST_GID}"
 )
-if [[ -S /var/run/docker.sock ]]; then
-    DOCKER_SOCK_GID="$(stat -c "%g" /var/run/docker.sock)"
-    if [[ -n "${DOCKER_SOCK_GID}" ]]; then
-        DOCKER_RUN_ARGUMENTS=(
-          "${DOCKER_RUN_ARGUMENTS[@]}"
-          --group-add "${DOCKER_SOCK_GID}"
-        )
-    fi
-fi
 
-docker run -it --init --rm \
+docker run -it --init --rm --name "${RUNNER_CONTAINER_NAME}" \
     "${DOCKER_RUN_ARGUMENTS[@]}" \
-    "${IMAGE}" \
-    "make ${MAKEFILE_TARGET}"
+    "${IMAGE_NAME}" \
+    "${COMMAND}"

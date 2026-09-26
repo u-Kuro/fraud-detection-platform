@@ -40,7 +40,7 @@ def apply_model_deployment() -> HttpOperator:
         method="POST",
         headers={
             "Authorization": f"Bearer {GitHubConfig.GITHUB_TOKEN()}",
-            "Accept": "application/vnd.github.v3+json",
+            "Accept": "application/vnd.github+json",
         },
         # Data unused for nektos/act
         data=json.dumps({

@@ -19,5 +19,5 @@ define BUILD_IMAGE
 $(if $(filter $(IS_INSIDE_FRAUD_DETECTION_PLATFORM_DOCKER),true),,$(call RUN_MAIN_SCRIPT,build-image) $(call FORMAT_SCRIPT_ARGUMENTS,DOCKERFILE,$(1)) $(call FORMAT_SCRIPT_ARGUMENTS,IMAGE,$(2)))
 endef
 define RUN_TARGET_IN_CONTAINER
-$(SCRIPT_RUNNER) "$(1)/run-target.$(SCRIPT_EXTENSION)" $(2) $(3)
+$(SCRIPT_RUNNER) "$(1)/run-target.$(SCRIPT_EXTENSION)" $(2) $(3) $(4)
 endef

@@ -5,7 +5,7 @@
 --pull=false
 
 # Set main docker network
---network fraud-detection-platform-network
+--network fraud_detection_platform_network
 
 # Set AWS CLI to use MiniStack
 --env AWS_ENDPOINT_URL=http://ministack:4566

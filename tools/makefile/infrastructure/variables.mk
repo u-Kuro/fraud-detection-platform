@@ -4,4 +4,5 @@ INFRASTRUCTURE_SCRIPT_DIRECTORY 		  := $(INFRASTRUCTURE_DIRECTORY)/scripts
 INFRASTRUCTURE_CONTAINER_SCRIPT_DIRECTORY := $(INFRASTRUCTURE_SCRIPT_DIRECTORY)/container
 # Docker
 INFRASTRUCTURE_DOCKERFILE := infrastructure/Dockerfile
-INFRASTRUCTURE_IMAGE 	  := fraud-detection-platform-infrastructure
+INFRASTRUCTURE_IMAGE 	  := fraud_detection_platform_infrastructure
+INFRASTRUCTURE_CONTAINER  := fraud_detection_platform_infrastructure

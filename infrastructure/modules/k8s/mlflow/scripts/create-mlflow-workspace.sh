@@ -2,7 +2,9 @@
 set -eu
 
 # install curl and jq
-apk add --no-cache curl jq 1>/dev/null
+apk add --no-cache \
+    curl=8.22.0-r0 \
+    jq=1.8.2-r0
 
 # Create user if not exists
 USER=$(

@@ -1,10 +1,10 @@
 # Official: amazon-ecr-login hardcodes an amazonaws.com URL and never reads AWS_ENDPOINT_URL,
 # so it always misses MiniStack. Even if the URL were right, docker login runs through the
-# Docker Desktop host daemon, which isn't on fraud-detection-platform-network and rejects
+# Docker Desktop host daemon, which isn't on fraud_detection_platform_network and rejects
 # plain HTTP registries.
 #
 # Custom: writing credentials directly to ~/.docker/config.json bypasses the daemon entirely.
-# BuildKit reads this file when pushing, and since it's on fraud-detection-platform-network
+# BuildKit reads this file when pushing, and since it's on fraud_detection_platform_network
 # it can reach ministack over plain HTTP.
 name: Amazon ECR Login
 description: Logs in to ECR for MiniStack, amazon-ecr-login can't reach MiniStack and docker login goes through the host daemon which can't either.
