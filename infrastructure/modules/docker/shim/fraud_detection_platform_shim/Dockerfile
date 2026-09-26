@@ -1,4 +1,4 @@
-FROM python:3.12.13-slim AS base
+FROM python:3.12.13-slim
 
 RUN apt-get update \
     && apt-get install --no-install-recommends --yes \
@@ -7,10 +7,7 @@ RUN apt-get update \
         bash=5.2.37-2+b10 \
     && rm --recursive --force /var/lib/apt/lists/*
 
-ENV PYTHON_DIRECTORY=/app/infrastructure/modules/docker/shim/fraud_detection_platform_shim
-ENV SCRIPT_DIRECTORY=$PYTHON_DIRECTORY/scripts
-
-WORKDIR $PYTHON_DIRECTORY
+WORKDIR /opt/app
 
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -18,16 +15,18 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV UV_LINK_MODE=copy
 ENV UV_COMPILE_BYTECODE=1
 ENV UV_PYTHON_PREFERENCE=only-system
-ENV UV_PROJECT_ENVIRONMENT=$PYTHON_DIRECTORY/.venv
+ENV UV_PROJECT_ENVIRONMENT=/opt/app/.venv
 
-ENV PATH=$PYTHON_DIRECTORY/.venv/bin:$PATH
+ENV PATH=/opt/app/.venv/bin:$PATH
 
 COPY --from=ghcr.io/astral-sh/uv:0.12.6 /uv /usr/local/bin/uv
 
+COPY infrastructure/modules/docker/shim/fraud_detection_platform_shim .
+
 RUN --mount=type=cache,target=/root/.cache/uv \
-    --mount=type=bind,source=infrastructure/modules/docker/shim/fraud_detection_platform_shim/pyproject.toml,target=pyproject.toml \
-    --mount=type=bind,source=infrastructure/modules/docker/shim/fraud_detection_platform_shim/uv.lock,target=uv.lock \
     uv sync --package fraud_detection_platform_shim --locked
+
+ENV SCRIPT_DIRECTORY=/opt/app/scripts
 
 WORKDIR /app
 

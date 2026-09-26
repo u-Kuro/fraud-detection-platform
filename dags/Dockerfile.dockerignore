@@ -16,6 +16,7 @@
 
 # Python Cache
 **/.venv/
+**/.python-version
 **/__pycache__/
 **/*.pyc
 **/*.pyo
