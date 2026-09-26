@@ -9,6 +9,7 @@ resource "docker_container" "traefik_http_proxy" {
   image   = docker_image.socat.image_id
   command = ["TCP-LISTEN:80,fork,reuseaddr", "TCP-CONNECT:${var.eks_container_ip}:80"]
 
+  network_mode = var.main_network_name
   networks_advanced {
     name         = var.main_network_name
     ipv4_address = cidrhost(var.main_network_subnet, -2) # 10.232.255.254

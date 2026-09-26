@@ -1,6 +1,6 @@
 # Docker Network
 # /configurations
-variable "main_docker_network_name" { type = string }
+variable "main_network_name" { type = string }
 
 # MiniStack
 # /configurations

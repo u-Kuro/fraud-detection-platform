@@ -9,8 +9,9 @@ resource "docker_container" "ministack" {
   image   = docker_image.ministack.image_id
   restart = "unless-stopped"
 
+  network_mode = var.main_network_name
   networks_advanced {
-    name = var.main_docker_network_name
+    name = var.main_network_name
   }
 
   ports {
@@ -19,7 +20,7 @@ resource "docker_container" "ministack" {
   }
 
   env = [
-    "DOCKER_NETWORK=${var.main_docker_network_name}",
+    "DOCKER_NETWORK=${var.main_network_name}",
     "LOG_LEVEL=DEBUG",
     # MiniStack persistence has bugs (clean restart is recommended)
     # "PERSIST_STATE=1",

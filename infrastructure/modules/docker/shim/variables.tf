@@ -4,7 +4,7 @@ variable "act_image_name" { type = string }
 
 # Docker
 # /configurations
-variable "main_docker_network_name" { type = string }
+variable "main_network_name" { type = string }
 
 # MiniStack
 # /configurations

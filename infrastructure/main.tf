@@ -7,7 +7,7 @@ module "ministack_container" {
 
   # Docker Network
   # /configurations
-  main_docker_network_name = module.main_docker_network.name
+  main_network_name = module.main_docker_network.name
 
   depends_on = [
     module.main_docker_network
@@ -31,7 +31,7 @@ module "shim_container" {
 
   # Docker
   # /configurations
-  main_docker_network_name = module.main_docker_network.name
+  main_network_name = module.main_docker_network.name
 
   # Runner
   # /configurations

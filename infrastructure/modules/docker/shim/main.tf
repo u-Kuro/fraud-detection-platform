@@ -11,10 +11,10 @@ resource "docker_container" "fraud_detection_platform_shim" {
   name  = var.shim_container_name
   image = docker_image.fraud_detection_platform_shim.image_id
 
-  network_mode = var.main_docker_network_name
-  host {
-    host = "api.github.com.shim"
-    ip   = "127.0.0.1"
+  network_mode = var.main_network_name
+  networks_advanced {
+    name    = var.main_network_name
+    aliases = ["api.github.com.shim"]
   }
 
   volumes {
