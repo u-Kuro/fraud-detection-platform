@@ -3,7 +3,7 @@ resource "docker_image" "fraud_detection_platform_shim" {
 
   build {
     context    = path.cwd
-    dockerfile = "infrastructure/modules/shim/fraud_detection_platform_shim/Dockerfile"
+    dockerfile = "infrastructure/modules/docker/shim/fraud_detection_platform_shim/Dockerfile"
   }
 }
 

@@ -7,7 +7,7 @@ RUN apt-get update \
         bash=5.2.37-2+b10 \
     && rm --recursive --force /var/lib/apt/lists/*
 
-ENV PYTHON_DIRECTORY=/app/infrastructure/modules/shim/fraud_detection_platform_shim
+ENV PYTHON_DIRECTORY=/app/infrastructure/modules/docker/shim/fraud_detection_platform_shim
 ENV SCRIPT_DIRECTORY=$PYTHON_DIRECTORY/scripts
 
 WORKDIR $PYTHON_DIRECTORY
@@ -25,8 +25,8 @@ ENV PATH=$PYTHON_DIRECTORY/.venv/bin:$PATH
 COPY --from=ghcr.io/astral-sh/uv:0.12.6 /uv /usr/local/bin/uv
 
 RUN --mount=type=cache,target=/root/.cache/uv \
-    --mount=type=bind,source=infrastructure/modules/shim/fraud_detection_platform_shim/pyproject.toml,target=pyproject.toml \
-    --mount=type=bind,source=infrastructure/modules/shim/fraud_detection_platform_shim/uv.lock,target=uv.lock \
+    --mount=type=bind,source=infrastructure/modules/docker/shim/fraud_detection_platform_shim/pyproject.toml,target=pyproject.toml \
+    --mount=type=bind,source=infrastructure/modules/docker/shim/fraud_detection_platform_shim/uv.lock,target=uv.lock \
     uv sync --package fraud_detection_platform_shim --locked
 
 WORKDIR /app
