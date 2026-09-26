@@ -1,7 +1,6 @@
-FROM alpine:3.24.1
+FROM alpine:3.24.2
 
-RUN apk add --no-cache \
-    curl=8.22.0-r0
+RUN apk add --no-cache curl
 
 WORKDIR /app
 

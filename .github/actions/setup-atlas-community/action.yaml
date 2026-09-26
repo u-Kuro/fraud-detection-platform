@@ -9,8 +9,8 @@ runs:
 
         ATLAS_DIRECTORY="${RUNNER_TEMP}/atlas"
         mkdir --parents "${ATLAS_DIRECTORY}"
-
+        
         ATLAS_INSTALLER="${ATLAS_DIRECTORY}/atlasgo.sh"
         curl --silent --fail --location --output "${ATLAS_INSTALLER}" "https://atlasgo.sh"
-
-        CI=true sh "${ATLAS_INSTALLER}" --community
+        
+        CI=true ATLAS_VERSION=v1.2.0 sh "${ATLAS_INSTALLER}" --community

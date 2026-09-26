@@ -1,11 +1,16 @@
+FROM docker:29.7.2-cli AS docker-cli
+FROM docker/buildx-bin:0.36.1 AS buildx-bin
+
 FROM python:3.12.13-slim
 
+COPY --from=docker-cli /usr/local/bin/docker /usr/local/bin/docker
+COPY --from=buildx-bin /buildx /usr/libexec/docker/cli-plugins/docker-buildx
+
 RUN apt-get update \
-    && apt-get install --no-install-recommends --yes \
-        docker-cli=26.1.5+dfsg1-9+deb13u1 \
-        docker-buildx=0.13.1+ds1-3 \
-        bash=5.2.37-2+b10 \
+    && apt-get install --no-install-recommends --yes bash \
     && rm --recursive --force /var/lib/apt/lists/*
+
+ENV DOCKER_CLI_EXPERIMENTAL=enabled
 
 WORKDIR /opt/app
 

@@ -137,7 +137,7 @@ resource "kubernetes_job_v1" "teams" {
 
         container {
           name  = "create-mlflow-workspace-for-${each.key}"
-          image = "alpine:3.24.1"
+          image = "alpine:3.24.2"
 
           command = ["/bin/sh", "/${local.create_mlflow_workspace_script_file_relative_path}"]
 

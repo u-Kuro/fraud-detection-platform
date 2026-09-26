@@ -5,7 +5,7 @@ resource "docker_image" "socat" {
 }
 # Create HTTP proxy for Traefik listening on K3s IP
 resource "docker_container" "traefik_http_proxy" {
-  name    = "traefik-http-proxy"
+  name    = "traefik_http_proxy"
   image   = docker_image.socat.image_id
   command = ["TCP-LISTEN:80,fork,reuseaddr", "TCP-CONNECT:${var.eks_container_ip}:80"]
 

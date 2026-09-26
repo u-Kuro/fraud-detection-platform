@@ -1,15 +1,22 @@
+FROM docker:29.7.2-cli AS docker-cli
+FROM docker/buildx-bin:0.36.1 AS buildx-bin
+FROM public.ecr.aws/aws-cli/aws-cli:2.36.32 AS aws-cli
+FROM alpine/helm:4.2.3 AS helm
+FROM rancher/kubectl:v1.34.2 AS kubectl
+
 FROM hashicorp/terraform:1.16.3
 
-RUN apk add --no-cache \
-    aws-cli=2.34.63-r0 \
-    bash=5.3.9-r1 \
-    jq=1.8.2-r0 \
-    sed=4.9-r2 \
-    docker-cli=29.5.3-r1 \
-    docker-cli-buildx=0.34.1-r1 \
-    helm=3.19.0-r8 \
-    kubectl=1.36.1-r1 \
-    make=4.4.1-r4
+COPY --from=docker-cli /usr/local/bin/docker /usr/local/bin/docker
+COPY --from=buildx-bin /buildx /usr/libexec/docker/cli-plugins/docker-buildx
+COPY --from=aws-cli /usr/local/aws-cli /usr/local/aws-cli
+COPY --from=aws-cli /usr/local/bin/aws /usr/local/bin/aws
+COPY --from=aws-cli /usr/local/bin/aws_completer /usr/local/bin/aws_completer
+COPY --from=helm /usr/bin/helm /usr/local/bin/helm
+COPY --from=kubectl /bin/kubectl /usr/local/bin/kubectl
+
+RUN apk add --no-cache bash curl jq sed make
+
+ENV DOCKER_CLI_EXPERIMENTAL=enabled
 
 WORKDIR /app
 
