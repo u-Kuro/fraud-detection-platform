@@ -19,7 +19,7 @@ if [[ -v HOST_USER ]]; then
     )
 fi
 
-docker run -it --init --rm --name "${CONTAINER_NAME}" \
+docker run --init --rm --name "${CONTAINER_NAME}" \
     "${DOCKER_RUN_ARGUMENTS[@]}" \
     "${IMAGE_NAME}" \
     "$@"
