@@ -9,7 +9,6 @@ resource "docker_container" "ministack" {
   image   = docker_image.ministack.image_id
   restart = "unless-stopped"
 
-  network_mode = var.main_network_name
   networks_advanced {
     name = var.main_network_name
   }

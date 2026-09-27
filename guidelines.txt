@@ -1,3 +1,22 @@
+clear
+make up
+pause
+
+docker run --rm --network fraud_detection_platform_network curlimages/curl:latest `
+  -i -X POST "http://api.github.com.shim:16138/repos/test-owner/test-repo/actions/workflows/cd-fraud-detection-api.yaml/dispatches" `
+  -H "Accept: application/vnd.github+json" `
+  -H "Content-Type: application/json" `
+  -d '{\"ref\": \"main\"}'
+pause
+
+docker run --rm --network fraud_detection_platform_network curlimages/curl:latest `
+  -i -X POST "http://fraud_detection_platform_shim:16138/repos/test-owner/test-repo/actions/workflows/cd-fraud-detection-api.yaml/dispatches" `
+  -H "Accept: application/vnd.github+json" `
+  -H "Content-Type: application/json" `
+  -d '{\"ref\": \"main\"}'
+
+
+
 up:
 1) infrastructure
 2) host bridge
