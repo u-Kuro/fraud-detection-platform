@@ -22,7 +22,11 @@ async def workflow_dispatch(
     inputs = data.get("inputs", {})
 
     container_name = f"act-{owner}-{repo}-{workflow_file}-{uuid4()}"
-    arguments = ["workflow_dispatch", "-W", f".github/workflows/{workflow_file}"]
+    arguments = [
+        "workflow_dispatch",
+        "--workflows", f".github/workflows/{workflow_file}",
+        "--bind=false"
+    ]
     for key, value in inputs.items():
         arguments += ["--input", f"{key}={value}"]
 

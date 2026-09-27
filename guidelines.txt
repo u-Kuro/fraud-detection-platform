@@ -1,3 +1,14 @@
+cd C:\Projects\Personal\Practice\fraud-detection-platform
+
+clear
+make down
+pause
+
+docker container prune -f
+docker volume prune -a -f
+docker network prune -f
+pause
+
 clear
 make up
 pause
