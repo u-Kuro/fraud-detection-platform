@@ -127,7 +127,6 @@ def initialize_training_approval(
     drift_result: DriftCheckResult | None,
 ) -> ModelDeploymentWorkflowForTraining:
     assert model_deployment_workflow_for_training is not None
-    assert drift_result is not None
 
     response = slack_client.chat_postMessage(
         channel=SlackConfig.SLACK_CHANNEL_ID(),

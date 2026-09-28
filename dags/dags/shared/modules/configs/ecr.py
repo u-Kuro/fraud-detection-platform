@@ -19,5 +19,10 @@ class ECRConfig:
 
     @classmethod
     @validated_lru_cache
+    def SEED_TRANSACTION_INFERENCES_IMAGE(cls) -> StrictStr:
+        return Variable.get(cls.SEED_TRANSACTION_INFERENCES_IMAGE.__name__)
+
+    @classmethod
+    @validated_lru_cache
     def TRAIN_MODEL_IMAGE(cls) -> StrictStr:
         return Variable.get(cls.TRAIN_MODEL_IMAGE.__name__)

@@ -34,11 +34,7 @@ def load_current_dataset(
                 TransactionInferences.v27, TransactionInferences.v28,
             )
             .distinct(TransactionInferences.transaction_id)
-            .where(
-                TransactionInferences.transaction_timestamp > current_dataset_cutoff,
-                TransactionInferences.is_fraud_prediction.is_not(None),
-                TransactionInferences.is_fraud_probability.is_not(None)
-            )
+            .where(TransactionInferences.transaction_timestamp > current_dataset_cutoff)
             .order_by(
                 TransactionInferences.transaction_id,
                 TransactionInferences.created_at.desc()

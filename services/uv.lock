@@ -12,6 +12,7 @@ members = [
     "archive",
     "drift-check",
     "fraud-detection-api",
+    "seed-transaction-inferences",
     "services",
     "shared",
     "train-model",
@@ -1830,6 +1831,49 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/91/4c/075e4f66471bac101141ac739e9e135549be1bae584571bd03a530c056e1/scipy-1.18.1-cp312-cp312-musllinux_1_2_x86_64.whl", hash = "sha256:d2924a03db38dc2e848bca2fe9f077dafb891480b91a00a0963a8cf86dfc31c1", size = 37480330, upload-time = "2026-08-21T23:24:19.608Z" },
     { url = "https://files.pythonhosted.org/packages/39/e7/979fd14e75008623df31ba70d6bb144700f68feadcea042021c06a05bf82/scipy-1.18.1-cp312-cp312-win_amd64.whl", hash = "sha256:5e4d44984abc0020154ea81b247adeddcc3ac5527b975ff798bd1ba0adc513c2", size = 36658278, upload-time = "2026-08-21T23:24:25.463Z" },
     { url = "https://files.pythonhosted.org/packages/c7/0b/e1525354ff9d7d5feb6d1b31af6d14072e5c91e9607b421fa1ec889660b3/scipy-1.18.1-cp312-cp312-win_arm64.whl", hash = "sha256:d65d448389b8436493abcf629cc94ad0cf32aecaf06e1acca1de53cc795f2f12", size = 24400588, upload-time = "2026-08-21T23:24:30.579Z" },
+]
+
+[[package]]
+name = "seed-transaction-inferences"
+version = "1.0.0"
+source = { editable = "dags_images/seed_transaction_inferences" }
+dependencies = [
+    { name = "pandas" },
+    { name = "shared" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "pyfakefs" },
+    { name = "pytest" },
+    { name = "pytest-env" },
+    { name = "pytest-mock" },
+]
+test = [
+    { name = "pyfakefs" },
+    { name = "pytest" },
+    { name = "pytest-env" },
+    { name = "pytest-mock" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "pandas", specifier = "==2.3.3" },
+    { name = "shared", editable = "shared" },
+]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "pyfakefs", specifier = "==6.2.0" },
+    { name = "pytest", specifier = "==9.1.1" },
+    { name = "pytest-env", specifier = "==1.7.0" },
+    { name = "pytest-mock", specifier = "==3.15.1" },
+]
+test = [
+    { name = "pyfakefs", specifier = "==6.2.0" },
+    { name = "pytest", specifier = "==9.1.1" },
+    { name = "pytest-env", specifier = "==1.7.0" },
+    { name = "pytest-mock", specifier = "==3.15.1" },
 ]
 
 [[package]]

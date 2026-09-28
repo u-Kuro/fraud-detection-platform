@@ -32,8 +32,12 @@ packages = ["archive"]
 testpaths = ["tests"]
 python_files = ["[a-z]*.py"]
 env = [
-    # modules/environment/archive.py
+    # archive/modules/environment/archive.py
     "TRANSACTION_INFERENCES_ISO_DATETIME_CUTOFF=0001-01-01T00:00:00+00:00",
-    # modules/environment/s3.py
+    # shared/modules/environment/s3.py
+    "AWS_DEFAULT_REGION=aws-region-default",
+    "AWS_ENDPOINT_URL_MWAA=http://localhost:0000",
+    "AWS_ACCESS_KEY_ID=aws-access-default",
+    "AWS_SECRET_ACCESS_KEY=aws-secret-default",
     "S3_BUCKET_NAME=s3-bucket-default",
 ]

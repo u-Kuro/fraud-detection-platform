@@ -109,12 +109,8 @@ def get_current_model_deployment_workflow_for_training() -> ModelDeploymentWorkf
     with sql_session.begin() as session:
         model_deployment_workflow_rows = session.execute(
             select(ModelDeploymentWorkflows)
-            .where(
-                ModelDeploymentWorkflows.project_id == PostgresConfig.project_id()
-            )
-            .order_by(
-                ModelDeploymentWorkflows.created_at.desc()
-            )
+            .where(ModelDeploymentWorkflows.project_id == PostgresConfig.project_id())
+            .order_by(ModelDeploymentWorkflows.created_at.desc())
             .limit(2)
         ).mappings().all()
 

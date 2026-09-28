@@ -10,11 +10,14 @@ class TestMLflowEnvironment:
 
     def test_values(self, monkeypatch: MonkeyPatch):
         value = "value"
-        monkeypatch.setenv(
-            name="MLFLOW_WORKSPACE",
-            value=value
-        )
+        monkeypatch.setenv(name="MLFLOW_TRACKING_URI", value=value)
+        monkeypatch.setenv(name="MLFLOW_TRACKING_USERNAME", value=value)
+        monkeypatch.setenv(name="MLFLOW_TRACKING_PASSWORD", value=value)
+        monkeypatch.setenv(name="MLFLOW_WORKSPACE", value=value)
 
         environment = MLflowEnvironment()
 
+        assert environment.MLFLOW_TRACKING_URI == value
+        assert environment.MLFLOW_TRACKING_USERNAME == value
+        assert environment.MLFLOW_TRACKING_PASSWORD == value
         assert environment.MLFLOW_WORKSPACE == value

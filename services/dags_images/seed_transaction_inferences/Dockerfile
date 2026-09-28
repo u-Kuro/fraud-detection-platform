@@ -1,0 +1,51 @@
+# syntax=docker/dockerfile:1-labs
+FROM scratch AS services
+COPY services/ /
+
+FROM python:3.12.13-slim AS base
+
+WORKDIR /app
+
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+
+ENV UV_LINK_MODE=copy
+ENV UV_COMPILE_BYTECODE=1
+ENV UV_PYTHON_PREFERENCE=only-system
+ENV UV_PROJECT_ENVIRONMENT=/app/.venv
+
+ENV PATH=/app/.venv/bin:$PATH
+
+COPY --from=ghcr.io/astral-sh/uv:0.12.6 /uv /usr/local/bin/uv
+
+COPY --parents --from=services **/pyproject.toml uv.lock ./
+
+COPY services/dags_images/seed_transaction_inferences/seed_transaction_inferences       ./dags_images/seed_transaction_inferences/seed_transaction_inferences
+COPY services/shared/shared                                                             ./shared/shared
+
+FROM base AS test-base
+
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --package seed_transaction_inferences --locked
+
+COPY services/dags_images/seed_transaction_inferences/tests     ./dags_images/seed_transaction_inferences/tests
+COPY services/shared/tests                                      ./shared/tests
+
+FROM test-base AS test-dev
+
+CMD ["sh", "-c", "uv run --directory dags_images/seed_transaction_inferences pytest --verbose && uv run --directory shared pytest --verbose"]
+
+FROM test-base AS test
+
+RUN uv run --directory dags_images/seed_transaction_inferences  pytest --quiet
+RUN uv run --directory shared                                   pytest --quiet
+
+FROM base AS runtime
+
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --package seed_transaction_inferences --no-dev --frozen --no-editable
+
+RUN useradd --create-home app_user && chown --recursive app_user /app
+USER app_user
+
+CMD ["python", "-m", "seed_transaction_inferences.main"]

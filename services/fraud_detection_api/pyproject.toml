@@ -33,12 +33,19 @@ packages = ["fraud_detection_api"]
 testpaths = ["tests"]
 python_files = ["[a-z]*.py"]
 env = [
-    # modules/environment/mwaa.py
+    # shared/modules/environment/mwaa.py
     "AWS_DEFAULT_REGION=aws-region-default",
+    "AWS_ENDPOINT_URL_MWAA=http://localhost:0000",
+    "AWS_ACCESS_KEY_ID=aws-access-default",
+    "AWS_SECRET_ACCESS_KEY=aws-secret-default",
     "MWAA_ENVIRONMENT_NAME=mwaa-environment-default",
-    # modules/environment/s3.py
+    # shared/modules/environment/s3.py
     "AWS_DEFAULT_REGION=aws-region-default",
-    # modules/environment/slack.py
+    "AWS_ENDPOINT_URL_MWAA=http://localhost:0000",
+    "AWS_ACCESS_KEY_ID=aws-access-default",
+    "AWS_SECRET_ACCESS_KEY=aws-secret-default",
+    "S3_BUCKET_NAME=s3-bucket-default",
+    # shared/modules/environment/slack.py
     "SLACK_APP_LEVEL_TOKEN=slack-app-token-default",
     "SLACK_BOT_USER_OAUTH_TOKEN=slack-bot-token-default",
     "SLACK_CHANNEL_ID=C000000000",

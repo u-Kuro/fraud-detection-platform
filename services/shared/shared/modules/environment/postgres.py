@@ -1,13 +1,14 @@
+from pydantic import StrictStr, StrictInt
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class PostgresEnvironment(BaseSettings):
     model_config = SettingsConfigDict(case_sensitive=True)
 
-    # PGHOST: StrictStr
-    # PGPORT: int
-    # PGDATABASE: StrictStr
-    # PGUSER: StrictStr
-    # PGPASSWORD: StrictStr
+    PGHOST: StrictStr
+    PGPORT: StrictStr
+    PGDATABASE: StrictStr
+    PGUSER: StrictStr
+    PGPASSWORD: StrictStr
 
     @property
     def DATABASE_URL(self) -> str:

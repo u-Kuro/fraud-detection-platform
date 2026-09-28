@@ -11,6 +11,12 @@ drift-check:
   - services/pyproject.toml
   - services/uv.lock
 
+seed-transaction-inferences:
+  - services/dags_images/seed_transaction_inferences/**
+  - services/shared/**
+  - services/pyproject.toml
+  - services/uv.lock
+
 train-model:
   - services/dags_images/train_model/**
   - services/shared/**

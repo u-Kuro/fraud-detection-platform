@@ -26,7 +26,7 @@ def delete_rejected_promotion_workflow(data: PromotionDecision):
         session.execute(
             delete(ModelDeploymentWorkflows)
             .where(
-                ModelDeploymentWorkflows.id == data.model_deployment_workflow,
+                ModelDeploymentWorkflows.id == data.model_deployment_workflow.id,
                 ModelDeploymentWorkflows.project_id == PostgresConfig.project_id()
             )
         )
