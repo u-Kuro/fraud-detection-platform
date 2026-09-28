@@ -1,3 +1,5 @@
+# TODO - orchastrate makefile
+
 cd C:\Projects\Personal\Practice\fraud-detection-platform
 
 clear
@@ -176,6 +178,7 @@ act push -W .github/workflows/delete/test-push.yaml
 $NS = "mle"
 $CONTAINER = "ministack-eks-us-east-1-eks"
 $KUBECTL = "docker exec -it $CONTAINER kubectl"
+
 $APP = "fraud-detection-api"
 Invoke-Expression "$KUBECTL get svc $APP -n $NS -o yaml"
 Invoke-Expression "$KUBECTL get ingressroute $APP -n $NS -o yaml"
@@ -207,6 +210,8 @@ $secret.data.PSObject.Properties | ForEach-Object {
 }
 ____
 
+cd C:\Projects\Personal\Practice\fraud-detection-platform
+
 clear
 # archive
 docker build -t test-archive -f services/dags_images/archive/Dockerfile --target test-dev .
@@ -215,6 +220,10 @@ docker run -it --init --rm test-archive
 # drift_check
 docker build -t test-drift-check -f services/dags_images/drift_check/Dockerfile --target test-dev .
 docker run -it --init --rm test-drift-check
+
+# seed_transaction_inferences
+docker build -t test-seed-transaction-inferences -f services/dags_images/seed_transaction_inferences/Dockerfile --target test-dev .
+docker run -it --init --rm test-seed-transaction-inferences
 
 # train_model
 docker build -t test-train-model -f services/dags_images/train_model/Dockerfile --target test-dev .

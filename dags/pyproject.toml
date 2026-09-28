@@ -57,6 +57,7 @@ env = [
     # dags/shared/modules/configs/ecr.py
     "AIRFLOW_VAR_ARCHIVE_IMAGE=000000000000.dkr.ecr.us-east-1.amazonaws.com/archive:test",
     "AIRFLOW_VAR_DRIFT_CHECK_IMAGE=000000000000.dkr.ecr.us-east-1.amazonaws.com/drift-check:test",
+    "AIRFLOW_VAR_SEED_TRANSACTION_INFERENCES_IMAGE=000000000000.dkr.ecr.us-east-1.amazonaws.com/seed-transaction-inferences:test",
     "AIRFLOW_VAR_TRAIN_MODEL_IMAGE=000000000000.dkr.ecr.us-east-1.amazonaws.com/train-model:test",
     # dags/shared/modules/configs/github.py
     "AIRFLOW_VAR_GITHUB_CONNECTION_ID=github-connection-default",

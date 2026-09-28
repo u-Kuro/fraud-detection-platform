@@ -1,6 +1,6 @@
 from _pytest.monkeypatch import MonkeyPatch
 
-from modules.environment.seed_transaction_inferences import SeedTransactionInferencesEnvironment
+from seed_transaction_inferences.modules.environment.seed_transaction_inferences import SeedTransactionInferencesEnvironment
 
 class TestDriftCheckEnvironment:
     def test_instance(self):

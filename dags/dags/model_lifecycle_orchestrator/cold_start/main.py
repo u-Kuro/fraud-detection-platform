@@ -3,7 +3,7 @@ from airflow.sdk import dag
 from dags.model_lifecycle_orchestrator.cold_start.modules.configs.airflow.task_ids import NoActionTaskIDs
 from dags.model_lifecycle_orchestrator.cold_start.repositories.postgres.projects import upsert_project
 from dags.model_lifecycle_orchestrator.cold_start.repositories.postgres.transaction_inferences import is_transaction_inferences_empty
-from dags.model_lifecycle_orchestrator.cold_start.services.tasks import get_transaction_inferences_seed, seed_transaction_inferences_pod, trigger_check_training_need, no_action
+from dags.model_lifecycle_orchestrator.cold_start.services.tasks import get_transaction_inferences_seed_s3_key, seed_transaction_inferences_pod, trigger_check_training_need, no_action
 from dags.shared.modules.configs.airflow.dag_ids import DAGIDs
 from dags.shared.modules.configs.project import ProjectConfig
 from dags.shared.modules.utilities.airflow.airflow import sequence
@@ -24,9 +24,9 @@ def cold_start():
         is_transaction_inferences_empty(),
         [
             sequence(
-                transaction_inferences_seed := get_transaction_inferences_seed(),
+                transaction_inferences_seed_s3_key := get_transaction_inferences_seed_s3_key(),
                 seed_transaction_inferences_pod(
-                    transaction_inferences_seed_s3_key=transaction_inferences_seed.s3_key
+                    transaction_inferences_seed_s3_key=transaction_inferences_seed_s3_key
                 ),
                 trigger_check_training_need(),
             ),

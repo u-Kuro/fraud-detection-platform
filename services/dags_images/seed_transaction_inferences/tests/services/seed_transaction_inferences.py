@@ -4,7 +4,7 @@ from uuid import UUID
 import pandas
 
 from shared.modules.schemas.postgres.transaction_inferences import TransactionInferences
-from services.seed_transaction_inferences import transform_transaction_inferences_seed_csv
+from seed_transaction_inferences.services.seed_transaction_inferences import transform_transaction_inferences_seed_csv
 
 def test_transform_transaction_inferences_seed_csv():
     dataframe = pandas.DataFrame({

@@ -1,8 +1,8 @@
-from airflow import models
 from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
 from airflow.providers.standard.operators.empty import EmptyOperator
 from airflow.providers.standard.operators.trigger_dagrun import TriggerDagRunOperator
 from airflow.sdk import task, get_current_context
+from kubernetes.client import models
 
 from dags.model_lifecycle_orchestrator.cold_start.modules.configs.airflow.task_ids import NoActionTaskIDs
 from dags.model_lifecycle_orchestrator.cold_start.modules.configs.k8s.environments import SeedTransactionInferencesEnvironmentKeys
@@ -16,10 +16,10 @@ def no_action(task_id: NoActionTaskIDs) -> EmptyOperator:
     return EmptyOperator(task_id=task_id)
 
 @task
-def get_transaction_inferences_seed() -> TransactionInferencesSeed:
+def get_transaction_inferences_seed_s3_key() -> str:
     context = TaskContext(get_current_context())
 
-    return context.configurations(pydantic_model=TransactionInferencesSeed)
+    return context.configurations(pydantic_model=TransactionInferencesSeed).s3_key
 
 def seed_transaction_inferences_pod(transaction_inferences_seed_s3_key: str) -> KubernetesPodOperator:
     return KubernetesPodOperator(

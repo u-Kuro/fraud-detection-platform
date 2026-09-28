@@ -9,7 +9,7 @@ def test_get_transaction_inferences_seed_csv(mocker: MockerFixture):
     gzipped_csv = gzip.compress(data=f"{csv_header}\n{csv_row}".encode())
 
     mocker.patch(
-        target="boto3.s3.inject.download_fileobj",
+        target="shared.repositories.s3.s3.s3_client.download_fileobj",
         side_effect=lambda **kwargs: kwargs["Fileobj"].write(gzipped_csv)
     )
 

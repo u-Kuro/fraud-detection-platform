@@ -16,6 +16,6 @@ class TestCheckTrainingNeed:
 
         assert dag.max_active_runs == 1
 
-        assert dag["on_failure_callback"] is slack_failure_alert
+        assert dag.default_args["on_failure_callback"] is slack_failure_alert
 
         assert dag.is_paused_upon_creation is False
