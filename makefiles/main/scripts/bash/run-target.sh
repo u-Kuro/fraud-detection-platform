@@ -13,9 +13,9 @@ DOCKER_RUN_ARGUMENTS=(
     --network "host"
     --add-host "host.docker.internal:host-gateway"
     --volume "${ABSOLUTE_ROOT_DIRECTORY}:${WORKING_DIRECTORY}"
+    --env-file ".env"
     --env RUNNER_CONTAINER_NAME="${RUNNER_CONTAINER_NAME}"
     --env HOST_USER="${HOST_UID}:${HOST_GID}"
-    --env HOME="/tmp"
     --user "${HOST_UID}:${HOST_GID}"
 )
 

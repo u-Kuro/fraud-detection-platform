@@ -14,8 +14,8 @@ docker run -it --init --rm --name "${RUNNER_CONTAINER_NAME}" `
     --network "host" `
     --add-host "host.docker.internal:host-gateway" `
     --volume "${Env:ABSOLUTE_ROOT_DIRECTORY}:${WORKING_DIRECTORY}" `
+    --env-file ".env" `
     --env RUNNER_CONTAINER_NAME="${RUNNER_CONTAINER_NAME}" `
-    --env HOME="/tmp" `
     "${IMAGE_NAME}" `
     "${COMMAND}"
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }

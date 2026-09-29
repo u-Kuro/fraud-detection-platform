@@ -1,11 +1,6 @@
 #!/bin/bash
 set -euo pipefail
 
-# Export environment variables
-set -a
-source .env
-set +a
-
 # Define data seed paths
 TRANSACTION_INFERENCES_SEED_SOURCE="${ABSOLUTE_ROOT_DIRECTORY}/database/seed/transaction_inferences/creditcard_transactions.csv.gz"
 TRANSACTION_INFERENCES_SEED_DESTINATION_KEY="fraud_detection_platform/data/seed/transaction_inferences/creditcard_transactions.csv.gz"
