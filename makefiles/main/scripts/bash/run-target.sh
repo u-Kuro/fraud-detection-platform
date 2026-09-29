@@ -16,6 +16,7 @@ DOCKER_RUN_ARGUMENTS=(
     --volume "${ABSOLUTE_ROOT_DIRECTORY}:${WORKING_DIRECTORY}"
     --env RUNNER_CONTAINER_NAME="${RUNNER_CONTAINER_NAME}"
     --env HOST_USER="${HOST_UID}:${HOST_GID}"
+    --env HOME="/tmp"
     --user "${HOST_UID}:${HOST_GID}"
 )
 
