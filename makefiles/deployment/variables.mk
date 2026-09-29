@@ -1,0 +1,8 @@
+# GitHub Directories
+GITHUB_DIRECTORY		   := .github
+GITHUB_WORKFLOWS_DIRECTORY := $(GITHUB_DIRECTORY)/workflows
+GITHUB_EVENTS_DIRECTORY	   := $(GITHUB_DIRECTORY)/events
+# GitHub Workflows
+GITHUB_DAGS_WORKFLOW				:= dags
+GITHUB_FRAUD_DETECTION_API_WORKFLOW := fraud-detection-api
+GITHUB_MIGRATE_WORKFLOW				:= migrate

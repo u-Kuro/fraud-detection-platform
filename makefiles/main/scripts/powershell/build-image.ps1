@@ -1,6 +1,6 @@
 param(
     [Parameter(Mandatory=$true, Position=0)][string]$DOCKERFILE,
-    [Parameter(Mandatory=$true, Position=0)][string]$IMAGE
+    [Parameter(Mandatory=$true, Position=1)][string]$IMAGE
 )
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"

@@ -1,4 +1,4 @@
 from pydantic import BaseModel, StrictStr
 
-class TransactionInferencesSeed(BaseModel):
-    s3_key: StrictStr
+class DataSeeding(BaseModel):
+    transaction_inferences_seed_s3_key: StrictStr

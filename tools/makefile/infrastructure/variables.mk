@@ -1,8 +1,0 @@
-# Directories
-INFRASTRUCTURE_DIRECTORY 				  := $(MAKEFILE_DIRECTORY)/infrastructure
-INFRASTRUCTURE_SCRIPT_DIRECTORY 		  := $(INFRASTRUCTURE_DIRECTORY)/scripts
-INFRASTRUCTURE_CONTAINER_SCRIPT_DIRECTORY := $(INFRASTRUCTURE_SCRIPT_DIRECTORY)/container
-# Docker
-INFRASTRUCTURE_DOCKERFILE := infrastructure/Dockerfile
-INFRASTRUCTURE_IMAGE 	  := fraud_detection_platform_infrastructure
-INFRASTRUCTURE_CONTAINER  := fraud_detection_platform_infrastructure

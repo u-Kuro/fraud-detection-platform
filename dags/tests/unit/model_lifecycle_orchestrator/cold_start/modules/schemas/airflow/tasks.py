@@ -1,4 +1,4 @@
-from dags.model_lifecycle_orchestrator.cold_start.modules.schemas.airflow.tasks import TransactionInferencesSeed
+from dags.model_lifecycle_orchestrator.cold_start.modules.schemas.airflow.tasks import DataSeeding
 
 class TestTransactionInferencesSeed:
     @staticmethod
@@ -11,7 +11,7 @@ class TestTransactionInferencesSeed:
 
     def test_values(self):
         data = self.make_seed()
-        values = TransactionInferencesSeed(**data)
+        values = DataSeeding(**data)
 
         for key, expected in data.items():
             actual = getattr(values, key)

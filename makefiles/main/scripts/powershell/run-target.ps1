@@ -5,6 +5,7 @@ param(
 )
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
+if (-not $Env:ABSOLUTE_ROOT_DIRECTORY) { throw "ABSOLUTE_ROOT_DIRECTORY environment is not set" }
 
 $WORKING_DIRECTORY = "/app"
 

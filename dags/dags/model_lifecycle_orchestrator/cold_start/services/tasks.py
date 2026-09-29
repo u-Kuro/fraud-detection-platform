@@ -6,7 +6,7 @@ from kubernetes.client import models
 
 from dags.model_lifecycle_orchestrator.cold_start.modules.configs.airflow.task_ids import NoActionTaskIDs
 from dags.model_lifecycle_orchestrator.cold_start.modules.configs.k8s.environments import SeedTransactionInferencesEnvironmentKeys
-from dags.model_lifecycle_orchestrator.cold_start.modules.schemas.airflow.tasks import TransactionInferencesSeed
+from dags.model_lifecycle_orchestrator.cold_start.modules.schemas.airflow.tasks import DataSeeding
 from dags.shared.modules.configs.airflow.dag_ids import DAGIDs
 from dags.shared.modules.configs.ecr import ECRConfig
 from dags.shared.modules.configs.k8s import K8sConfig
@@ -19,7 +19,7 @@ def no_action(task_id: NoActionTaskIDs) -> EmptyOperator:
 def get_transaction_inferences_seed_s3_key() -> str:
     context = TaskContext(get_current_context())
 
-    return context.configurations(pydantic_model=TransactionInferencesSeed).s3_key
+    return context.configurations(pydantic_model=DataSeeding).transaction_inferences_seed_s3_key
 
 def seed_transaction_inferences_pod(transaction_inferences_seed_s3_key: str) -> KubernetesPodOperator:
     return KubernetesPodOperator(

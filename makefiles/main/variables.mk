@@ -19,6 +19,6 @@ endif
 
 # Directories
 export ABSOLUTE_ROOT_DIRECTORY := $(CURDIR)
-MAKEFILE_DIRECTORY 	  		   := tools/makefile
+MAKEFILE_DIRECTORY 	  		   := makefiles
 MAIN_DIRECTORY 		  		   := $(MAKEFILE_DIRECTORY)/main
 MAIN_SCRIPT_DIRECTORY 		   := $(MAIN_DIRECTORY)/scripts

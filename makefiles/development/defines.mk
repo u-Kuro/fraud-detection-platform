@@ -1,0 +1,4 @@
+# Script Runner
+define RUN_DEVELOPMENT_SCRIPT
+$(call RUN_SCRIPT,$(DEVELOPMENT_SCRIPT_DIRECTORY),$(1))
+endef
