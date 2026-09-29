@@ -1,3 +1,8 @@
+# Pull and cache Postgres image to avoid AWS provider timeout
+resource "docker_image" "postgres" {
+  name         = "postgres:15-alpine"
+  keep_locally = true
+}
 # Create Postgres in RDS
 resource "aws_db_instance" "postgres" {
   identifier            = "rds"
@@ -10,6 +15,10 @@ resource "aws_db_instance" "postgres" {
   password              = var.rds_postgres_admin_password
   db_name               = "main"
   skip_final_snapshot   = true
+
+  depends_on = [
+    docker_image.postgres,
+  ]
 }
 # Allow snapshots/backup in RDS
 resource "aws_iam_role_policy" "rds" {

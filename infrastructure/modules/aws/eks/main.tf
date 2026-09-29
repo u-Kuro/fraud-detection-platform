@@ -18,6 +18,11 @@ resource "aws_iam_role_policy_attachment" "ecr_read_only" {
   role       = var.iam_ec2_role_name
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
 }
+# Pull and cache K3s image to avoid AWS provider timeout
+resource "docker_image" "rancher_k3s" {
+  name         = "rancher/k3s:v1.31.4-k3s1"
+  keep_locally = true
+}
 # Initialize EKS
 resource "aws_eks_cluster" "main" {
   name     = "eks"
@@ -29,7 +34,8 @@ resource "aws_eks_cluster" "main" {
   }
 
   depends_on = [
-    aws_iam_role_policy_attachment.eks_cluster_policy
+    aws_iam_role_policy_attachment.eks_cluster_policy,
+    docker_image.rancher_k3s,
   ]
 }
 # Initialize EKS worker node

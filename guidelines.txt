@@ -1,5 +1,3 @@
-# TODO - orchastrate makefile
-
 cd C:\Projects\Personal\Practice\fraud-detection-platform
 
 $FormatEnumerationLimit = -1                     # don't truncate collections with "..."
@@ -7,6 +5,16 @@ $raw  = $Host.UI.RawUI
 $size = $raw.BufferSize
 $size.Height = 32766                             # max scrollback lines
 $raw.BufferSize = $size
+
+clear
+make down
+pause
+
+docker container prune -f
+docker volume prune -a -f
+docker network prune -f
+pause
+
 
 clear
 make up

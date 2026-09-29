@@ -14,6 +14,11 @@ resource "aws_s3_object" "upload_kubeconfig_for_mwaa" {
   source   = var.local_files_kubeconfig_for_docker_file_path
   etag     = var.local_files_kubeconfig_for_docker_file_md5
 }
+# Pull and cache Airflow image to avoid AWS provider timeout
+resource "docker_image" "apache_airflow" {
+  name         = "apache/airflow:3.3.1-python3.12"
+  keep_locally = true
+}
 # Create MWAA environments for each team
 resource "aws_mwaa_environment" "teams" {
   for_each           = var.mwaa_teams
@@ -45,6 +50,7 @@ resource "aws_mwaa_environment" "teams" {
     # Needs initial files for environment
     aws_s3_object.upload_requirements_for_mwaa,
     aws_s3_object.upload_kubeconfig_for_mwaa,
+    docker_image.apache_airflow,
   ]
 }
 # Allow teams to manage attached repositories in their MWAA environments
