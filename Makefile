@@ -25,14 +25,15 @@ include makefiles/development/targets.mk
 
 init: uv-sync
 
-up: infrastructure-up \
+update: atlas-hash uv-update
+
+up: update \
+	infrastructure-up \
 	deploy-migration \
 	deploy-dags \
 	start-pipeline
 
 down: infrastructure-down
-
-update: atlas-hash uv-update
 
 no-target:
 	@$(error Error: no target given, e.g. 'make up')
