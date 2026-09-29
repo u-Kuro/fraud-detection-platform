@@ -1,4 +1,0 @@
-# Script Runner
-define CONFIGURE_AWS_IN_CONTAINER
-$(call RUN_BASH_SCRIPT,$(OPERATIONS_MAIN_SCRIPT_DIRECTORY),configure-aws)
-endef

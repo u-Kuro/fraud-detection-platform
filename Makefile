@@ -13,7 +13,6 @@ include makefiles/deployment/defines.mk
 include makefiles/deployment/targets.mk
 # Operations
 include makefiles/operations/main/variables.mk
-include makefiles/operations/main/defines.mk
 # Start pipeline operation
 include makefiles/operations/start_pipeline/variables.mk
 include makefiles/operations/start_pipeline/defines.mk

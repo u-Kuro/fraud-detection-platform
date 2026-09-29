@@ -8,6 +8,9 @@ endef
 define RUN_MAIN_SCRIPT
 $(call RUN_SCRIPT,$(MAIN_SCRIPT_DIRECTORY),$(1))
 endef
+define CONFIGURE_AWS_IN_CONTAINER
+$(call RUN_BASH_SCRIPT,$(MAIN_SCRIPT_DIRECTORY),configure-aws)
+endef
 
 # Script Formatter
 define FORMAT_SCRIPT_ARGUMENTS
