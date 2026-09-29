@@ -12,7 +12,6 @@ DOCKER_RUN_ARGUMENTS=(
     --use-api-socket
     --network "host"
     --add-host "host.docker.internal:host-gateway"
-    --add-host "api.host.docker.internal:host-gateway"
     --volume "${ABSOLUTE_ROOT_DIRECTORY}:${WORKING_DIRECTORY}"
     --env RUNNER_CONTAINER_NAME="${RUNNER_CONTAINER_NAME}"
     --env HOST_USER="${HOST_UID}:${HOST_GID}"

@@ -13,7 +13,6 @@ docker run -it --init --rm --name "${RUNNER_CONTAINER_NAME}" `
     --use-api-socket `
     --network "host" `
     --add-host "host.docker.internal:host-gateway" `
-    --add-host "api.host.docker.internal:host-gateway" `
     --volume "${Env:ABSOLUTE_ROOT_DIRECTORY}:${WORKING_DIRECTORY}" `
     --env RUNNER_CONTAINER_NAME="${RUNNER_CONTAINER_NAME}" `
     --env HOME="/tmp" `

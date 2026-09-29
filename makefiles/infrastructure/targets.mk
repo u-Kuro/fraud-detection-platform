@@ -10,6 +10,7 @@ infrastructure-down: build-infrastructure-image
 
 # Container scripts
 infrastructure-container-init:
+	@$(call CONFIGURE_AWS_IN_CONTAINER)
 	@$(call RUN_INFRASTRUCTURE_SCRIPT,init)
 
 infrastructure-container-up: infrastructure-container-init infrastructure-container-down

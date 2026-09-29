@@ -3,8 +3,6 @@ provider "aws" {
   access_key               = var.aws_admin_access_key
   secret_key               = var.aws_admin_secret_key
   region                   = var.aws_admin_region
-  shared_config_files      = []
-  shared_credentials_files = []
 
   # Routes requests to local aws emulator (MiniStack container)
   endpoints {
