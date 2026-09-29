@@ -2,6 +2,17 @@
 
 cd C:\Projects\Personal\Practice\fraud-detection-platform
 
+$FormatEnumerationLimit = -1                     # don't truncate collections with "..."
+$raw  = $Host.UI.RawUI
+$size = $raw.BufferSize
+$size.Height = 32766                             # max scrollback lines
+$raw.BufferSize = $size
+
+clear
+make up
+
+_____
+
 clear
 make down
 pause

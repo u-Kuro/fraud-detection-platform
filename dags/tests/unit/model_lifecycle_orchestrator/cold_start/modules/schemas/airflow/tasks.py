@@ -4,7 +4,7 @@ class TestTransactionInferencesSeed:
     @staticmethod
     def make_seed(**overrides) -> dict:
         data = {
-            "s3_key": "value",
+            "transaction_inferences_seed_s3_key": "value",
         }
         data.update(overrides)
         return data
