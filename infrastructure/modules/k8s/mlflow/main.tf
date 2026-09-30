@@ -8,7 +8,7 @@ resource "helm_release" "mlflow" {
   create_namespace = true
   wait             = true
   wait_for_jobs    = true
-  timeout          = 600
+  timeout          = 900
 
   values = [file("${path.module}/configurations/values.yaml")]
 

@@ -7,6 +7,7 @@ resource "helm_release" "traefik" {
   create_namespace = true
   wait             = true
   wait_for_jobs    = true
+  timeout          = 900
 
   values = [file("${path.module}/configurations/values.yaml")]
 
