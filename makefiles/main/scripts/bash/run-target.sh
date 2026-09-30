@@ -20,7 +20,7 @@ DOCKER_RUN_ARGUMENTS=(
     --user "${HOST_UID}:${HOST_GID}"
 )
 
-docker run -it --init --rm --name "${RUNNER_CONTAINER_NAME}" \
+docker run -it --init --name "${RUNNER_CONTAINER_NAME}" \
     "${DOCKER_RUN_ARGUMENTS[@]}" \
     "${IMAGE_NAME}" \
     "${COMMAND}"

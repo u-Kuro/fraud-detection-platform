@@ -9,7 +9,7 @@ if (-not $Env:ABSOLUTE_ROOT_DIRECTORY) { throw "ABSOLUTE_ROOT_DIRECTORY environm
 
 $WORKING_DIRECTORY = "/app"
 
-docker run -it --init --rm --name "${RUNNER_CONTAINER_NAME}" `
+docker run -it --init --name "${RUNNER_CONTAINER_NAME}" `
     --use-api-socket `
     --network "host" `
     --add-host "host.docker.internal:host-gateway" `

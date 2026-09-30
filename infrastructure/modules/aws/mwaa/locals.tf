@@ -32,7 +32,9 @@ resource "local_sensitive_file" "mwaa_teams_aws_config" {
     [default]
     region = ${var.iam_admin_region}
     endpoint_url = ${var.secrets_manager_url}
+    disable_host_prefix_injection = true
     request_checksum_calculation = when_required
+    cli_pager =
   EOF
 }
 # Initialize Apache Airflow's default credentials
