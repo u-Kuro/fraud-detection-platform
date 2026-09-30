@@ -37,6 +37,22 @@ variable "ministack_container_port" { type = number }
 # /teams
 variable "mwaa_teams" { type = set(string) }
 
+# RDS
+# /postgres
+variable "rds_postgres_host" { type = string }
+variable "rds_postgres_port" { type = number }
+variable "rds_postgres_db_name" { type = string }
+# /mwaa-teams
+variable "rds_postgres_mwaa_teams_schemas" { type = map(string) }
+variable "rds_postgres_mwaa_teams_usernames" {
+  type      = map(string)
+  sensitive = true
+}
+variable "rds_postgres_mwaa_teams_passwords" {
+  type      = map(string)
+  sensitive = true
+}
+
 # S3
 # /mwaa
 variable "s3_teams_mwaa_bucket_names" { type = map(string) }

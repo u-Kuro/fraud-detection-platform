@@ -1,4 +1,10 @@
 locals {
+  # MWAA
+  # /teams
+  mwaa_teams_postgres_schemas   = { for v in var.mwaa_teams : v => "${v}_mwaa" }
+  mwaa_teams_postgres_usernames = { for v in var.mwaa_teams : v => "${v}_mwaa_0123456789" }
+  mwaa_teams_postgres_passwords = { for v in var.mwaa_teams : v => "${v}_mwaa_0123456789" }
+
   # RDS
   # /teams
   rds_postgres_teams_schemas             = { for v in var.rds_postgres_teams : v => v }

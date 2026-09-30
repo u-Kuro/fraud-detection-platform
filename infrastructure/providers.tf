@@ -1,8 +1,8 @@
 # Connect AWS with MiniStack
 provider "aws" {
-  access_key               = var.aws_admin_access_key
-  secret_key               = var.aws_admin_secret_key
-  region                   = var.aws_admin_region
+  access_key = var.aws_admin_access_key
+  secret_key = var.aws_admin_secret_key
+  region     = var.aws_admin_region
 
   # Routes requests to local aws emulator (MiniStack container)
   endpoints {

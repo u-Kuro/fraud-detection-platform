@@ -8,6 +8,18 @@ output "mlflow_password" {
   value     = postgresql_role.mlflow.password
   sensitive = true
 }
+# /teams-mwaa
+output "teams_mwaa_schemas" {
+  value = local.mwaa_teams_postgres_schemas
+}
+output "teams_mwaa_usernames" {
+  value     = local.mwaa_teams_postgres_usernames
+  sensitive = true
+}
+output "teams_mwaa_passwords" {
+  value     = local.mwaa_teams_postgres_passwords
+  sensitive = true
+}
 # /teams
 output "teams_usernames" {
   value     = local.rds_postgres_teams_usernames

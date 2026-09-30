@@ -1,3 +1,51 @@
+# Create teams MWAA schemas
+resource "postgresql_schema" "teams_mwaa" {
+  for_each     = var.mwaa_teams
+  name         = local.mwaa_teams_postgres_schemas[each.key]
+  owner        = var.rds_postgres_admin_username
+  drop_cascade = true # Unsafe for production
+}
+# Create Postgres roles for each team's MWAA schema (role-level search_path only, asyncpg rejects search_path in URI)
+resource "postgresql_role" "teams_mwaa" {
+  for_each    = var.mwaa_teams
+  name        = local.mwaa_teams_postgres_usernames[each.key]
+  password    = local.mwaa_teams_postgres_passwords[each.key]
+  login       = true
+  search_path = [postgresql_schema.teams_mwaa[each.key].name]
+}
+# Grant MWAA roles permission to connect to the database
+resource "postgresql_grant" "teams_mwaa_database" {
+  for_each    = postgresql_role.teams_mwaa
+  database    = var.rds_postgres_db_name
+  role        = each.value.name
+  object_type = "database"
+  privileges  = ["CONNECT"]
+}
+# Grant MWAA roles permissions to use objects in their schema
+resource "postgresql_grant" "teams_mwaa_schema" {
+  for_each    = postgresql_schema.teams_mwaa
+  database    = var.rds_postgres_db_name
+  schema      = each.value.name
+  role        = postgresql_role.teams_mwaa[each.key].name
+  object_type = "schema"
+  privileges  = ["USAGE", "CREATE"]
+}
+resource "postgresql_grant" "teams_mwaa_table" {
+  for_each    = postgresql_schema.teams_mwaa
+  database    = var.rds_postgres_db_name
+  schema      = each.value.name
+  role        = postgresql_role.teams_mwaa[each.key].name
+  object_type = "table"
+  privileges  = ["SELECT", "INSERT", "UPDATE", "DELETE", "TRUNCATE", "REFERENCES", "TRIGGER"]
+}
+resource "postgresql_grant" "teams_mwaa_sequence" {
+  for_each    = postgresql_schema.teams_mwaa
+  database    = var.rds_postgres_db_name
+  schema      = each.value.name
+  role        = postgresql_role.teams_mwaa[each.key].name
+  object_type = "sequence"
+  privileges  = ["USAGE", "SELECT", "UPDATE"]
+}
 # Create MLflow schema
 resource "postgresql_schema" "mlflow" {
   name         = "mlflow"
@@ -47,7 +95,7 @@ resource "postgresql_schema" "teams" {
   owner        = var.rds_postgres_admin_username
   drop_cascade = true # Unsafe for production
 }
-# Create Postgres roles for each teams' schema
+# Create Postgres roles for each team's schema
 resource "postgresql_role" "teams" {
   for_each    = var.rds_postgres_teams
   name        = local.rds_postgres_teams_usernames[each.key]
@@ -88,7 +136,7 @@ resource "postgresql_grant" "teams_sequence" {
   object_type = "sequence"
   privileges  = ["USAGE", "SELECT"]
 }
-# Create Postgres roles for each teams' schema for migration
+# Create Postgres roles for each team's schema for migration
 resource "postgresql_role" "teams_migration" {
   for_each    = var.rds_postgres_teams
   name        = local.rds_postgres_teams_migration_usernames[each.key]
@@ -104,7 +152,7 @@ resource "postgresql_grant" "teams_migration_database" {
   object_type = "database"
   privileges  = ["CONNECT"]
 }
-# Grant teams permissions to manage objects in their schema
+# Grant teams' migration roles permissions to manage objects in their schema
 resource "postgresql_grant" "teams_migration_schema" {
   for_each    = postgresql_schema.teams
   database    = var.rds_postgres_db_name

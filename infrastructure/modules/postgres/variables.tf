@@ -1,3 +1,7 @@
+# MWAA
+# /teams
+variable "mwaa_teams" { type = set(string) }
+
 # RDS
 # /postgres
 variable "rds_postgres_host" { type = string }

@@ -19,6 +19,29 @@ resource "aws_secretsmanager_secret_version" "mlflow_credentials" {
   })
   secret_string_wo_version = 1
 }
+# Allow admin to see team's MWAA credentials
+resource "aws_secretsmanager_secret" "teams_mwaa_credentials" {
+  for_each                = postgresql_role.teams_mwaa
+  name                    = "admin/rds/postgres/services/mwaa/${each.key}/credential"
+  recovery_window_in_days = 0
+
+  depends_on = [
+    postgresql_grant.teams_mwaa_database,
+    postgresql_grant.teams_mwaa_schema,
+    postgresql_grant.teams_mwaa_table,
+    postgresql_grant.teams_mwaa_sequence,
+  ]
+}
+resource "aws_secretsmanager_secret_version" "teams_mwaa_credentials" {
+  for_each  = aws_secretsmanager_secret.teams_mwaa_credentials
+  secret_id = each.value.id
+
+  secret_string_wo = jsonencode({
+    username = postgresql_role.teams_mwaa[each.key].name
+    password = postgresql_role.teams_mwaa[each.key].password
+  })
+  secret_string_wo_version = 1
+}
 # Allow teams to see their Postgres credentials
 locals { secrets_manager_teams_postgres_credentials_path = "postgres/credential" }
 resource "aws_secretsmanager_secret" "teams_postgres_credentials" {

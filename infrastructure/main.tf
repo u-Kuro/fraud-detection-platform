@@ -181,6 +181,10 @@ module "rds" {
 module "postgres" {
   source = "./modules/postgres"
 
+  # MWAA
+  # /teams
+  mwaa_teams = local.mwaa_teams
+
   # RDS
   # /postgres
   rds_postgres_host           = module.rds.postgres_host
@@ -347,6 +351,16 @@ module "mwaa" {
   # /teams
   mwaa_teams = local.mwaa_teams
 
+  # RDS
+  # /postgres
+  rds_postgres_host    = module.rds.postgres_host
+  rds_postgres_port    = module.rds.postgres_port
+  rds_postgres_db_name = module.rds.postgres_db_name
+  # /mwaa-teams
+  rds_postgres_mwaa_teams_schemas   = module.postgres.teams_mwaa_schemas
+  rds_postgres_mwaa_teams_usernames = module.postgres.teams_mwaa_usernames
+  rds_postgres_mwaa_teams_passwords = module.postgres.teams_mwaa_passwords
+
   # S3
   # /mwaa
   s3_teams_mwaa_bucket_names = module.s3.teams_mwaa_bucket_names
@@ -366,7 +380,10 @@ module "mwaa" {
     module.ministack_container,
     module.eks,
     local_sensitive_file.mwaa_requirements,
+    local_sensitive_file.kubeconfig_for_docker,
     module.ministack_container,
+    module.rds,
+    module.postgres,
     module.s3,
     module.ssm,
   ]
