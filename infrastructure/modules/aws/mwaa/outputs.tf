@@ -1,6 +1,4 @@
 # MWAA
-# /urls
-output "egress_url" { value = "http://${var.ministack_container_ip}:${var.ministack_container_port}" }
 # /teams
 output "teams_host_url" { value = { for k, v in data.external.airflow_configuration : k => "http://localhost:${v.result.airflow_container_host_port}" } }
 # /environment

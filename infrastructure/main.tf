@@ -422,7 +422,7 @@ module "mlflow" {
 
   # S3
   # /urls
-  s3_url = local.s3_url
+  s3_egress_url = local.s3_egress_url
   # /mlflow
   s3_mlflow_bucket_name = module.s3.mlflow_bucket_name
 
@@ -492,7 +492,7 @@ module "exports" {
 
   # MWAA
   # /urls
-  mwaa_url = local.mwaa_url
+  mwaa_egress_url = local.mwaa_egress_url
   # /teams
   mwaa_teams                       = local.mwaa_teams
   mwaa_teams_environment_names     = module.mwaa.teams_environment_names
@@ -512,7 +512,7 @@ module "exports" {
 
   # S3
   # /urls
-  s3_url = local.s3_url
+  s3_egress_url = local.s3_egress_url
   # /teams
   s3_teams              = local.s3_teams
   s3_teams_bucket_names = module.s3.teams_bucket_names

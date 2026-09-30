@@ -50,7 +50,7 @@ variable "mlflow_teams_workspace_names" { type = map(string) }
 
 # MWAA
 # /urls
-variable "mwaa_url" { type = string }
+variable "mwaa_egress_url" { type = string }
 # /teams
 variable "mwaa_teams" { type = set(string) }
 variable "mwaa_teams_environment_names" { type = map(string) }
@@ -76,7 +76,7 @@ variable "rds_postgres_teams_passwords" {
 
 # S3
 # /urls
-variable "s3_url" { type = string }
+variable "s3_egress_url" { type = string }
 # /teams
 variable "s3_teams" { type = set(string) }
 variable "s3_teams_bucket_names" { type = map(string) }

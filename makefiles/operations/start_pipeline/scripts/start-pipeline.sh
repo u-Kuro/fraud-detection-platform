@@ -15,7 +15,7 @@ temporary_file="$(mktemp)"
 trap 'rm -f "${temporary_file}"' EXIT
 cat > "${temporary_file}" <<EOF
 {
-  "logical_date": "2013-09-01T00:00:00Z",
+  "logical_date": "$(date --utc +%Y-%m-%dT%H:%M:%SZ)",
   "conf": {
     "transaction_inferences_seed_s3_key": "${TRANSACTION_INFERENCES_SEED_DESTINATION_KEY}"
   }
@@ -31,8 +31,20 @@ MWAA_ENVIRONMENT_NAME=$(
 )
 
 # Start the pipeline
-aws mwaa invoke-rest-api \
-  --name "${MWAA_ENVIRONMENT_NAME}" \
-  --method POST \
-  --path "/dags/cold_start/dagRuns" \
-  --body "file://${temporary_file}"
+response="$(
+  aws mwaa invoke-rest-api \
+    --name "${MWAA_ENVIRONMENT_NAME}" \
+    --method POST \
+    --path "/dags/cold_start/dagRuns" \
+    --body "file://${temporary_file}" \
+    --output json
+)"
+
+# View response
+status_code="$(jq --raw-output '.RestApiStatusCode' <<<"${response}")"
+if [[ "${status_code}" == "200" ]]; then
+  echo "${response}"
+else
+  echo "${response}" 1>&2
+  exit 1
+fi

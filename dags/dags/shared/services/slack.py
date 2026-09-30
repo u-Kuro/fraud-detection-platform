@@ -1,5 +1,5 @@
 from airflow.providers.slack.hooks.slack import SlackHook
-from airflow.sdk import get_current_context
+from airflow.sdk import get_current_context, Context
 from slack_sdk import WebClient
 
 from dags.shared.modules.configs.slack import SlackConfig
@@ -7,8 +7,8 @@ from dags.shared.modules.schemas.airflow import TaskContext
 
 slack_client: WebClient = SlackHook(slack_conn_id=SlackConfig.SLACK_CONNECTION_ID()).client
 
-def slack_failure_alert():
-    context = TaskContext(get_current_context())
+def slack_failure_alert(context: Context):
+    context = TaskContext(context)
     ti = context.task_instance
     slack_client.chat_postMessage(
         channel=SlackConfig.SLACK_CHANNEL_ID(),

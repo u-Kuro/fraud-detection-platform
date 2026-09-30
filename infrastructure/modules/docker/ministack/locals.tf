@@ -6,6 +6,7 @@ locals {
     if network.network_name == var.main_network_name
   ]
   ministack_container_ports     = docker_container.ministack.ports
+  ministack_container_ip        = tolist(local.ministack_container_networks)[0].ip_address
   ministack_container_port      = tonumber(tolist(local.ministack_container_ports)[0].internal)
   ministack_container_host_port = tonumber(tolist(local.ministack_container_ports)[0].external)
 }

@@ -27,11 +27,11 @@ locals {
 
   # MWAA
   # /urls
-  mwaa_url = module.ministack_container.url
+  mwaa_egress_url = module.ministack_container.egress_url
 
   # S3
   # /urls
-  s3_url = module.ministack_container.url
+  s3_egress_url = module.ministack_container.egress_url
 
   # Secrets Manager
   # /urls

@@ -1,6 +1,6 @@
 FROM alpine:3.24.2
 
-RUN apk add --no-cache aws-cli bash make
+RUN apk add --no-cache aws-cli bash jq make
 
 WORKDIR /app
 

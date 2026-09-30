@@ -31,7 +31,7 @@ class TaskContext:
         self.context: Context = context
         self.task_instance: RuntimeTaskInstanceProtocol = context["task_instance"]
         self.dag_run: TaskDAGRun = TaskDAGRun(context["dag_run"])
-        self.exception: None | str | BaseException = context["exception"]
+        self.exception: None | str | BaseException = context.get("exception")
 
     def resolve_task_id(self, task_id: str) -> str:
         current_task_id = self.task_instance.task_id
