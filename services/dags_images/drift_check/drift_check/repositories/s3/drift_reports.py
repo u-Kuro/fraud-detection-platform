@@ -10,10 +10,11 @@ def upload_drift_report(html_bytes: bytes, json_bytes: bytes) -> None:
     ensure_bucket(s3_environment.S3_BUCKET_NAME)
 
     partition = datetime.now(timezone.utc).strftime("year=%Y/month=%m/day=%d")
-    s3_client.upload_fileobj(
-        Fileobj=io.BytesIO(html_bytes),
+    s3_client.put_object(
         Bucket=s3_environment.S3_BUCKET_NAME,
         Key=f"{S3Config.model_drift_path}/{partition}/drift_report.html",
+        Body=html_bytes,
+        ContentType="text/html",
     )
     s3_client.put_object(
         Bucket=s3_environment.S3_BUCKET_NAME,

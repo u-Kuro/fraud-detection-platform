@@ -45,7 +45,7 @@ FROM base AS runtime
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --package archive --no-dev --frozen --no-editable
 
-RUN useradd --create-home app_user && chown --recursive app_user /app
+RUN useradd --create-home app_user
 USER app_user
 
 CMD ["python", "-m", "archive.main"]

@@ -59,10 +59,7 @@ def extract_drift_summary(
                 "roc_auc_delta": delta("roc_auc"),
                 "precision_delta": delta("precision"),
                 "recall_delta": delta("recall"),
-                # A negative delta means the model performs worse on current data.
-                # Flag concept drift if F1 degrades by more than 5 pp.
-                # TODO - idk if we need to remove or change this concept drift. I need to check it manually first online.
-                EvidentlyConfig.drifted_key: f1_delta is not None and f1_delta < -0.05
+                EvidentlyConfig.drifted_key: f1_delta is not None and f1_delta <= -0.05
             }
 
     return {

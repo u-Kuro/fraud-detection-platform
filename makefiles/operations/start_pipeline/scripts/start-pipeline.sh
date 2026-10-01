@@ -5,10 +5,28 @@ set -euo pipefail
 TRANSACTION_INFERENCES_SEED_SOURCE="${ABSOLUTE_ROOT_DIRECTORY}/database/seed/transaction_inferences/creditcard_transactions.csv.gz"
 TRANSACTION_INFERENCES_SEED_DESTINATION_KEY="fraud_detection_platform/data/seed/transaction_inferences/creditcard_transactions.csv.gz"
 
+# Validate seed source
+if ! (gzip --test "${TRANSACTION_INFERENCES_SEED_SOURCE}"); then
+  echo "Seed is not a valid gzip archive: ${TRANSACTION_INFERENCES_SEED_SOURCE}" 1>&2
+  exit 1
+fi
+
 # Upsert seed for DAG workflow
 aws s3 cp \
   "${TRANSACTION_INFERENCES_SEED_SOURCE}" \
   "s3://${S3_BUCKET}/${TRANSACTION_INFERENCES_SEED_DESTINATION_KEY}"
+
+# Validate seed in destination after upsert
+if ! (
+  aws s3api head-object \
+    --bucket "${S3_BUCKET}" \
+    --key "${TRANSACTION_INFERENCES_SEED_DESTINATION_KEY}" \
+    1>/dev/null
+); then
+  echo "Seed is not found at s3://${S3_BUCKET}/${TRANSACTION_INFERENCES_SEED_DESTINATION_KEY} after upload" 1>&2
+  exit 1
+fi
+
 
 # Create temporary file for DAG call
 temporary_file="$(mktemp)"
@@ -42,7 +60,7 @@ response="$(
 
 # View response
 status_code="$(jq --raw-output '.RestApiStatusCode' <<<"${response}")"
-if [[ "${status_code}" == "200" ]]; then
+if (( status_code >= 200 && status_code < 300 )); then
   echo "${response}"
 else
   echo "${response}" 1>&2

@@ -45,7 +45,7 @@ FROM base AS runtime
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --package seed_transaction_inferences --no-dev --frozen --no-editable
 
-RUN useradd --create-home app_user && chown --recursive app_user /app
+RUN useradd --create-home app_user
 USER app_user
 
 CMD ["python", "-m", "seed_transaction_inferences.main"]
