@@ -4,9 +4,9 @@ from uuid import UUID
 import pandas
 
 from shared.modules.schemas.postgres.transaction_inferences import TransactionInferences
-from seed_transaction_inferences.services.seed_transaction_inferences import transform_transaction_inferences_seed_csv
+from seed_transaction_inferences.services.seed_transaction_inferences import transform_transaction_inferences_seed
 
-def test_transform_transaction_inferences_seed_csv():
+def test_transform_transaction_inferences_seed():
     dataframe = pandas.DataFrame({
         "Time": [0],
         "Amount": [1.0],
@@ -14,7 +14,7 @@ def test_transform_transaction_inferences_seed_csv():
         **{f"V{i}": [1.0] for i in range(1, 29)},
     })
 
-    row = transform_transaction_inferences_seed_csv(dataframe=dataframe)[0]
+    row = transform_transaction_inferences_seed(dataframe=dataframe)[0]
 
     assert isinstance(row[TransactionInferences.transaction_id.key], UUID)
 
