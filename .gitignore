@@ -39,4 +39,4 @@ infrastructure/local_files/
 **/*.log
 
 # Temporary
-count-lines.ps1
+ignore/
