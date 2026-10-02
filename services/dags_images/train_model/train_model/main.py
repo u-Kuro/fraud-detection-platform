@@ -1,3 +1,4 @@
+from imblearn.over_sampling import SMOTE
 from sklearn.preprocessing import RobustScaler
 from xgboost import XGBClassifier
 
@@ -30,6 +31,7 @@ def main() -> None:
         train_model_outputs = train_model(
             preprocess_outputs=preprocess_outputs,
             scaler=RobustScaler,
+            resampler=SMOTE,
             model=XGBClassifier,
             hyperparameters_sampler=XGBHyperparametersSampler
         )

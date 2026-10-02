@@ -4,9 +4,10 @@ from dataclasses import dataclass
 class MLflowConfig:
     experiment_name: str = "fraud-detection"
 
-    model_path:  str = "model"
-    model_name:  str = "xgboost"
-    scaler_name: str = "robust_scaler"
+    model_path:     str = "model"
+    model_name:     str = "xgboost"
+    scaler_name:    str = "robust_scaler"
+    resampler_name: str = "smote"
 
     reference_dataset_path:      str = "reference_dataset"
     reference_dataset_file_name: str = "reference.parquet"

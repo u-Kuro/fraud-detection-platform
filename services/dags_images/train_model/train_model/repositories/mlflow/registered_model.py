@@ -1,6 +1,6 @@
+from imblearn.pipeline import Pipeline
 from mlflow.models import infer_signature
 from numpy import ndarray
-from sklearn.pipeline import Pipeline
 
 from shared.modules.configs.mlflow import MLflowConfig
 from shared.repositories.mlflow.mlflow import mlflow_module
@@ -19,13 +19,23 @@ def save_and_register_model(
         ),
         input_example=x_test_samples,
         pip_requirements=[
+            "imbalanced-learn==0.14.2",
             "xgboost==3.4.1",
             "scikit-learn==1.9.0",
             "numpy==2.5.2",
             "pandas==2.3.3",
         ],
         name=MLflowConfig.model_path,
-        pyfunc_predict_fn=model.predict_proba.__name__
+        serialization_format=mlflow_module.sklearn.SERIALIZATION_FORMAT_SKOPS,
+        skops_trusted_types=[
+            "imblearn.over_sampling._smote.base.SMOTE",
+            "imblearn.pipeline.Pipeline",
+            "sklearn.metrics._dist_metrics.EuclideanDistance64",
+            "sklearn.neighbors._kd_tree.KDTree",
+            "xgboost.core.Booster",
+            "xgboost.sklearn.XGBClassifier",
+        ],
+        pyfunc_predict_fn=model.predict_proba.__name__,
     )
 
     if isinstance(model_info.registered_model_version, int):

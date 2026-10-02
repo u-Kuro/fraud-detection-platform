@@ -1,3 +1,4 @@
+from imblearn.over_sampling import SMOTE
 from pandas import DataFrame
 from sklearn.preprocessing import RobustScaler
 from xgboost import XGBClassifier
@@ -20,6 +21,7 @@ def test_train_model():
     train_model(
         preprocess_outputs=dataframe,
         scaler=RobustScaler,
+        resampler=SMOTE,
         model=XGBClassifier,
         hyperparameters_sampler=XGBHyperparametersSampler
     )

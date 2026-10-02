@@ -16,7 +16,7 @@
 **/.pytest_cache/
 **/.ruff_cache/
 
-# Terraform
+# infrastracture
 infrastructure/**/.helm/
 infrastructure/**/.terraform/
 infrastructure/**/.terraform.lock.hcl
@@ -26,6 +26,9 @@ infrastructure/**/*.tfstate.backup
 infrastructure/**/*.tfstate.*.backup
 infrastructure/**/terraform.tfvars
 infrastructure/local_files/
+
+# notebooks
+notebooks/mlflow/
 
 # IDE & Editor
 **/.idea/

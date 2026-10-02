@@ -1,4 +1,3 @@
-from imblearn.over_sampling import SMOTE
 from pandas import DataFrame
 from sklearn.model_selection import train_test_split, StratifiedKFold
 
@@ -18,9 +17,6 @@ def preprocess(dataset: DataFrame) -> PreprocessOutputs:
     )
 
     original_y_train_positive_scale = (y_train == 0).sum() / (y_train == 1).sum()
-
-    smote = SMOTE(random_state=TrainingConfig.random_state)
-    x_train, y_train = smote.fit_resample(x_train, y_train)
 
     cross_validation = StratifiedKFold(
         n_splits=int(1 / TrainingConfig.cv_val_size),
