@@ -15,21 +15,31 @@ An end-to-end MLOps platform that monitors a credit-card fraud model for drift, 
 | Infrastructure | 18 Terraform modules provision emulated AWS services (S3, ECR, RDS, EKS, MWAA, Secrets Manager, SSM), MLflow, Traefik, MetalLB, and Kyverno. |
 | CI/CD | 6 GitHub Actions workflows run locally with act, covering image builds, DAG sync, API deployment, and schema migrations. |
 | Tests | 194 test functions across 102 files covering the DAGs, job images, shared code, and the API, run inside Docker image builds. |
+| Run it | `make up` provisions and starts everything locally. Steps are in "Run it locally" below. |
 
 ## How it works
 
-### Architecture
+### Components
 
-Airflow runs each heavy step as a Kubernetes pod. Slack approvals reach the API over Socket Mode, and the API triggers the matching DAG through the MWAA REST API.
+| Layer | Components | Role |
+|---|---|---|
+| Orchestration | Airflow with 4 DAGs | Schedules the drift check, runs each job as a Kubernetes pod, and posts Slack approval requests. |
+| Workloads | K3s cluster standing in for EKS | Runs the 4 job images (drift check, training, archive, seed) and the FastAPI inference service. |
+| Serving | FastAPI service | Loads the active model from MLflow, serves `/predict`, stores each prediction in PostgreSQL, and handles Slack button clicks over Socket Mode. |
+| Tracking | MLflow on the cluster | Tracks experiments and registers models in per-team workspaces, backed by PostgreSQL and S3. |
+| Data and images | MiniStack (emulated AWS) | Provides PostgreSQL, S3, ECR, Secrets Manager, and SSM for workflow state, inferences, artifacts, reports, archives, and container images. |
+| CI/CD | 6 GitHub Actions workflows run by act, plus a GitHub API shim | Builds and pushes images, syncs DAGs, applies migrations, and deploys the API when a promotion dispatches the workflow. |
 
 ### Model lifecycle
 
-| DAG | Trigger | What it does |
-|---|---|---|
-| `cold_start` | `make up` | Creates the project row, seeds `transaction_inferences` from S3 when the table is empty, then runs `check_training_need`. |
-| `check_training_need` | Daily | Expires stale challengers, runs the drift-check pod, and posts a Slack approval request when training is needed. |
-| `on_training_decision` | Slack button | Trains the model in a pod after approval, registers it in MLflow, and posts a promotion request. |
-| `on_promotion_decision` | Slack button | Marks the new model as the active deployment, dispatches the API deploy workflow, and archives old inferences to S3. |
+1. `cold_start` seeds `transaction_inferences` from S3 on the first run, then starts `check_training_need`.
+2. `check_training_need` runs daily, expires stale challengers, and runs the drift-check pod when a model is deployed.
+3. A Slack message asks a person to approve training, which happens when drift is detected or no model is deployed yet.
+4. `on_training_decision` trains and registers the model in a pod after approval, then posts a promotion request.
+5. A person approves promotion in Slack.
+6. `on_promotion_decision` marks the model as the active deployment, dispatches the API deployment, and archives older inferences to S3.
+
+A rejected approval deletes the workflow, and a daily run without drift takes no action.
 
 ## Model results
 
@@ -42,7 +52,7 @@ Results come from the notebook experiments in [`notebooks/02_models.ipynb`](note
 | **XGBoost** | **0.800** | **0.874** | 0.857 | **0.750** |
 | MLP (PyTorch) | 0.612 | 0.835 | 0.878 | 0.470 |
 
-XGBoost scored highest on PR-AUC, so it is the model the platform use. SHAP interpretation is in [`notebooks/03_model_interpretation.ipynb`](notebooks/03_model_interpretation.ipynb).
+XGBoost scored highest on F1, PR-AUC, and precision, and it is the model the platform trains. SHAP interpretation is in [`notebooks/03_model_interpretation.ipynb`](notebooks/03_model_interpretation.ipynb).
 
 ## Design decisions
 
@@ -59,7 +69,23 @@ XGBoost scored highest on PR-AUC, so it is the model the platform use. SHAP inte
 | Safe schema changes | Atlas lints migrations in CI and treats destructive or backward-incompatible changes as errors. |
 | Bounded inference storage | After each promotion, older inferences move to S3 as Parquet files with Hive-style date partitions in 50,000-row batches. |
 
-## Where to look
+## Tests and CI
+
+- Each Dockerfile has a `test` target that runs pytest during the build, so a failing test fails CI.
+- DAG tests load every DAG with `DagBag` and assert no import errors, no cycles, and a failure callback.
+- Migration CI starts a throwaway `postgres:15-alpine` service and runs `atlas migrate lint`.
+- Path filters rebuild only the images whose folders, shared code, or lockfile changed.
+
+## Scope and limits
+
+- The platform runs on emulators (MiniStack and K3s) and has not been deployed to real AWS. A few MiniStack workarounds are documented in the Terraform comments.
+- Credentials in the example files are development placeholders.
+- DAGs reach the Airflow container through `docker exec` and rsync, because the S3-based MWAA DAG upload does not work in this setup.
+- There is no hosted demo, since the platform needs the local stack.
+- One team, `mle`, is defined in [`infrastructure/locals.tf`](infrastructure/locals.tf).
+
+<details>
+<summary><b>Where to look</b> (folder map)</summary>
 
 | Area | Path | Contents |
 |---|---|---|
@@ -75,7 +101,10 @@ XGBoost scored highest on PR-AUC, so it is the model the platform use. SHAP inte
 | Experiments | [`notebooks/`](notebooks/) | EDA, 4-model comparison, and SHAP interpretation. |
 | Make targets | [`makefiles/`](makefiles/) | Bash and PowerShell scripts behind every `make` command. |
 
-## Run it locally
+</details>
+
+<details>
+<summary><b>Run it locally</b> (prerequisites, steps, URLs, commands)</summary>
 
 ### Prerequisites
 
@@ -89,7 +118,8 @@ XGBoost scored highest on PR-AUC, so it is the model the platform use. SHAP inte
 
 1. Copy `.env.example` to `.env`, `.secrets.example` to `.secrets`, and `infrastructure/terraform.tfvars.example` to `infrastructure/terraform.tfvars`.
 2. Fill in the Slack values and a GitHub token in `.secrets`. The AWS and database values are local placeholders for the emulator.
-3. Run `make up`.
+3. Place the seed file in `database/seed/transaction_inferences/`.
+4. Run `make up`.
 
 `make up` runs these stages in order: refresh the lockfiles and the Atlas hash, provision the infrastructure with Terraform inside a container, apply the schema migration, push the job images and sync the DAGs, and trigger the `cold_start` DAG. `make init` is optional and creates local virtual environments for editing with `uv sync`.
 
@@ -110,20 +140,7 @@ Terraform prints the service URLs as outputs (`ministack_host_url`, `mlflow_host
 | `make deploy-dags`, `make deploy-fraud-detection-api`, `make deploy-migration` | The matching CD workflow with act on a push event. |
 | `make down` | Destroys the infrastructure. |
 
-## Tests and CI
-
-- Each Dockerfile has a `test` target that runs pytest during the build, so a failing test fails CI.
-- DAG tests load every DAG with `DagBag` and assert no import errors, no cycles, and a failure callback.
-- Migration CI starts a throwaway `postgres:15-alpine` service and runs `atlas migrate lint`.
-- Path filters rebuild only the images whose folders, shared code, or lockfile changed.
-
-## Scope and limits
-
-- The platform runs on emulators (MiniStack and K3s) and has not been deployed to real AWS. A few MiniStack workarounds are documented in the Terraform comments.
-- Credentials in the example files are development placeholders.
-- DAGs reach the Airflow container through `docker exec` and rsync, because the S3-based MWAA DAG upload does not work in this setup.
-- There is no hosted demo, since the platform needs the local stack.
-- One team, `mle`, is defined in [`infrastructure/locals.tf`](infrastructure/locals.tf).
+</details>
 
 ## Data
 
