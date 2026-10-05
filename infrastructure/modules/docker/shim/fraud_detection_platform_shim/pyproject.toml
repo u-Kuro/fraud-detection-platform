@@ -1,7 +1,7 @@
 [project]
 name = "fraud_detection_platform_shim"
 version = "1.0.0"
-requires-python = "==3.12.13"
+requires-python = "==3.12.*"
 dependencies = [
     "fastapi==0.136.3",
     "pydantic==2.13.4",
@@ -10,7 +10,7 @@ dependencies = [
 ]
 
 [tool.uv]
-required-version = "0.12.6"
+required-version = "==0.12.*"
 
 [dependency-groups]
 # helpers

@@ -1,7 +1,7 @@
 [project]
 name = "dags"
 version = "1.0.0"
-requires-python = "==3.12.13"
+requires-python = "==3.12.*"
 dependencies = [
     "apache-airflow==3.3.1",
     "apache-airflow-providers-amazon==9.34.0",
@@ -35,7 +35,7 @@ type_check = [
 ]
 
 [tool.uv]
-required-version = "0.12.6"
+required-version = "==0.12.*"
 constraint-dependencies = [
     # Apache Airflow 3.3.1-python3.12 constraints (https://raw.githubusercontent.com/apache/airflow/refs/tags/constraints-3.3.1/constraints-3.12.txt)
     "apache-airflow==3.3.1",

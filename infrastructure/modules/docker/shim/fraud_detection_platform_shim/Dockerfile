@@ -24,7 +24,7 @@ ENV UV_PROJECT_ENVIRONMENT=/opt/app/.venv
 
 ENV PATH=/opt/app/.venv/bin:$PATH
 
-COPY --from=ghcr.io/astral-sh/uv:0.12.6 /uv /usr/local/bin/uv
+COPY --from=ghcr.io/astral-sh/uv:0.12.23 /uv /usr/local/bin/uv
 
 COPY infrastructure/modules/docker/shim/fraud_detection_platform_shim .
 

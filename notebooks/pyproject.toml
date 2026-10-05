@@ -1,7 +1,7 @@
 [project]
 name = "notebooks"
 version = "1.0.0"
-requires-python = "==3.12.13"
+requires-python = "==3.12.*"
 
 [dependency-groups]
 data_processing = [
@@ -45,7 +45,7 @@ type_check = [
 ]
 
 [tool.uv]
-required-version = "0.12.6"
+required-version = "==0.12.*"
 default-groups = [
     "data_processing",
     "modeling",

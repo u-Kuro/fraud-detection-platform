@@ -16,7 +16,7 @@ ENV UV_PROJECT_ENVIRONMENT=/app/.venv
 
 ENV PATH=/app/.venv/bin:$PATH
 
-COPY --from=ghcr.io/astral-sh/uv:0.12.6 /uv /usr/local/bin/uv
+COPY --from=ghcr.io/astral-sh/uv:0.12.23 /uv /usr/local/bin/uv
 
 COPY --parents --from=services **/pyproject.toml uv.lock ./
 
