@@ -21,6 +21,8 @@ resource "docker_container" "ministack" {
   env = [
     "DOCKER_NETWORK=${var.main_network_name}",
     "LOG_LEVEL=DEBUG",
+    # Set disk allocation for RDS
+    "RDS_TMPFS_SIZE=20g",
     # Increase timeout for lack of resource
     "MINISTACK_DOCKER_TIMEOUT=180",
     # MiniStack persistence has bugs (clean restart is recommended)

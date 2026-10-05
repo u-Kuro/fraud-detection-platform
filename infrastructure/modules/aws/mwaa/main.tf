@@ -38,9 +38,7 @@ resource "aws_mwaa_environment" "teams" {
     "database.sql_alchemy_conn"   = "postgresql+psycopg2://${var.rds_postgres_mwaa_teams_usernames[each.key]}:${var.rds_postgres_mwaa_teams_passwords[each.key]}@${var.rds_postgres_host}:${var.rds_postgres_port}/${var.rds_postgres_db_name}"
     "database.sql_alchemy_schema" = var.rds_postgres_mwaa_teams_schemas[each.key]
     # For lack of resources
-    "core.parallelism"                        = "1"
-    "dag_processor.min_file_process_interval" = "30"
-    "dag_processor.refresh_interval"          = "30"
+    "core.parallelism" = "4"
     # AWS Secrets Manager backend
     "secrets.backend" = "airflow.providers.amazon.aws.secrets.secrets_manager.SecretsManagerBackend"
     "secrets.backend_kwargs" = jsonencode({

@@ -9,7 +9,7 @@ from dags.shared.modules.schemas.airflow import TaskContext
 from dags.shared.modules.schemas.postgres.model_deployments import ModelDeployments
 from dags.shared.repositories.postgres.postgres import sql_session
 
-@task
+@task(trigger_rule=TriggerRule.NONE_FAILED_MIN_ONE_SUCCESS)
 def get_active_model_deployment() -> ActiveModelDeployment | None:
     with sql_session.begin() as session:
         mlflow_run_id = session.execute(
@@ -28,7 +28,7 @@ def get_active_model_deployment() -> ActiveModelDeployment | None:
             mlflow_run_id=mlflow_run_id
         )
 
-@task.branch(trigger_rule=TriggerRule.NONE_FAILED_MIN_ONE_SUCCESS)
+@task.branch
 def has_active_model_deployment(
     active_model_deployment: ActiveModelDeployment | None
 ) -> str:
