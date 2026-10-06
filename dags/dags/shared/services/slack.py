@@ -1,5 +1,5 @@
 from airflow.providers.slack.hooks.slack import SlackHook
-from airflow.sdk import get_current_context, Context
+from airflow.sdk import Context
 from slack_sdk import WebClient
 
 from dags.shared.modules.configs.slack import SlackConfig

@@ -160,8 +160,8 @@ def cold_start_buttons(
             "value": json.dumps({
                 "workflow_id": str(workflow_id),
                 "should_train_for_promotion": should_train_for_promotion,
-                "mwaa_environment_name": AirflowConfig.MWAA_ENVIRONMENT_NAME,
-                "aws_endpoint_url_mwaa": AirflowConfig.AWS_ENDPOINT_URL_MWAA,
+                "mwaa_environment_name": AirflowConfig.MWAA_ENVIRONMENT_NAME(),
+                "aws_endpoint_url_mwaa": AirflowConfig.AWS_ENDPOINT_URL_MWAA(),
             })
         },
         {
@@ -175,8 +175,8 @@ def cold_start_buttons(
             "value": json.dumps({
                 "workflow_id": str(workflow_id),
                 "should_train_for_promotion": should_train_for_promotion,
-                "mwaa_environment_name": AirflowConfig.MWAA_ENVIRONMENT_NAME,
-                "aws_endpoint_url_mwaa": AirflowConfig.AWS_ENDPOINT_URL_MWAA,
+                "mwaa_environment_name": AirflowConfig.MWAA_ENVIRONMENT_NAME(),
+                "aws_endpoint_url_mwaa": AirflowConfig.AWS_ENDPOINT_URL_MWAA(),
             })
         },
     ]
@@ -197,8 +197,8 @@ def drift_retraining_buttons(
             "value": json.dumps({
                 "workflow_id": str(workflow_id),
                 "should_train_for_promotion": should_train_for_promotion,
-                "mwaa_environment_name": AirflowConfig.MWAA_ENVIRONMENT_NAME,
-                "aws_endpoint_url_mwaa": AirflowConfig.AWS_ENDPOINT_URL_MWAA,
+                "mwaa_environment_name": AirflowConfig.MWAA_ENVIRONMENT_NAME(),
+                "aws_endpoint_url_mwaa": AirflowConfig.AWS_ENDPOINT_URL_MWAA(),
             })
         },
         {
@@ -212,8 +212,8 @@ def drift_retraining_buttons(
             "value": json.dumps({
                 "workflow_id": str(workflow_id),
                 "should_train_for_promotion": should_train_for_promotion,
-                "mwaa_environment_name": AirflowConfig.MWAA_ENVIRONMENT_NAME,
-                "aws_endpoint_url_mwaa": AirflowConfig.AWS_ENDPOINT_URL_MWAA,
+                "mwaa_environment_name": AirflowConfig.MWAA_ENVIRONMENT_NAME(),
+                "aws_endpoint_url_mwaa": AirflowConfig.AWS_ENDPOINT_URL_MWAA(),
             })
         },
     ]

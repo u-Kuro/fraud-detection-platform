@@ -47,8 +47,8 @@ def model_promotion_buttons(workflow_id: UUID) -> list:
             "action_id": "approve_promotion",
             "value": json.dumps({
                 "workflow_id": str(workflow_id),
-                "mwaa_environment_name": AirflowConfig.MWAA_ENVIRONMENT_NAME,
-                "aws_endpoint_url_mwaa": AirflowConfig.AWS_ENDPOINT_URL_MWAA,
+                "mwaa_environment_name": AirflowConfig.MWAA_ENVIRONMENT_NAME(),
+                "aws_endpoint_url_mwaa": AirflowConfig.AWS_ENDPOINT_URL_MWAA(),
             })
         },
         {
@@ -61,8 +61,8 @@ def model_promotion_buttons(workflow_id: UUID) -> list:
             "action_id": "reject_promotion",
             "value": json.dumps({
                 "workflow_id": str(workflow_id),
-                "mwaa_environment_name": AirflowConfig.MWAA_ENVIRONMENT_NAME,
-                "aws_endpoint_url_mwaa": AirflowConfig.AWS_ENDPOINT_URL_MWAA,
+                "mwaa_environment_name": AirflowConfig.MWAA_ENVIRONMENT_NAME(),
+                "aws_endpoint_url_mwaa": AirflowConfig.AWS_ENDPOINT_URL_MWAA(),
             })
         },
     ]

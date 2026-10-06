@@ -11,7 +11,18 @@ slack_app = App(
     signing_secret=slack_environment.SLACK_SIGNING_SECRET
 )
 
+def register_slack_handlers() -> None:
+    # These imports are used to register slack handlers
+    # noinspection unused-imports
+    from fraud_detection_platform_shim.controllers.handlers.slack import ( # noqa: F401
+        promotion,
+        retraining,
+        training
+    )
+
 def start_socket_mode() -> None:
+    register_slack_handlers()
+
     handler = SocketModeHandler(
         app=slack_app,
         app_token=slack_environment.SLACK_APP_LEVEL_TOKEN,
