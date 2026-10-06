@@ -4,7 +4,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class SlackEnvironment(BaseSettings):
     model_config = SettingsConfigDict(
         case_sensitive=True,
-        env_file=".env"
+        env_file=".env",
+        extra="ignore",
     )
 
     SLACK_APP_LEVEL_TOKEN: StrictStr
