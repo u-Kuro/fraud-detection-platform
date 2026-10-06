@@ -1,12 +1,12 @@
-from typing import Annotated, Any
+from typing import Any
 
-from pydantic import BaseModel, StrictBool, StrictStr, Strict, model_validator, ModelWrapValidatorHandler
+from pydantic import BaseModel, StrictBool, StrictStr, model_validator, ModelWrapValidatorHandler
 
 from dags.model_lifecycle_orchestrator.check_training_need.modules.configs.airflow.xcom import DriftCheckXComKeys
 
 class DriftCheckResult(BaseModel):
     drift_detected: StrictBool
-    drift_summary: Annotated[dict[StrictStr, Annotated[dict, Strict()]], Strict()]
+    drift_summary: dict[StrictStr, dict]
 
     @model_validator(mode="wrap")
     @classmethod

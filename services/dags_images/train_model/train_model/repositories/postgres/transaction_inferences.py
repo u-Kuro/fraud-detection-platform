@@ -19,8 +19,6 @@ def get_timed_latest_unused_dataset() -> TransactionInferencesDatasetNow:
                 ModelDeployments.project_id == PostgresConfig.project_id(),
                 ModelDeployments.active.is_(True),
             )
-            .order_by(ModelDeployments.created_at.desc())
-            .limit(1)
             .scalar_subquery()
         )
         df = pandas.read_sql(

@@ -11,7 +11,7 @@ from dags.shared.repositories.postgres.postgres import sql_session
 def update_approved_training_workflow(training_decision: TrainingDecision):
     with sql_session.begin() as session:
         session.execute(
-            update(ModelDeploymentWorkflows.training_approved)
+            update(ModelDeploymentWorkflows)
             .where(
                 ModelDeploymentWorkflows.id == training_decision.model_deployment_workflow.id,
                 ModelDeploymentWorkflows.project_id == PostgresConfig.project_id()

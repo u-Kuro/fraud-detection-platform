@@ -32,6 +32,7 @@ variable "local_files_mwaa_requirements_file_md5" { type = string }
 # /configurations
 variable "ministack_container_ip" { type = string }
 variable "ministack_container_port" { type = number }
+variable "ministack_container_host_port" { type = number }
 
 # MWAA
 # /teams

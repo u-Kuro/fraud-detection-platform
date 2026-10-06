@@ -1,8 +1,8 @@
 from datetime import datetime
-from typing import Annotated
 from uuid import UUID
 
-from pydantic import BaseModel, StrictBool, Strict
+from airflow.sdk.serde import allow_class
+from pydantic import BaseModel, StrictBool
 
 class ModelDeploymentWorkflowForPromotion(BaseModel):
     id: UUID
@@ -12,4 +12,6 @@ class PromotionDecision(BaseModel):
     model_deployment_workflow: ModelDeploymentWorkflowForPromotion
 
 class PromotedModelDeployment(BaseModel):
-    dataset_max_timestamp: Annotated[datetime, Strict()]
+    dataset_max_timestamp: datetime
+
+allow_class(PromotionDecision)

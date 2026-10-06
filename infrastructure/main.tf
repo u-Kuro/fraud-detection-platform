@@ -351,8 +351,9 @@ module "mwaa" {
 
   # MiniStack
   # /configurations
-  ministack_container_ip   = module.ministack_container.ip
-  ministack_container_port = module.ministack_container.port
+  ministack_container_ip        = module.ministack_container.ip
+  ministack_container_port      = module.ministack_container.port
+  ministack_container_host_port = module.ministack_container.host_port
 
   # MWAA
   # /teams
