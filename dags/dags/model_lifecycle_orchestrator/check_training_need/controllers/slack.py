@@ -5,6 +5,7 @@ from airflow.sdk import task
 
 from dags.model_lifecycle_orchestrator.check_training_need.modules.schemas.airflow.tasks import ExpiredAndReservedModelDeploymentWorkflows, ModelDeploymentWorkflowForTraining
 from dags.model_lifecycle_orchestrator.check_training_need.modules.schemas.airflow.xcom import DriftCheckResult
+from dags.shared.modules.configs.airflow.airflow import AirflowConfig
 from dags.shared.modules.configs.slack import SlackConfig
 from dags.shared.services.slack import create_blocks, slack_client
 
@@ -43,7 +44,8 @@ def invalidate_old_training_approval(
     drift_result: DriftCheckResult | None,
 ):
     assert model_deployment_workflow_for_training is not None
-    assert model_deployment_workflow_for_training.slack_training_approval_message_ts is not None
+
+    if model_deployment_workflow_for_training.slack_training_approval_message_ts is None: return
 
     slack_client.chat_update(
         ts=model_deployment_workflow_for_training.slack_training_approval_message_ts,
@@ -157,7 +159,9 @@ def cold_start_buttons(
             "action_id": "approve_training",
             "value": json.dumps({
                 "workflow_id": str(workflow_id),
-                "should_train_for_promotion": should_train_for_promotion
+                "should_train_for_promotion": should_train_for_promotion,
+                "mwaa_environment_name": AirflowConfig.MWAA_ENVIRONMENT_NAME,
+                "aws_endpoint_url_mwaa": AirflowConfig.AWS_ENDPOINT_URL_MWAA,
             })
         },
         {
@@ -170,7 +174,9 @@ def cold_start_buttons(
             "action_id": "reject_training",
             "value": json.dumps({
                 "workflow_id": str(workflow_id),
-                "should_train_for_promotion": should_train_for_promotion
+                "should_train_for_promotion": should_train_for_promotion,
+                "mwaa_environment_name": AirflowConfig.MWAA_ENVIRONMENT_NAME,
+                "aws_endpoint_url_mwaa": AirflowConfig.AWS_ENDPOINT_URL_MWAA,
             })
         },
     ]
@@ -190,7 +196,9 @@ def drift_retraining_buttons(
             "action_id": "approve_retraining",
             "value": json.dumps({
                 "workflow_id": str(workflow_id),
-                "should_train_for_promotion": should_train_for_promotion
+                "should_train_for_promotion": should_train_for_promotion,
+                "mwaa_environment_name": AirflowConfig.MWAA_ENVIRONMENT_NAME,
+                "aws_endpoint_url_mwaa": AirflowConfig.AWS_ENDPOINT_URL_MWAA,
             })
         },
         {
@@ -203,7 +211,9 @@ def drift_retraining_buttons(
             "action_id": "reject_retraining",
             "value": json.dumps({
                 "workflow_id": str(workflow_id),
-                "should_train_for_promotion": should_train_for_promotion
+                "should_train_for_promotion": should_train_for_promotion,
+                "mwaa_environment_name": AirflowConfig.MWAA_ENVIRONMENT_NAME,
+                "aws_endpoint_url_mwaa": AirflowConfig.AWS_ENDPOINT_URL_MWAA,
             })
         },
     ]

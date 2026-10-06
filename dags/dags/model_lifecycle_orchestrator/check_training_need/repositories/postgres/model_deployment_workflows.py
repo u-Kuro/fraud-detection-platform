@@ -108,7 +108,11 @@ def delete_expired_promote_pending_workflow(model_deployment_workflows: ExpiredA
 def get_current_model_deployment_workflow_for_training() -> ModelDeploymentWorkflowForTraining | None:
     with sql_session.begin() as session:
         model_deployment_workflow_rows = session.execute(
-            select(ModelDeploymentWorkflows)
+            select(
+                ModelDeploymentWorkflows.id,
+                ModelDeploymentWorkflows.state,
+                ModelDeploymentWorkflows.slack_training_approval_message_ts,
+            )
             .where(ModelDeploymentWorkflows.project_id == PostgresConfig.project_id())
             .order_by(ModelDeploymentWorkflows.created_at.desc())
             .limit(2)

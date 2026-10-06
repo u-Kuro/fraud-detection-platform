@@ -54,6 +54,9 @@ constraint-dependencies = [
 testpaths = ["tests"]
 python_files = ["[a-z]*.py"]
 env = [
+    # dags/shared/modules/configs/airflow/airflow.py
+    "MWAA_ENVIRONMENT_NAME=mwaa-environment-default",
+    "AWS_ENDPOINT_URL_MWAA=http://localhost:0000",
     # dags/shared/modules/configs/ecr.py
     "AIRFLOW_VAR_ARCHIVE_IMAGE=000000000000.dkr.ecr.us-east-1.amazonaws.com/archive:test",
     "AIRFLOW_VAR_DRIFT_CHECK_IMAGE=000000000000.dkr.ecr.us-east-1.amazonaws.com/drift-check:test",

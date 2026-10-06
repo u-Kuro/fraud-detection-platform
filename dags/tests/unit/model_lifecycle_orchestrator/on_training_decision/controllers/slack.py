@@ -7,6 +7,7 @@ from pytest_mock import MockerFixture
 from dags.model_lifecycle_orchestrator.on_training_decision.controllers.slack import initialize_promotion_approval, model_promotion_buttons
 from dags.model_lifecycle_orchestrator.on_training_decision.modules.schemas.airflow.tasks import ModelDeploymentWorkflowForPromotion
 from dags.model_lifecycle_orchestrator.on_training_decision.modules.schemas.airflow.xcom import TrainModelResult
+from dags.shared.modules.configs.airflow.airflow import AirflowConfig
 
 def test_initialize_promotion_approval(mocker: MockerFixture):
     ts = "value"
@@ -44,3 +45,5 @@ def test_model_promotion_buttons():
     for item in output:
         value = json.loads(item["value"])
         assert UUID(value["workflow_id"]) == uuid
+        assert value["mwaa_environment_name"] == AirflowConfig.MWAA_ENVIRONMENT_NAME()
+        assert value["aws_endpoint_url_mwaa"] == AirflowConfig.AWS_ENDPOINT_URL_MWAA()

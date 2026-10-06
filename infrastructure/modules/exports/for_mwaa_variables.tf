@@ -124,6 +124,37 @@ resource "aws_secretsmanager_secret_version" "mwaa_teams_mlflow_workspace_variab
     aws_secretsmanager_secret.mwaa_teams_mlflow_workspace_variables
   ]
 }
+# MWAA
+# /teams-environment-name
+resource "aws_secretsmanager_secret" "mwaa_teams_environment_name_variables" {
+  for_each = var.mwaa_teams
+  name     = "${var.mwaa_teams_variables_prefixes[each.key]}/${local.mwaa_variables_environment_name}"
+}
+resource "aws_secretsmanager_secret_version" "mwaa_teams_environment_name_variables" {
+  for_each  = aws_secretsmanager_secret.mwaa_teams_environment_name_variables
+  secret_id = each.value.id
+
+  secret_string = var.mwaa_teams_environment_names[each.key]
+
+  depends_on = [
+    aws_secretsmanager_secret.mwaa_teams_environment_name_variables
+  ]
+}
+# /teams-environment-url
+resource "aws_secretsmanager_secret" "mwaa_teams_environment_host_url_variables" {
+  for_each = var.mwaa_teams
+  name     = "${var.mwaa_teams_variables_prefixes[each.key]}/${local.mwaa_variables_environment_url}"
+}
+resource "aws_secretsmanager_secret_version" "mwaa_teams_environment_host_url_variables" {
+  for_each  = aws_secretsmanager_secret.mwaa_teams_environment_host_url_variables
+  secret_id = each.value.id
+
+  secret_string = var.mwaa_teams_environment_host_urls[each.key]
+
+  depends_on = [
+    aws_secretsmanager_secret.mwaa_teams_environment_host_url_variables
+  ]
+}
 # S3
 # /teams-bucket
 resource "aws_secretsmanager_secret" "mwaa_teams_s3_bucket_variables" {

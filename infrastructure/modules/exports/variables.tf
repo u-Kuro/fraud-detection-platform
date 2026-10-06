@@ -49,11 +49,10 @@ variable "mlflow_teams_passwords" {
 variable "mlflow_teams_workspace_names" { type = map(string) }
 
 # MWAA
-# /urls
-variable "mwaa_egress_url" { type = string }
 # /teams
 variable "mwaa_teams" { type = set(string) }
 variable "mwaa_teams_environment_names" { type = map(string) }
+variable "mwaa_teams_environment_host_urls" { type = map(string) }
 variable "mwaa_teams_connections_prefixes" { type = map(string) }
 variable "mwaa_teams_variables_prefixes" { type = map(string) }
 variable "mwaa_teams_kubeconfig_file_paths" { type = map(string) }

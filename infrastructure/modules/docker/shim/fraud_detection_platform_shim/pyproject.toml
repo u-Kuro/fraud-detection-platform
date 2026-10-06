@@ -3,9 +3,11 @@ name = "fraud_detection_platform_shim"
 version = "1.0.0"
 requires-python = "==3.12.*"
 dependencies = [
+    "boto3==1.43.83",
     "fastapi==0.136.3",
     "pydantic==2.13.4",
     "pydantic-settings==2.15.0",
+    "slack-bolt==1.30.0",
     "uvicorn==0.52.4",
 ]
 
@@ -17,11 +19,15 @@ required-version = "==0.12.*"
 lint = [
     "ruff==0.16.5",
 ]
+stubs = [
+    "boto3-stubs[mwaa,s3]==1.43.83",
+]
 type_check = [
     "mypy==2.3.1",
 ]
 dev = [
     { include-group = "lint" },
+    { include-group = "stubs" },
     { include-group = "type_check" }
 ]
 

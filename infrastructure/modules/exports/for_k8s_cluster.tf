@@ -26,9 +26,6 @@ resource "kubernetes_config_map_v1" "eks_teams_base_config_map" {
     # S3
     AWS_ENDPOINT_URL_S3 = var.s3_egress_url
     S3_BUCKET_NAME      = var.s3_teams_bucket_names[each.key]
-    # MWAA
-    AWS_ENDPOINT_URL_MWAA = var.mwaa_egress_url
-    MWAA_ENVIRONMENT_NAME = var.mwaa_teams_environment_names[each.key] # Not Fixed
     # MLflow
     MLFLOW_TRACKING_URI = var.mlflow_inter_url # http://[service-name].[namespace].svc.cluster.local:[port]
     MLFLOW_WORKSPACE    = var.mlflow_teams_workspace_names[each.key]

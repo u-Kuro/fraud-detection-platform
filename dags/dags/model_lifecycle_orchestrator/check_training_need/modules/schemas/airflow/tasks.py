@@ -1,6 +1,7 @@
 from typing import Annotated
 from uuid import UUID
 
+from airflow.sdk.serde import allow_class
 from pydantic import BaseModel, ConfigDict, StrictStr, StrictInt, StrictBool, Strict
 
 class ExpiredModelDeploymentWorkflow(BaseModel):
@@ -26,5 +27,7 @@ class ModelDeploymentWorkflowForTraining(BaseModel):
 
     state: StrictStr
     should_train_for_promotion: StrictBool
-    id: Annotated[UUID, Strict()] | None = None
+    id: UUID | None = None
     slack_training_approval_message_ts: StrictStr | None = None
+
+allow_class(ModelDeploymentWorkflowForTraining)

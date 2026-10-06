@@ -25,10 +25,6 @@ locals {
   kubeconfig_for_localhost_file_path            = "${local.local_files_directory_path}/kubeconfig_for_localhost.yaml"
   kubeconfig_for_docker_host_internal_file_path = "${local.local_files_directory_path}/kubeconfig_for_docker_host_internal.yaml"
 
-  # MWAA
-  # /urls
-  mwaa_egress_url = module.ministack_container.egress_url
-
   # S3
   # /urls
   s3_egress_url = module.ministack_container.egress_url

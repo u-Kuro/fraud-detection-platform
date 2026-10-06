@@ -22,6 +22,19 @@ module "act_container" {
   ]
 }
 
+module "iam" {
+  source = "./modules/aws/iam"
+
+  # IAM
+  # /teams
+  iam_teams = local.iam_teams
+
+  depends_on = [
+    module.main_docker_network,
+    module.ministack_container,
+  ]
+}
+
 module "shim_container" {
   source = "./modules/docker/shim"
 
@@ -33,27 +46,21 @@ module "shim_container" {
   # /configurations
   main_network_name = module.main_docker_network.name
 
+  # IAM
+  # /admin
+  iam_admin_access_key = var.aws_admin_access_key
+  iam_admin_secret_key = var.aws_admin_secret_key
+  iam_admin_region     = module.iam.admin_region
+
   # Runner
   # /configurations
   RUNNER_CONTAINER_NAME = var.RUNNER_CONTAINER_NAME
   HOST_USER             = var.HOST_USER
 
   depends_on = [
-    module.main_docker_network,
     module.act_container,
-  ]
-}
-
-module "iam" {
-  source = "./modules/aws/iam"
-
-  # IAM
-  # /teams
-  iam_teams = local.iam_teams
-
-  depends_on = [
     module.main_docker_network,
-    module.ministack_container,
+    module.iam,
   ]
 }
 
@@ -491,11 +498,10 @@ module "exports" {
   mlflow_teams_workspace_names = module.mlflow.teams_workspace_names
 
   # MWAA
-  # /urls
-  mwaa_egress_url = local.mwaa_egress_url
   # /teams
   mwaa_teams                       = local.mwaa_teams
   mwaa_teams_environment_names     = module.mwaa.teams_environment_names
+  mwaa_teams_environment_host_urls = module.mwaa.teams_environment_host_docker_internal_urls
   mwaa_teams_connections_prefixes  = module.mwaa.teams_environment_connections_prefixes
   mwaa_teams_variables_prefixes    = module.mwaa.teams_environment_variables_prefixes
   mwaa_teams_kubeconfig_file_paths = module.mwaa.teams_environment_kubeconfig_file_paths

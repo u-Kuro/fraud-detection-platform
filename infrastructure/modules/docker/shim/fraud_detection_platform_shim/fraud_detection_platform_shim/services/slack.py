@@ -4,7 +4,7 @@ from slack_bolt import App
 from slack_bolt.adapter.socket_mode import SocketModeHandler
 from slack_sdk import WebClient
 
-from shared.modules.environment.slack import slack_environment
+from fraud_detection_platform_shim.modules.environment.slack import slack_environment
 
 slack_app = App(
     token=slack_environment.SLACK_BOT_USER_OAUTH_TOKEN,

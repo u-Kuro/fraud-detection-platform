@@ -5,6 +5,7 @@ from airflow.sdk import task
 
 from dags.model_lifecycle_orchestrator.on_training_decision.modules.schemas.airflow.tasks import ModelDeploymentWorkflowForPromotion, TrainingDecision
 from dags.model_lifecycle_orchestrator.on_training_decision.modules.schemas.airflow.xcom import TrainModelResult
+from dags.shared.modules.configs.airflow.airflow import AirflowConfig
 from dags.shared.modules.configs.slack import SlackConfig
 from dags.shared.services.slack import slack_client, create_blocks
 
@@ -45,7 +46,9 @@ def model_promotion_buttons(workflow_id: UUID) -> list:
             "style": "primary",
             "action_id": "approve_promotion",
             "value": json.dumps({
-                "workflow_id": str(workflow_id)
+                "workflow_id": str(workflow_id),
+                "mwaa_environment_name": AirflowConfig.MWAA_ENVIRONMENT_NAME,
+                "aws_endpoint_url_mwaa": AirflowConfig.AWS_ENDPOINT_URL_MWAA,
             })
         },
         {
@@ -57,7 +60,9 @@ def model_promotion_buttons(workflow_id: UUID) -> list:
             "style": "danger",
             "action_id": "reject_promotion",
             "value": json.dumps({
-                "workflow_id": str(workflow_id)
+                "workflow_id": str(workflow_id),
+                "mwaa_environment_name": AirflowConfig.MWAA_ENVIRONMENT_NAME,
+                "aws_endpoint_url_mwaa": AirflowConfig.AWS_ENDPOINT_URL_MWAA,
             })
         },
     ]

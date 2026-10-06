@@ -8,4 +8,4 @@ from dags.shared.modules.schemas.postgres.model_deployment_workflows import Mode
 class ModelDeploymentWorkflow(BaseModel):
     id: Annotated[UUID, Strict()]
     state: Annotated[ModelDeploymentWorkflowState, Strict()]
-    slack_training_approval_message_ts: StrictStr
+    slack_training_approval_message_ts: StrictStr | None

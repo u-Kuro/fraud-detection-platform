@@ -24,4 +24,3 @@ patch(
 
 # S3
 patch(target="boto3.s3.inject.upload_fileobj").start()
-patch(target="slack_bolt.App").start()

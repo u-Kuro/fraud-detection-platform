@@ -14,7 +14,7 @@ output "mlflow_host_url" { value = module.mlflow.host_url }
 # /environment
 output "mwaa_teams_environment_names" { value = module.mwaa.teams_environment_names }
 # /teams
-output "mwaa_teams_host_urls" { value = module.mwaa.teams_host_url }
+output "mwaa_teams_environment_host_urls" { value = module.mwaa.teams_environment_host_urls }
 
 # RDS
 # /postgres

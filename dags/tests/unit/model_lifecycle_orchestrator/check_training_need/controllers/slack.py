@@ -6,6 +6,7 @@ from pytest_mock import MockerFixture
 from dags.model_lifecycle_orchestrator.check_training_need.controllers.slack import build_training_approval_blocks_initializing, initialize_training_approval, cold_start_buttons, drift_retraining_buttons, build_training_approval_blocks
 from dags.model_lifecycle_orchestrator.check_training_need.modules.schemas.airflow.tasks import ModelDeploymentWorkflowForTraining
 from dags.model_lifecycle_orchestrator.check_training_need.modules.schemas.airflow.xcom import DriftCheckResult
+from dags.shared.modules.configs.airflow.airflow import AirflowConfig
 
 def test_build_training_approval_blocks_initializing():
     no_drift_result = build_training_approval_blocks_initializing(None)
@@ -56,6 +57,8 @@ def test_cold_start_buttons():
         value = json.loads(item["value"])
         assert UUID(value["workflow_id"]) == uuid
         assert value["should_train_for_promotion"] == should_train_for_promotion
+        assert value["mwaa_environment_name"] == AirflowConfig.MWAA_ENVIRONMENT_NAME()
+        assert value["aws_endpoint_url_mwaa"] == AirflowConfig.AWS_ENDPOINT_URL_MWAA()
 
 def test_drift_retraining_buttons():
     uuid = uuid4()
@@ -72,6 +75,8 @@ def test_drift_retraining_buttons():
         value = json.loads(item["value"])
         assert UUID(value["workflow_id"]) == uuid
         assert value["should_train_for_promotion"] == should_train_for_promotion
+        assert value["mwaa_environment_name"] == AirflowConfig.MWAA_ENVIRONMENT_NAME()
+        assert value["aws_endpoint_url_mwaa"] == AirflowConfig.AWS_ENDPOINT_URL_MWAA()
 
 def test_build_training_approval_blocks():
     no_drift_result = build_training_approval_blocks(

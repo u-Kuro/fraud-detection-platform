@@ -1,9 +1,10 @@
+from pydantic import StrictStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class DockerEnvironment(BaseSettings):
     model_config = SettingsConfigDict(case_sensitive=True)
 
-    SCRIPT_DIRECTORY: str
-    ACT_IMAGE: str
+    ACT_IMAGE: StrictStr
+    SCRIPT_DIRECTORY: StrictStr
 
 docker_environment = DockerEnvironment()
