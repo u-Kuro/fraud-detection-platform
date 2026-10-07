@@ -49,6 +49,10 @@ constraint-dependencies = [
     # MLflow constraints
     "mlflow-skinny==3.15.2",
 ]
+cache-keys = [
+    { file = "pyproject.toml" },
+    { file = "**/*.py" },
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -19,6 +19,12 @@ dev = [
     { include-group = "test" }
 ]
 
+[tool.uv]
+cache-keys = [
+    { file = "pyproject.toml" },
+    { file = "**/*.py" },
+]
+
 [tool.uv.sources]
 "shared" = { workspace = true }
 

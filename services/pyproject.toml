@@ -10,6 +10,9 @@ workspace.members = [
     "fraud_detection_api",
     "shared",
 ]
+cache-keys = [
+    { file = "pyproject.toml" },
+]
 
 [dependency-groups]
 # helpers
