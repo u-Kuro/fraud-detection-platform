@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
 from airflow.providers.standard.operators.empty import EmptyOperator
 from airflow.sdk import task_group, task, get_current_context
@@ -13,8 +15,14 @@ from dags.model_lifecycle_orchestrator.check_training_need.repositories.mlflow.r
 from dags.model_lifecycle_orchestrator.check_training_need.repositories.postgres.model_deployment_workflows import has_expired_promote_pending_workflow_with_replacement, delete_expired_promote_pending_workflow, update_train_pending_workflow, check_current_model_deployment_workflows, initialize_train_pending_workflow, reinitialize_train_pending_workflow, get_expired_model_deployment_workflow_with_its_replacement, get_current_model_deployment_workflow_for_training
 from dags.shared.modules.configs.ecr import ECRConfig
 from dags.shared.modules.configs.k8s import K8sConfig
+from dags.shared.modules.configs.postgres import PostgresConfig
 from dags.shared.modules.schemas.airflow import TaskContext
 from dags.shared.modules.utilities.airflow.airflow import sequence
+
+@task.short_circuit
+def has_project() -> bool:
+    try: return isinstance(PostgresConfig.project_id(), UUID)
+    except: return False
 
 def no_action(task_id: NoActionTaskIDs) -> EmptyOperator:
     return EmptyOperator(task_id=task_id)

@@ -4,8 +4,8 @@ from os import environ
 import mlflow
 from mlflow import MlflowClient, MlflowException
 
-from dags.shared.modules.configs.mlflow import MLflowConfig
 from dags.shared.modules.utilities.retry import retry
+from dags.shared.modules.configs.mlflow import MLflowConfig
 
 @cache
 def initialize_mlflow() -> None:

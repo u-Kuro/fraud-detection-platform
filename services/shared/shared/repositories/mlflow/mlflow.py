@@ -3,7 +3,7 @@ from functools import cache
 import mlflow
 from mlflow import MlflowClient, MlflowException
 
-from modules.utilities.retry import retry
+from shared.modules.utilities.retry import retry
 from shared.modules.configs.mlflow import MLflowConfig
 from shared.modules.environment.mlflow import mlflow_environment
 
