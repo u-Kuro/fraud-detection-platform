@@ -1,5 +1,6 @@
 from typing import Any
 
+from airflow.sdk.serde import allow_class
 from pydantic import BaseModel, StrictBool, StrictStr, model_validator, ModelWrapValidatorHandler
 
 class DriftCheckResult(BaseModel):
@@ -20,3 +21,5 @@ class DriftCheckResult(BaseModel):
             return handler(payload)
         else:
             return handler(value)
+
+allow_class(DriftCheckResult)

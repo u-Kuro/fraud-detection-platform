@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import Any
 
+from airflow.sdk.serde import allow_class
 from pydantic import BaseModel, StrictStr, StrictInt, StrictFloat, model_validator, ModelWrapValidatorHandler
 
 class TrainModelResult(BaseModel):
@@ -29,3 +30,5 @@ class TrainModelResult(BaseModel):
             return handler(payload)
         else:
             return handler(value)
+
+allow_class(TrainModelResult)
