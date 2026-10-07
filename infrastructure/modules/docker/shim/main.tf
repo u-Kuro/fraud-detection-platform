@@ -12,7 +12,7 @@ resource "docker_container" "fraud_detection_platform_shim" {
   image = docker_image.fraud_detection_platform_shim.image_id
 
   networks_advanced {
-    name    = var.main_network_name
+    name = var.main_network_name
     aliases = [
       "api.github.com.shim"
     ]

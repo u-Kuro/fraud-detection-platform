@@ -9,11 +9,11 @@ variable "main_network_name" { type = string }
 # IAM
 # /admin
 variable "iam_admin_access_key" {
-  type = string
+  type      = string
   sensitive = true
 }
 variable "iam_admin_secret_key" {
-  type = string
+  type      = string
   sensitive = true
 }
 variable "iam_admin_region" { type = string }

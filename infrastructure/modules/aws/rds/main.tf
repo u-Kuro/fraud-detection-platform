@@ -5,15 +5,15 @@ resource "docker_image" "postgres" {
 }
 # Create Postgres in RDS
 resource "aws_db_instance" "postgres" {
-  identifier            = "rds"
-  engine                = "postgres"
-  instance_class        = "db.t3.micro"
-  allocated_storage     = 20 # Not working, MiniStack relies in RDS_TMPFS_SIZE/RDS_PERSIST environment for allocation
-  engine_version        = "15" # Fixed to alpine, can only use major version in MiniStack
-  username              = var.rds_postgres_admin_username
-  password              = var.rds_postgres_admin_password
-  db_name               = "main"
-  skip_final_snapshot   = true
+  identifier          = "rds"
+  engine              = "postgres"
+  instance_class      = "db.t3.micro"
+  allocated_storage   = 20   # Not working, MiniStack relies in RDS_TMPFS_SIZE/RDS_PERSIST environment for allocation
+  engine_version      = "15" # Fixed to alpine, can only use major version in MiniStack
+  username            = var.rds_postgres_admin_username
+  password            = var.rds_postgres_admin_password
+  db_name             = "main"
+  skip_final_snapshot = true
 
   depends_on = [
     docker_image.postgres,

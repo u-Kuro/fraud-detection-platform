@@ -1,17 +1,29 @@
+from functools import cache
 from os import environ
 
 import mlflow
-from mlflow import MlflowClient
+from mlflow import MlflowClient, MlflowException
 
 from dags.shared.modules.configs.mlflow import MLflowConfig
+from dags.shared.modules.utilities.retry import retry
 
-def initialize_mlflow():
+@cache
+def initialize_mlflow() -> None:
     # Sets prefixed Apache Airflow environment to its official environment name
     environ["MLFLOW_TRACKING_USERNAME"] = MLflowConfig.MLFLOW_TRACKING_USERNAME()
     environ["MLFLOW_TRACKING_PASSWORD"] = MLflowConfig.MLFLOW_TRACKING_PASSWORD()
 
     mlflow.set_tracking_uri(MLflowConfig.MLFLOW_TRACKING_URI())
     mlflow.set_workspace(MLflowConfig.MLFLOW_WORKSPACE())
+
+    # warmup tracking
+    # for attempt in retry(ignored_exceptions=MlflowException):
+    #     with attempt:
+    #         mlflow.set_experiment(experiment_name)
+    # warmup registry
+    for attempt in retry(ignored_exceptions=MlflowException):
+        with attempt:
+            mlflow.search_registered_models(max_results=1)
 
 def get_mlflow_client() -> MlflowClient:
     initialize_mlflow()

@@ -1,9 +1,9 @@
-import time
 from functools import cache
 
 import mlflow
 from mlflow import MlflowClient, MlflowException
 
+from modules.utilities.retry import retry
 from shared.modules.configs.mlflow import MLflowConfig
 from shared.modules.environment.mlflow import mlflow_environment
 
@@ -11,14 +11,16 @@ from shared.modules.environment.mlflow import mlflow_environment
 def initialize_mlflow() -> None:
     mlflow.set_tracking_uri(mlflow_environment.MLFLOW_TRACKING_URI)
     mlflow.set_workspace(mlflow_environment.MLFLOW_WORKSPACE)
-    attempts = 5
-    for attempt in range(1, attempts + 1):
-        try:
+
+    # warmup tracking
+    for attempt in retry(ignored_exceptions=MlflowException):
+        with attempt:
             mlflow.set_experiment(MLflowConfig.experiment_name)
-            break
-        except MlflowException:
-            if attempt == attempts: raise
-            time.sleep(5)
+
+    # warmup registry
+    for attempt in retry(ignored_exceptions=MlflowException):
+        with attempt:
+            mlflow.search_registered_models(max_results=1)
 
 def get_mlflow_client() -> MlflowClient:
     initialize_mlflow()
