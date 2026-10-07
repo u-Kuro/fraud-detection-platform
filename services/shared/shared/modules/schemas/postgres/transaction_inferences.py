@@ -9,8 +9,7 @@ from shared.modules.schemas.postgres.postgres import PostgresTableBase
 class TransactionInferences(PostgresTableBase):
     __tablename__ = "transaction_inferences"
 
-    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False, primary_key=True,
-                                          server_default=func.gen_random_uuid())
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False, primary_key=True, server_default=func.gen_random_uuid())
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
     transaction_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False)
     transaction_timestamp: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)

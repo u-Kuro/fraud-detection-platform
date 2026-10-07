@@ -29,8 +29,9 @@ def get_node_entry(node: BaseOperator | TaskGroup | PlainXComArg | Sequence[Base
 
 def sequence(*nodes):
     assert nodes
-    for i in range(len(nodes) - 1):
-        # noinspection statement-effect
-        nodes[i] >> nodes[i + 1]
-    # To return the first entry in the sequence as a direct downstream
-    return get_node_entry(nodes[0])
+    entries = [get_node_entry(node) for node in nodes]
+    for upstream, downstream in zip(entries, entries[1:]):
+        # noinspection unresolved-references
+        upstream >> downstream
+    # return the first entry in sequence as a direct downstream
+    return entries[0]
