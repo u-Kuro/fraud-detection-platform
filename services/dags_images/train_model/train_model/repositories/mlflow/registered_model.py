@@ -22,7 +22,7 @@ def save_and_register_model(
             "imbalanced-learn==0.14.2",
             "xgboost==3.4.1",
             "scikit-learn==1.9.0",
-            "numpy==2.5.2",
+            "numpy==2.4.6",
             "pandas==2.3.3",
         ],
         name=MLflowConfig.model_path,

@@ -1,5 +1,3 @@
-from typing import cast
-
 import numpy
 import optuna
 from imblearn.over_sampling import SMOTE
@@ -43,6 +41,7 @@ def train_model(
             MLflowConfig.model_name,
             model(
                 **best_model_hyperparameters,
+                device=TrainingConfig.device,
                 scale_pos_weight=preprocess_outputs.original_y_train_positive_scale,
                 random_state=TrainingConfig.random_state,
                 n_jobs=get_safe_cpu_count(),
@@ -77,6 +76,7 @@ def optimize_model_hyperparameters(
                 MLflowConfig.model_name,
                 model(
                     **hyperparameters_sampler().resolve(trial),
+                    device=TrainingConfig.device,
                     scale_pos_weight=preprocessed_output.original_y_train_positive_scale,
                     random_state=TrainingConfig.random_state,
                     n_jobs=get_safe_cpu_count(),
