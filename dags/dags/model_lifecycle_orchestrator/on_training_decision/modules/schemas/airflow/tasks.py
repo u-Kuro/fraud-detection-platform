@@ -13,4 +13,6 @@ class TrainingDecision(BaseModel):
 class ModelDeploymentWorkflowForPromotion(BaseModel):
     slack_promotion_approval_message_ts: StrictStr
 
+allow_class(ModelDeploymentWorkflowForTraining)
 allow_class(TrainingDecision)
+allow_class(ModelDeploymentWorkflowForPromotion)

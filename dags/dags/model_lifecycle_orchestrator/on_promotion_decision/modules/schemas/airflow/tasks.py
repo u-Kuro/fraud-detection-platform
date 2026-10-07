@@ -14,4 +14,6 @@ class PromotionDecision(BaseModel):
 class PromotedModelDeployment(BaseModel):
     dataset_max_timestamp: datetime
 
+allow_class(ModelDeploymentWorkflowForPromotion)
 allow_class(PromotionDecision)
+allow_class(PromotedModelDeployment)

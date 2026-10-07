@@ -29,5 +29,8 @@ class ModelDeploymentWorkflowForTraining(BaseModel):
     id: UUID | None = None
     slack_training_approval_message_ts: StrictStr | None = None
 
+allow_class(ExpiredModelDeploymentWorkflow)
+allow_class(ReservedModelDeploymentWorkflow)
 allow_class(ExpiredAndReservedModelDeploymentWorkflows)
+allow_class(ActiveModelDeployment)
 allow_class(ModelDeploymentWorkflowForTraining)
