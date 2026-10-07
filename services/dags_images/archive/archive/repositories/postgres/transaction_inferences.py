@@ -7,7 +7,7 @@ from shared.modules.schemas.postgres.transaction_inferences import TransactionIn
 
 def get_transaction_inferences_batch(session: Session) -> list[dict]:
     result = session.execute(
-        select(TransactionInferences)
+        select(TransactionInferences.__table__)
         .where(TransactionInferences.transaction_timestamp <= archive_environment.TRANSACTION_INFERENCES_ISO_DATETIME_CUTOFF)
         .order_by(
             TransactionInferences.transaction_timestamp.asc(),

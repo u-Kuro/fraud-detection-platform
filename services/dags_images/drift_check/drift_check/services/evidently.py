@@ -6,8 +6,6 @@ from evidently.presets import DataDriftPreset, ClassificationPreset
 from pandas import DataFrame
 
 from drift_check.modules.configs.evidently import EvidentlyConfig
-from drift_check.repositories.mlflow.registered_model_dataset import load_reference_dataset
-from drift_check.repositories.postgres.transaction_inferences import load_current_dataset
 from drift_check.repositories.s3.drift_reports import upload_drift_report
 from shared.modules.configs.dataset import DatasetConfig
 from shared.modules.schemas.models_dataset.fraud_classification import FraudClassificationFeaturesKeys
@@ -111,10 +109,7 @@ def run_drift_report(
     )
     return summary, buffer.getvalue().encode("utf-8")
 
-def drift_check() -> tuple[bool, dict[str, dict]]:
-    df_reference, current_dataset_cutoff = load_reference_dataset()
-    df_current = load_current_dataset(current_dataset_cutoff)
-
+def drift_check(df_reference: DataFrame, df_current: DataFrame) -> tuple[bool, dict[str, dict]]:
     drift_summary, html_bytes = run_drift_report(df_reference, df_current)
     upload_drift_report(html_bytes, json.dumps(drift_summary).encode())
 

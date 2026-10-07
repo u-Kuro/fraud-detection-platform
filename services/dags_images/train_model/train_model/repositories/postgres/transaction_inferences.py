@@ -61,9 +61,6 @@ def get_timed_latest_unused_dataset() -> TransactionInferencesDatasetNow:
         if not isinstance(df, DataFrame):
             raise TypeError(f"Expected DataFrame, got {type(df).__name__}")
 
-        if len(df) < DatasetConfig.minimum_rows:
-            raise ValueError(f"Dataset window is too small ({len(df)} rows), minimum is {DatasetConfig.minimum_rows}.")
-
         # Convert bool to int64
         df[TransactionInferences.is_fraud.key] = df[TransactionInferences.is_fraud.key].astype("int64")
         # Convert bool to int64

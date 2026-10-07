@@ -1,6 +1,7 @@
 from enum import StrEnum
 
 class TrainModelXComKeys(StrEnum):
+    has_enough_training_data = "has_enough_training_data"
     model_trained_at_datetime = "model_trained_at_datetime"
     model_mlflow_run_id = "model_mlflow_run_id"
     model_name = "model_name"

@@ -2,7 +2,7 @@ from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperato
 from airflow.sdk import task, get_current_context, task_group
 from kubernetes.client import models
 
-from dags.model_lifecycle_orchestrator.on_training_decision.modules.schemas.airflow.xcom import TrainModelResult
+from dags.model_lifecycle_orchestrator.on_training_decision.modules.schemas.airflow.xcom import TrainModelResultValidation, TrainModelResult
 from dags.model_lifecycle_orchestrator.on_training_decision.modules.schemas.airflow.tasks import TrainingDecision
 from dags.model_lifecycle_orchestrator.on_training_decision.repositories.postgres.model_deployment_workflows import update_approved_training_workflow, delete_rejected_training_workflow
 from dags.shared.modules.configs.ecr import ECRConfig
@@ -63,6 +63,11 @@ def train_model_operator() -> KubernetesPodOperator:
 
 @task_group
 def train_model() -> TrainModelResult:
+    @task.short_circuit
+    def has_enough_training_data() -> bool:
+        context = TaskContext(get_current_context())
+        return context.xcom_pull(pydantic_model=TrainModelResultValidation).has_enough_training_data
+
     @task
     def get_train_model_result() -> TrainModelResult:
         context = TaskContext(get_current_context())
@@ -70,6 +75,7 @@ def train_model() -> TrainModelResult:
 
     sequence(
         train_model_operator(),
+        has_enough_training_data(),
         train_model_result := get_train_model_result()
     )
 

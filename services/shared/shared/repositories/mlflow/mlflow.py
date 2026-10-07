@@ -1,4 +1,5 @@
 from functools import cache
+from os import environ
 
 import mlflow
 from mlflow import MlflowClient, MlflowException
@@ -9,6 +10,9 @@ from shared.modules.environment.mlflow import mlflow_environment
 
 @cache
 def initialize_mlflow() -> None:
+    # Workaround: without this, downloading the reference dataset from MLflow fails (cause unknown)
+    environ["MLFLOW_ENABLE_PROXY_MULTIPART_DOWNLOAD"] = "false"
+
     mlflow.set_tracking_uri(mlflow_environment.MLFLOW_TRACKING_URI)
     mlflow.set_workspace(mlflow_environment.MLFLOW_WORKSPACE)
 

@@ -10,7 +10,7 @@ from fraud_detection_api.controllers.routers import predict
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     app.state.model = FraudClassifier(
-        mlflow_model_uri=FraudClassifierConfig.deployed_model,
+        deployed_model=FraudClassifierConfig.deployed_model,
     )
     app.state.executor = ThreadPoolExecutor(max_workers=cpu_count())
 

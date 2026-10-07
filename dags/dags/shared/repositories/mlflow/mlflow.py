@@ -9,6 +9,8 @@ from dags.shared.modules.configs.mlflow import MLflowConfig
 
 @cache
 def initialize_mlflow() -> None:
+    # Workaround: without this, downloading the reference dataset from MLflow fails (cause unknown)
+    environ["MLFLOW_ENABLE_PROXY_MULTIPART_DOWNLOAD"] = "false"
     # Sets prefixed Apache Airflow environment to its official environment name
     environ["MLFLOW_TRACKING_USERNAME"] = MLflowConfig.MLFLOW_TRACKING_USERNAME()
     environ["MLFLOW_TRACKING_PASSWORD"] = MLflowConfig.MLFLOW_TRACKING_PASSWORD()

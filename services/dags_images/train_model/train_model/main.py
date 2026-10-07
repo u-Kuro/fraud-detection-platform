@@ -2,6 +2,7 @@ from imblearn.over_sampling import SMOTE
 from sklearn.preprocessing import RobustScaler
 from xgboost import XGBClassifier
 
+from shared.modules.configs.dataset import DatasetConfig
 from shared.controllers.airflow.xcom import xcom_push
 from shared.modules.configs.mlflow import MLflowConfig
 from shared.modules.schemas.postgres.transaction_inferences import TransactionInferences
@@ -21,66 +22,72 @@ def main() -> None:
     seed_everything(TrainingConfig.random_state)
 
     unused_dataset_outputs = get_timed_latest_unused_dataset()
-    preprocess_outputs = preprocess(
-        dataset=unused_dataset_outputs.dataset.drop(
-            columns=[TransactionInferences.is_fraud_prediction.key]
-        )
-    )
-
-    with transactional_mlflow_run(run_name=MLflowConfig.model_name):
-        train_model_outputs = train_model(
-            preprocess_outputs=preprocess_outputs,
-            scaler=RobustScaler,
-            resampler=SMOTE,
-            model=XGBClassifier,
-            hyperparameters_sampler=XGBHyperparametersSampler
+    if len(unused_dataset_outputs.dataset) < DatasetConfig.minimum_rows:
+        xcom_push({
+            TrainModelXComKeys.has_enough_training_data: False
+        })
+    else:
+        preprocess_outputs = preprocess(
+            dataset=unused_dataset_outputs.dataset.drop(
+                columns=[TransactionInferences.is_fraud_prediction.key]
+            )
         )
 
-        model_evaluations = evaluate_model(
-            model=train_model_outputs.model,
-            x_test=preprocess_outputs.x_test,
-            y_test=preprocess_outputs.y_test
+        with transactional_mlflow_run(run_name=MLflowConfig.model_name):
+            train_model_outputs = train_model(
+                preprocess_outputs=preprocess_outputs,
+                scaler=RobustScaler,
+                resampler=SMOTE,
+                model=XGBClassifier,
+                hyperparameters_sampler=XGBHyperparametersSampler
+            )
+
+            model_evaluations = evaluate_model(
+                model=train_model_outputs.model,
+                x_test=preprocess_outputs.x_test,
+                y_test=preprocess_outputs.y_test
+            )
+
+            registered_model_info = save_and_register_model(
+                model=train_model_outputs.model,
+                x_test_samples=preprocess_outputs.x_test[:5]
+            )
+
+            save_model_reference_dataset(
+                mlflow_model_run_id=registered_model_info.run_id,
+                model_reference_dataset=unused_dataset_outputs.dataset
+            )
+
+            save_model_hyperparameters(
+                mlflow_model_run_id=registered_model_info.run_id,
+                model_hyperparameters=train_model_outputs.hyperparameters
+            )
+
+            save_model_metrics(
+                mlflow_model_run_id=registered_model_info.run_id,
+                mlflow_model_id=registered_model_info.model_id,
+                model_metrics=model_evaluations.metrics.model_dump(),
+                model_metric_figures=model_evaluations.metric_figures.model_dump()
+            )
+
+        dataset_min_max_timestamps = get_dataset_min_and_max_timestamps(
+            dataset=unused_dataset_outputs.dataset,
+            timestamp_feature_key=TransactionInferences.transaction_timestamp.key
         )
 
-        registered_model_info = save_and_register_model(
-            model=train_model_outputs.model,
-            x_test_samples=preprocess_outputs.x_test[:5]
-        )
-
-        save_model_reference_dataset(
-            mlflow_model_run_id=registered_model_info.run_id,
-            model_reference_dataset=unused_dataset_outputs.dataset
-        )
-
-        save_model_hyperparameters(
-            mlflow_model_run_id=registered_model_info.run_id,
-            model_hyperparameters=train_model_outputs.hyperparameters
-        )
-
-        save_model_metrics(
-            mlflow_model_run_id=registered_model_info.run_id,
-            mlflow_model_id=registered_model_info.model_id,
-            model_metrics=model_evaluations.metrics.model_dump(),
-            model_metric_figures=model_evaluations.metric_figures.model_dump()
-        )
-
-    dataset_min_max_timestamps = get_dataset_min_and_max_timestamps(
-        dataset=unused_dataset_outputs.dataset,
-        timestamp_feature_key=TransactionInferences.transaction_timestamp.key
-    )
-
-    xcom_push({
-        TrainModelXComKeys.model_trained_at_datetime: unused_dataset_outputs.retrieved_iso_datetime,
-        TrainModelXComKeys.model_mlflow_run_id: registered_model_info.run_id,
-        TrainModelXComKeys.model_name: registered_model_info.model_name,
-        TrainModelXComKeys.model_version: registered_model_info.model_version,
-        TrainModelXComKeys.model_dataset_min_datetime: dataset_min_max_timestamps.model_dataset_min_iso_datetime,
-        TrainModelXComKeys.model_dataset_max_datetime: dataset_min_max_timestamps.model_dataset_max_iso_datetime,
-        TrainModelXComKeys.model_f1_score: model_evaluations.metrics.f1_score,
-        TrainModelXComKeys.model_pr_auc: model_evaluations.metrics.pr_auc,
-        TrainModelXComKeys.model_recall: model_evaluations.metrics.recall,
-        TrainModelXComKeys.model_precision: model_evaluations.metrics.precision,
-    })
+        xcom_push({
+            TrainModelXComKeys.has_enough_training_data: True,
+            TrainModelXComKeys.model_trained_at_datetime: unused_dataset_outputs.retrieved_iso_datetime,
+            TrainModelXComKeys.model_mlflow_run_id: registered_model_info.run_id,
+            TrainModelXComKeys.model_name: registered_model_info.model_name,
+            TrainModelXComKeys.model_version: registered_model_info.model_version,
+            TrainModelXComKeys.model_dataset_min_datetime: dataset_min_max_timestamps.model_dataset_min_iso_datetime,
+            TrainModelXComKeys.model_dataset_max_datetime: dataset_min_max_timestamps.model_dataset_max_iso_datetime,
+            TrainModelXComKeys.model_f1_score: model_evaluations.metrics.f1_score,
+            TrainModelXComKeys.model_pr_auc: model_evaluations.metrics.pr_auc,
+            TrainModelXComKeys.model_recall: model_evaluations.metrics.recall,
+            TrainModelXComKeys.model_precision: model_evaluations.metrics.precision,
+        })
 
 if __name__ == "__main__":
     main()

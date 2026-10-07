@@ -1,3 +1,4 @@
+import tempfile
 from datetime import datetime, timezone, timedelta
 
 import numpy
@@ -10,11 +11,13 @@ from shared.modules.schemas.postgres.transaction_inferences import TransactionIn
 from shared.repositories.mlflow.mlflow import mlflow_module
 
 def load_reference_dataset() -> tuple[DataFrame, datetime]:
-    reference_dataset_parquet = mlflow_module.artifacts.download_artifacts(
-        run_id=drift_check_environment.ACTIVE_MODEL_DEPLOYMENT_MLFLOW_RUN_ID,
-        artifact_path=MLflowConfig.reference_dataset_path
-    )
-    df_reference = parquet.read_table(reference_dataset_parquet).to_pandas()
+    with tempfile.TemporaryDirectory() as temporary_directory:
+        reference_dataset_parquet = mlflow_module.artifacts.download_artifacts(
+            run_id=drift_check_environment.ACTIVE_MODEL_DEPLOYMENT_MLFLOW_RUN_ID,
+            artifact_path=f"{MLflowConfig.reference_dataset_path}/{MLflowConfig.reference_dataset_file_name}",
+            dst_path=temporary_directory,
+        )
+        df_reference = parquet.read_table(reference_dataset_parquet).to_pandas()
 
     if df_reference is None:
         raise ValueError(f"No reference dataset was found in 'runs:/{drift_check_environment.ACTIVE_MODEL_DEPLOYMENT_MLFLOW_RUN_ID}/{MLflowConfig.reference_dataset_path}'.")

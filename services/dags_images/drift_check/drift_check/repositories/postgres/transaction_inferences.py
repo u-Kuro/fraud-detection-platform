@@ -51,9 +51,6 @@ def load_current_dataset(
         if not isinstance(df_current, DataFrame):
             raise TypeError(f"Expected DataFrame, got {type(df_current).__name__}")
 
-        if len(df_current) < DatasetConfig.minimum_rows:
-            raise ValueError(f"Dataset window is too small ({len(df_current)} rows), minimum is {DatasetConfig.minimum_rows}.")
-
         # Convert boolean to Int64 (nullable)
         df_current[TransactionInferences.is_fraud.key] = df_current[TransactionInferences.is_fraud.key].astype("Int64")
         # Convert bool to int64

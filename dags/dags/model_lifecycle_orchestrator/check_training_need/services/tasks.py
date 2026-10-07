@@ -9,7 +9,7 @@ from dags.model_lifecycle_orchestrator.check_training_need.controllers.slack imp
 from dags.model_lifecycle_orchestrator.check_training_need.modules.configs.airflow.task_ids import NoActionTaskIDs, SetupTrainingApprovalTaskIDs, DispatchTrainingApprovalTaskIDs
 from dags.model_lifecycle_orchestrator.check_training_need.modules.configs.k8s.environments import DriftCheckEnvironmentKeys
 from dags.model_lifecycle_orchestrator.check_training_need.modules.schemas.airflow.tasks import ActiveModelDeployment, ModelDeploymentWorkflowForTraining
-from dags.model_lifecycle_orchestrator.check_training_need.modules.schemas.airflow.xcom import DriftCheckResult
+from dags.model_lifecycle_orchestrator.check_training_need.modules.schemas.airflow.xcom import DriftCheckResultValidation, DriftCheckResult
 from dags.model_lifecycle_orchestrator.check_training_need.repositories.mlflow.registered_model import replace_expired_model, delete_expired_model
 from dags.model_lifecycle_orchestrator.check_training_need.repositories.mlflow.run import delete_expired_mlflow_run
 from dags.model_lifecycle_orchestrator.check_training_need.repositories.postgres.model_deployment_workflows import has_expired_promote_pending_workflow_with_replacement, delete_expired_promote_pending_workflow, update_train_pending_workflow, check_current_model_deployment_workflows, initialize_train_pending_workflow, reinitialize_train_pending_workflow, get_expired_model_deployment_workflow_with_its_replacement, get_current_model_deployment_workflow_for_training
@@ -90,6 +90,11 @@ def drift_check(active_model_deployment: ActiveModelDeployment | None) -> DriftC
     def get_active_model_deployment_mlflow_run_id(inner_active_model_deployment: ActiveModelDeployment) -> str:
         return inner_active_model_deployment.mlflow_run_id
 
+    @task.short_circuit
+    def has_enough_current_data() -> bool:
+        context = TaskContext(get_current_context())
+        return context.xcom_pull(pydantic_model=DriftCheckResultValidation).has_enough_current_data
+
     @task
     def get_drift_result() -> DriftCheckResult:
         context = TaskContext(get_current_context())
@@ -98,6 +103,7 @@ def drift_check(active_model_deployment: ActiveModelDeployment | None) -> DriftC
     sequence(
         active_model_deployment_mlflow_run_id := get_active_model_deployment_mlflow_run_id(active_model_deployment),
         drift_check_operator(active_model_deployment_mlflow_run_id),
+        has_enough_current_data(),
         drift_result := get_drift_result()
     )
 
