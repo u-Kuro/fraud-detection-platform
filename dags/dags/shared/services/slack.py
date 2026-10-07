@@ -29,9 +29,7 @@ def slack_failure_alert(context: Context):
         .replace("<", "&lt;")
         .replace(">", "&gt;")
         .replace(fence, "'''")
-    )
-    if len(error) > limit:
-        error = error[: max(limit - 1, 0)] + "…"
+    )[:limit]
 
     slack_client.chat_postMessage(
         channel=SlackConfig.SLACK_CHANNEL_ID(),

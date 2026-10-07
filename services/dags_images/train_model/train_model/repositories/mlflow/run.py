@@ -1,5 +1,6 @@
 import os
 import tempfile
+import traceback
 from contextlib import contextmanager
 from typing import Any
 
@@ -13,20 +14,19 @@ from shared.repositories.mlflow.mlflow import mlflow_module, mlflow_client
 
 @contextmanager
 def transactional_mlflow_run(run_name: str):
-    with mlflow_module.start_run(run_name=run_name) as run:
-        try: yield
-        except:
-            run_id_str = str(run.info.run_id)
+    run_id: str | None = None
+    try:
+        with mlflow_module.start_run(run_name=run_name) as run:
+            run_id = run.info.run_id
+            yield run
+    except Exception as exception:
+        if run_id is not None:
             try:
-                mlflow_client.delete_run(run_id=run_id_str)
-                items = mlflow_client.search_model_versions(filter_string=f"run_id='{run_id_str}'")
-                for item in items:
-                    mlflow_client.delete_model_version(
-                        name=item.name,
-                        version=item.version,
-                    )
-            except: pass
-            raise RuntimeError("Model training failed.")
+                for mv in mlflow_client.search_model_versions(filter_string=f"run_id='{run_id}'"):
+                    mlflow_client.delete_model_version(name=mv.name, version=mv.version)
+                mlflow_client.delete_run(run_id)
+            except: traceback.print_exc()
+        raise RuntimeError("Model training failed.") from exception
 
 def save_model_reference_dataset(
     mlflow_model_run_id: str,

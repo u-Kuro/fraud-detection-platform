@@ -38,12 +38,12 @@ def save_and_register_model(
         pyfunc_predict_fn=model.predict_proba.__name__,
     )
 
-    if isinstance(model_info.registered_model_version, int):
+    if model_info.registered_model_version is None:
+        raise RuntimeError("Model registration failed: registered_model_version is None.")
+    else:
         return MLflowRegisteredModelInfo(
             run_id=model_info.run_id,
             model_id=model_info.model_id,
             model_name=MLflowConfig.model_name,
-            model_version=model_info.registered_model_version
+            model_version=int(model_info.registered_model_version)
         )
-    else:
-        raise RuntimeError("Model registration failed: registered_model_version is not an integer.")
