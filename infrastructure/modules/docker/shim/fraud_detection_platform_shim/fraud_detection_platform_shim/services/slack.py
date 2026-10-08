@@ -16,7 +16,6 @@ def register_slack_handlers() -> None:
     # noinspection unused-imports
     from fraud_detection_platform_shim.controllers.handlers.slack import ( # noqa: F401
         promotion,
-        retraining,
         training
     )
 
@@ -39,14 +38,19 @@ def update_message(
     body: dict,
     text_markdown: str
 ) -> None:
+    blocks = [
+        block for block in body["message"]["blocks"]
+        if block["type"] != "actions"
+    ]
+
+    blocks.append({
+        "type": "section",
+        "text": {"type": "mrkdwn", "text": text_markdown}
+    })
+
     client.chat_update(
         channel=body["channel"]["id"],
         ts=body["message"]["ts"],
-        blocks=[{
-            "type": "section",
-            "text": {
-                "type": "mrkdwn",
-                "text": text_markdown
-            }
-        }],
+        blocks=blocks,
+        text=text_markdown,
     )

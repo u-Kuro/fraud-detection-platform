@@ -44,8 +44,9 @@ def model_promotion_buttons(workflow_id: UUID) -> list:
                 "text": "🚀 Approve Promotion"
             },
             "style": "primary",
-            "action_id": "approve_promotion",
+            "action_id": "promotion_decision",
             "value": json.dumps({
+                "approved": True,
                 "workflow_id": str(workflow_id),
                 "mwaa_environment_name": AirflowConfig.MWAA_ENVIRONMENT_NAME(),
                 "aws_endpoint_url_mwaa": AirflowConfig.AWS_ENDPOINT_URL_MWAA(),
@@ -58,8 +59,9 @@ def model_promotion_buttons(workflow_id: UUID) -> list:
                 "text": "❌ Dismiss"
             },
             "style": "danger",
-            "action_id": "reject_promotion",
+            "action_id": "promotion_decision",
             "value": json.dumps({
+                "approved": False,
                 "workflow_id": str(workflow_id),
                 "mwaa_environment_name": AirflowConfig.MWAA_ENVIRONMENT_NAME(),
                 "aws_endpoint_url_mwaa": AirflowConfig.AWS_ENDPOINT_URL_MWAA(),

@@ -7,8 +7,8 @@ from fraud_detection_platform_shim.services.mwaa import trigger_airflow_dag
 from fraud_detection_platform_shim.services.idempotency import slack_action_store
 from fraud_detection_platform_shim.services.slack import update_message
 
-@slack_app.action("approve_training")
-def approve_training(
+@slack_app.action("training_decision")
+def training_decision(
     ack: Ack,
     body: dict,
     action: dict,
@@ -22,43 +22,21 @@ def approve_training(
             endpoint_url=training_value.aws_endpoint_url_mwaa,
             environment_name=training_value.mwaa_environment_name,
             configurations={
-                "approved": True,
+                "approved": training_value.approved,
                 "model_deployment_workflow": {
                     "id": str(training_value.workflow_id),
                 },
                 "should_train_for_promotion": training_value.should_train_for_promotion
             }
-        )
-        update_message(
-            client=client,
-            body=body,
-            text_markdown=f"✅ *Training approved* by @{body['user']['username']}, added to queue..."
         )
 
-@slack_app.action("reject_training")
-def reject_training(
-    ack: Ack,
-    body: dict,
-    action: dict,
-    client: WebClient
-):
-    ack()
-    with slack_action_store.guard(action["action_id"], body["message"]["ts"]):
-        training_value = TrainingValue.model_validate_json(action["value"])
-        trigger_airflow_dag(
-            dag_id="on_training_decision",
-            endpoint_url=training_value.aws_endpoint_url_mwaa,
-            environment_name=training_value.mwaa_environment_name,
-            configurations={
-                "approved": False,
-                "model_deployment_workflow": {
-                    "id": str(training_value.workflow_id),
-                },
-                "should_train_for_promotion": training_value.should_train_for_promotion
-            }
-        )
+        username = body["user"]["username"]
         update_message(
             client=client,
             body=body,
-            text_markdown=f"❌ *Training dismissed* by @{body['user']['username']}."
+            text_markdown=(
+                f"✅ *Training approved* by @{username}, added to queue..."
+                if training_value.approved else
+                f"❌ *Training dismissed* by @{username}."
+            )
         )

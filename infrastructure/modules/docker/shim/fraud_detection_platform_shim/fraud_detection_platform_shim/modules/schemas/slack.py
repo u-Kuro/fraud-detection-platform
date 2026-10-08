@@ -5,6 +5,7 @@ from pydantic import BaseModel, StrictBool, ConfigDict, StrictStr
 class TrainingValue(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
+    approved: StrictBool
     workflow_id: UUID
     should_train_for_promotion: StrictBool
 
@@ -14,6 +15,7 @@ class TrainingValue(BaseModel):
 class PromotionValue(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
+    approved: StrictBool
     workflow_id: UUID
 
     mwaa_environment_name: StrictStr

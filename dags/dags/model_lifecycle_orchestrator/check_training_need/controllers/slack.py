@@ -144,7 +144,7 @@ def initialize_training_approval(
 
     return model_deployment_workflow_for_training
 
-def cold_start_buttons(
+def training_decision_buttons(
     workflow_id: UUID,
     should_train_for_promotion: bool
 ) -> list[dict]:
@@ -156,8 +156,9 @@ def cold_start_buttons(
                 "text": "✅ Approve Training"
             },
             "style": "primary",
-            "action_id": "approve_training",
+            "action_id": "training_decision",
             "value": json.dumps({
+                "approved": True,
                 "workflow_id": str(workflow_id),
                 "should_train_for_promotion": should_train_for_promotion,
                 "mwaa_environment_name": AirflowConfig.MWAA_ENVIRONMENT_NAME(),
@@ -171,45 +172,9 @@ def cold_start_buttons(
                 "text": "❌ Dismiss"
             },
             "style": "danger",
-            "action_id": "reject_training",
+            "action_id": "training_decision",
             "value": json.dumps({
-                "workflow_id": str(workflow_id),
-                "should_train_for_promotion": should_train_for_promotion,
-                "mwaa_environment_name": AirflowConfig.MWAA_ENVIRONMENT_NAME(),
-                "aws_endpoint_url_mwaa": AirflowConfig.AWS_ENDPOINT_URL_MWAA(),
-            })
-        },
-    ]
-
-def drift_retraining_buttons(
-    workflow_id: UUID,
-    should_train_for_promotion: bool
-) -> list:
-    return [
-        {
-            "type": "button",
-            "text": {
-                "type": "plain_text",
-                "text": "🔄 Approve Retraining"
-            },
-            "style": "primary",
-            "action_id": "approve_retraining",
-            "value": json.dumps({
-                "workflow_id": str(workflow_id),
-                "should_train_for_promotion": should_train_for_promotion,
-                "mwaa_environment_name": AirflowConfig.MWAA_ENVIRONMENT_NAME(),
-                "aws_endpoint_url_mwaa": AirflowConfig.AWS_ENDPOINT_URL_MWAA(),
-            })
-        },
-        {
-            "type": "button",
-            "text": {
-                "type": "plain_text",
-                "text": "❌ Dismiss"
-            },
-            "style": "danger",
-            "action_id": "reject_retraining",
-            "value": json.dumps({
+                "approved": False,
                 "workflow_id": str(workflow_id),
                 "should_train_for_promotion": should_train_for_promotion,
                 "mwaa_environment_name": AirflowConfig.MWAA_ENVIRONMENT_NAME(),
@@ -230,7 +195,7 @@ def build_training_approval_blocks(
                 "No model has been deployed yet. "
                 "Click *Approve Training* to train a model."
             ),
-            buttons=cold_start_buttons(
+            buttons=training_decision_buttons(
                 workflow_id=workflow_id,
                 should_train_for_promotion=should_train_for_promotion
             )
@@ -257,7 +222,7 @@ def build_training_approval_blocks(
 
                 "Click *Approve Retraining* to kick off a new training run."
             ),
-            buttons=drift_retraining_buttons(
+            buttons=training_decision_buttons(
                 workflow_id=workflow_id,
                 should_train_for_promotion=should_train_for_promotion
             )
