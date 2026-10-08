@@ -17,7 +17,7 @@ def test_build_training_approval_blocks_initializing():
         )
     )
 
-    assert no_drift_result[0]["text"]["text"] == "🆕 Training Required"
+    assert no_drift_result[0]["text"]["text"] == "🆕 First Training Required"
     assert with_drift_result[0]["text"]["text"] == "⚠️ Model Retraining Required"
 
 def test_initialize_training_approval(mocker: MockerFixture):
@@ -75,5 +75,5 @@ def test_build_training_approval_blocks():
         should_train_for_promotion=True
     )
 
-    assert no_drift_result[0]["text"]["text"] == "🆕 Training Required"
+    assert no_drift_result[0]["text"]["text"] == "🆕 First Training Required"
     assert with_drift_result[0]["text"]["text"] == "⚠️ Model Retraining Required"

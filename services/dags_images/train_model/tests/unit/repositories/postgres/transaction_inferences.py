@@ -21,12 +21,6 @@ def test_get_timed_latest_unused_dataset(mocker: MockerFixture):
         return_value=dataframe
     )
 
-    mocker.patch.object(
-        target=DatasetConfig,
-        attribute="minimum_rows",
-        new=len(dataframe.index)
-    )
-
     result = get_timed_latest_unused_dataset()
     original_dataframe[TransactionInferences.transaction_timestamp.key] = original_dataframe[TransactionInferences.transaction_timestamp.key].astype("datetime64[s, UTC]").astype("int64")
 

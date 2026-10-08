@@ -30,3 +30,14 @@ def delete_rejected_promotion_workflow(data: PromotionDecision):
                 ModelDeploymentWorkflows.project_id == PostgresConfig.project_id()
             )
         )
+
+@task
+def delete_completed_workflow(data: PromotionDecision):
+    with sql_session.begin() as session:
+        session.execute(
+            delete(ModelDeploymentWorkflows)
+            .where(
+                ModelDeploymentWorkflows.id == data.model_deployment_workflow.id,
+                ModelDeploymentWorkflows.project_id == PostgresConfig.project_id()
+            )
+        )

@@ -20,12 +20,6 @@ def test_load_current_dataset(mocker: MockerFixture):
         return_value=dataframe
     )
 
-    mocker.patch.object(
-        target=DatasetConfig,
-        attribute="minimum_rows",
-        new=len(dataframe.index)
-    )
-
     from drift_check.repositories.postgres.transaction_inferences import load_current_dataset
     result = load_current_dataset(current_dataset_cutoff=datetime.now())
 

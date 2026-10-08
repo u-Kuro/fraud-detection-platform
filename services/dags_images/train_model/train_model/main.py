@@ -29,7 +29,10 @@ def main() -> None:
     else:
         preprocess_outputs = preprocess(
             dataset=unused_dataset_outputs.dataset.drop(
-                columns=[TransactionInferences.is_fraud_prediction.key]
+                columns=[
+                    TransactionInferences.is_fraud_prediction.key,
+                    TransactionInferences.is_fraud_probability.key,
+                ]
             )
         )
 

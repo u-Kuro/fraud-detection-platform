@@ -1,6 +1,6 @@
 from airflow.sdk import dag
 
-from dags.model_lifecycle_orchestrator.on_promotion_decision.repositories.postgres.model_deployment_workflows import update_approved_promotion_workflow, delete_rejected_promotion_workflow
+from dags.model_lifecycle_orchestrator.on_promotion_decision.repositories.postgres.model_deployment_workflows import update_approved_promotion_workflow, delete_rejected_promotion_workflow, delete_completed_workflow
 from dags.model_lifecycle_orchestrator.on_promotion_decision.repositories.postgres.model_deployments import promote_model_deployment
 from dags.model_lifecycle_orchestrator.on_promotion_decision.services.tasks import check_promotion_decision, get_promotion_decision, apply_model_deployment, archive_transaction_inferences_used_for_deployed_model, get_transaction_inferences_iso_datetime_cutoff
 from dags.shared.modules.configs.airflow.dag_ids import DAGIDs
@@ -27,7 +27,8 @@ def on_promotion_decision():
                 promoted_model_deployment := promote_model_deployment(promotion_decision),
                 transaction_inferences_iso_datetime_cutoff := get_transaction_inferences_iso_datetime_cutoff(promoted_model_deployment),
                 apply_model_deployment(),
-                archive_transaction_inferences_used_for_deployed_model(transaction_inferences_iso_datetime_cutoff)
+                archive_transaction_inferences_used_for_deployed_model(transaction_inferences_iso_datetime_cutoff),
+                delete_completed_workflow(promotion_decision)
             ),
 
             delete_rejected_promotion_workflow(promotion_decision)

@@ -34,7 +34,10 @@ def load_current_dataset(
                 TransactionInferences.v27, TransactionInferences.v28,
             )
             .distinct(TransactionInferences.transaction_id)
-            .where(TransactionInferences.transaction_timestamp > current_dataset_cutoff)
+            .where(
+                TransactionInferences.transaction_timestamp > current_dataset_cutoff,
+                TransactionInferences.is_fraud.is_not(None),
+            )
             .order_by(
                 TransactionInferences.transaction_id,
                 TransactionInferences.created_at.desc()
@@ -51,8 +54,8 @@ def load_current_dataset(
         if not isinstance(df_current, DataFrame):
             raise TypeError(f"Expected DataFrame, got {type(df_current).__name__}")
 
-        # Convert boolean to Int64 (nullable)
-        df_current[TransactionInferences.is_fraud.key] = df_current[TransactionInferences.is_fraud.key].astype("Int64")
+        # Convert boolean to int64 (BinaryClassification does not allow null)
+        df_current[TransactionInferences.is_fraud.key] = df_current[TransactionInferences.is_fraud.key].astype("int64")
         # Convert bool to int64
         df_current[TransactionInferences.is_fraud_prediction.key] = df_current[TransactionInferences.is_fraud_prediction.key].astype("int64")
         # Convert datetime64[ns, UTC] to seconds (int64)
