@@ -3,7 +3,11 @@ name = "fraud_detection_api"
 version = "1.0.0"
 dependencies = [
     "fastapi==0.136.3",
+    "imbalanced-learn==0.14.2",
     "pandas==2.3.3",
+    "scikit-learn==1.9.0",
+    "skops==0.16.0",
+    "xgboost==3.4.1",
     "shared",
 ]
 

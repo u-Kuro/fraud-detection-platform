@@ -25,7 +25,7 @@ def get_timed_latest_unused_dataset() -> TransactionInferencesDatasetNow:
             select(
                 TransactionInferences.is_fraud,
                 TransactionInferences.is_fraud_prediction,
-                TransactionInferences.is_fraud_probability.key,
+                TransactionInferences.is_fraud_probability,
                 TransactionInferences.amount,
                 TransactionInferences.transaction_timestamp,
                 TransactionInferences.v1, TransactionInferences.v2,

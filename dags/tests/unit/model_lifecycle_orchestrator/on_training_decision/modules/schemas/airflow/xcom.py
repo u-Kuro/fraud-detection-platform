@@ -27,7 +27,7 @@ class TestTrainModelResult:
 
         task_context = TaskContext(TestTaskContext().make_context())
         task_context.task_instance = mocker.MagicMock()
-        task_context.task_instance.xcom_pull.side_effect = lambda **kwargs: xcom_values[kwargs["key"]]
+        task_context.task_instance.xcom_pull.side_effect = lambda **kwargs: xcom_values
 
         return task_context
 

@@ -1,5 +1,3 @@
-import json
-
 import pytest
 from pytest_mock import MockerFixture
 
@@ -13,13 +11,23 @@ class TestDriftCheckResult:
     @pytest.fixture
     def mocked_task_context(mocker: MockerFixture) -> TaskContext:
         xcom_values = {
+            DriftCheckXComKeys.drift_summary: {
+                "data_drift": {},
+                "concept_drift": {
+                    "f1": 1.0,
+                    "f1_delta": 1.0,
+                    "precision": 1.0,
+                    "precision_delta": 1.0,
+                    "recall": 1.0,
+                    "recall_delta": 1.0,
+                }
+            },
             DriftCheckXComKeys.drift_detected: True,
-            DriftCheckXComKeys.drift_summary: {"key": {"key": "value"}},
         }
 
         task_context = TaskContext(TestTaskContext().make_context())
         task_context.task_instance = mocker.MagicMock()
-        task_context.task_instance.xcom_pull.side_effect = lambda **kwargs: xcom_values[kwargs["key"]]
+        task_context.task_instance.xcom_pull.side_effect = lambda **kwargs: xcom_values
 
         return task_context
 

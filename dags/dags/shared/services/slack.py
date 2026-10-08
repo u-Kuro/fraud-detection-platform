@@ -1,3 +1,6 @@
+import html
+import re
+
 from airflow.providers.slack.hooks.slack import SlackHook
 from airflow.sdk import Context
 from slack_sdk import WebClient
@@ -24,11 +27,12 @@ def slack_failure_alert(context: Context):
     limit = 3000 - len(header) - len(footer) - 2 * len(fence)
 
     error = (
-        (str(context.exception or "") or "N/A")
-        .replace("&", "&amp;")
-        .replace("<", "&lt;")
-        .replace(">", "&gt;")
-        .replace(fence, "'''")
+        re.sub(
+            r" +", " ",
+            html.escape(str(context.exception or ""), quote=False)
+            .replace(fence, "'''")
+        ).strip()
+        or "N/A"
     )[:limit]
 
     slack_client.chat_postMessage(

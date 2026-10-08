@@ -87,37 +87,38 @@ def build_training_approval_blocks_initializing(
         )
     else:
         drift_summary = drift_result.drift_summary
-        data_drift = drift_summary.get("data_drift", {})
-        concept_drift = drift_summary.get("concept_drift", {})
+        data_drift = drift_summary["data_drift"]
+        concept_drift = drift_summary["concept_drift"]
 
-        share_drifted_features = data_drift.get("share_drifted_features")
-        number_of_drifted_features = data_drift.get("number_of_drifted_features")
-        total_features = data_drift.get("total_features")
+        features_drift_text = (
+            f"`{data_drift.get('number_of_drifted_features', 0)} / "
+            f"{data_drift.get('number_of_features', 0)} features "
+            f"({data_drift.get('share_of_drifted_features', 0.0):.2%})`"
+        )
 
-        # Data Drift
-        if (
-            isinstance(share_drifted_features, float | int)
-            and isinstance(number_of_drifted_features, float | int)
-            and isinstance(total_features, float | int)
-        ):
-            features_drift_text = f"{share_drifted_features:.1%} ({number_of_drifted_features} / {total_features})"
+        if concept_drift.get("skipped", False):
+            concept_drift_text = "`Not evaluated, fewer than 100 fraud samples`"
         else:
-            features_drift_text = "N/A"
+            f1 = concept_drift["f1"]
+            f1_delta = concept_drift["f1_delta"]
+            precision = concept_drift["precision"]
+            precision_delta = concept_drift["precision_delta"]
+            recall = concept_drift["recall"]
+            recall_delta = concept_drift["recall_delta"]
 
-        # Concept Drift
-        f1_delta = concept_drift.get("f1_delta")
-        if isinstance(f1_delta, float | int):
-            concept_drift_text = f"{f1_delta:+.4f} F1 Δ"
-        else:
-            concept_drift_text = "N/A"
+            concept_drift_text = (
+                f"  • F1: `{f1:.2%} ({f1_delta * 100:+.2f} pp)`\n"
+                f"  • Recall: `{recall:.2%} ({recall_delta * 100:+.2f} pp)`\n"
+                f"  • Precision: `{precision:.2%} ({precision_delta * 100:+.2f} pp)`"
+            )
 
         return create_blocks(
             title="⚠️ Model Retraining Required",
             body=(
                 "Significant data or concept drift has been detected in production.\n\n"
     
-                f"• *Features drift:* {features_drift_text}\n"
-                f"• *Concept drift:* {concept_drift_text}\n\n"
+                f"*Features drifted:* {features_drift_text}\n"
+                f"*Concept drifted:* \n{concept_drift_text}\n\n"
     
                 "Please wait, this approval request is initializing..."
             ),
@@ -206,13 +207,13 @@ def build_training_approval_blocks(
         concept_drift = drift_summary["concept_drift"]
 
         features_drift_text = (
-            f"{data_drift.get('number_of_drifted_features', 0)} of "
+            f"`{data_drift.get('number_of_drifted_features', 0)} of "
             f"{data_drift.get('number_of_features', 0)} features "
-            f"({data_drift.get('share_of_drifted_features', 0.0):.1%})"
+            f"({data_drift.get('share_of_drifted_features', 0.0):.2%})`"
         )
 
         if concept_drift.get("skipped", False):
-            concept_drift_text = "_Not evaluated, fewer than 100 fraud samples_"
+            concept_drift_text = "`Not evaluated, fewer than 100 fraud samples`"
         else:
             f1 = concept_drift["f1"]
             f1_delta = concept_drift["f1_delta"]
@@ -222,9 +223,9 @@ def build_training_approval_blocks(
             recall_delta = concept_drift["recall_delta"]
 
             concept_drift_text = (
-                f"  • F1: `{f1:.1%}` (`{f1_delta * 100:+.1f} pp`)\n"
-                f"  • Recall: `{recall:.1%}` (`{recall_delta * 100:+.1f} pp`)\n"
-                f"  • Precision: `{precision:.1%}` (`{precision_delta * 100:+.1f} pp`)"
+                f"  • F1: `{f1:.2%} ({f1_delta * 100:+.2f} pp)`\n"
+                f"  • Recall: `{recall:.2%} ({recall_delta * 100:+.2f} pp)`\n"
+                f"  • Precision: `{precision:.2%} ({precision_delta * 100:+.2f} pp)`"
             )
 
         return create_blocks(
@@ -233,7 +234,7 @@ def build_training_approval_blocks(
                 "Significant data or concept drift has been detected in production.\n\n"
 
                 f"*Features drifted:* {features_drift_text}\n"
-                f"*Concept drifted:* {concept_drift_text}\n\n"
+                f"*Concept drifted:* \n{concept_drift_text}\n\n"
 
                 "Click *Approve Training* to kick off a new training run."
             ),

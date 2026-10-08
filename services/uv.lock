@@ -621,8 +621,12 @@ version = "1.0.0"
 source = { editable = "fraud_detection_api" }
 dependencies = [
     { name = "fastapi" },
+    { name = "imbalanced-learn" },
     { name = "pandas" },
+    { name = "scikit-learn" },
     { name = "shared" },
+    { name = "skops" },
+    { name = "xgboost" },
 ]
 
 [package.dev-dependencies]
@@ -642,8 +646,12 @@ test = [
 [package.metadata]
 requires-dist = [
     { name = "fastapi", specifier = "==0.136.3" },
+    { name = "imbalanced-learn", specifier = "==0.14.2" },
     { name = "pandas", specifier = "==2.3.3" },
+    { name = "scikit-learn", specifier = "==1.9.0" },
     { name = "shared", editable = "shared" },
+    { name = "skops", specifier = "==0.16.0" },
+    { name = "xgboost", specifier = "==3.4.1" },
 ]
 
 [package.metadata.requires-dev]
@@ -2168,7 +2176,7 @@ requires-dist = [
     { name = "pyarrow", specifier = "==25.0.1" },
     { name = "scikit-learn", specifier = "==1.9.0" },
     { name = "shared", editable = "shared" },
-    { name = "skops", specifier = ">=0.16.0" },
+    { name = "skops", specifier = "==0.16.0" },
     { name = "xgboost", specifier = "==3.4.1" },
 ]
 

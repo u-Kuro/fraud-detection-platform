@@ -34,18 +34,18 @@ class TestIdempotencyStore:
             with idempotency_store.guard("a"):
                 pass
 
-    def test_key_removal_after_success(self, idempotency_store: IdempotencyStore):
+    def test_key_persistence_after_success(self, idempotency_store: IdempotencyStore):
         with idempotency_store.guard("a"):
             pass
-        assert len(idempotency_store) == 0
+        assert "a" in idempotency_store.completed
 
-    def test_key_persistence_after_failure(self, idempotency_store: IdempotencyStore):
+    def test_key_removal_after_failure(self, idempotency_store: IdempotencyStore):
         try:
             with idempotency_store.guard("a"):
                 raise RuntimeError
         except RuntimeError:
             pass
-        assert "a" in idempotency_store.completed
+        assert len(idempotency_store) == 0
 
     def test_success_for_expired_key_reprocessing(self, idempotency_store: IdempotencyStore):
         idempotency_store.completed["a"] = time.monotonic() - 1
@@ -88,4 +88,4 @@ class TestIdempotencyStore:
         for thread in threads: thread.start()
         for thread in threads: thread.join()
 
-        assert len(inside) < concurrent_items
+        assert len(inside) == 1

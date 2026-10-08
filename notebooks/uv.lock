@@ -1553,7 +1553,7 @@ modeling = [
     { name = "imbalanced-learn", specifier = "==0.14.2" },
     { name = "optuna", specifier = "==4.9.0" },
     { name = "scikit-learn", specifier = "==1.9.0" },
-    { name = "skops", specifier = ">=0.16.0" },
+    { name = "skops", specifier = "==0.16.0" },
     { name = "torch", marker = "sys_platform != 'linux' and sys_platform != 'win32'", specifier = "==2.14.1" },
     { name = "torch", marker = "sys_platform == 'linux' or sys_platform == 'win32'", specifier = "==2.14.1", index = "https://download.pytorch.org/whl/cu130" },
     { name = "xgboost", specifier = "==3.4.1" },

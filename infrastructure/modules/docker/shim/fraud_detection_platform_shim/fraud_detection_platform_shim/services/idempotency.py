@@ -10,16 +10,16 @@ class IdempotencyGuard:
 
     def __enter__(self) -> "IdempotencyGuard":
         with self.store.lock:
+            now = time.monotonic()
             expiration = self.store.completed.get(self.key)
-            if expiration is None:
-                self.store.completed[self.key] = time.monotonic() + self.store.ttl
-            elif expiration >= time.monotonic():
+            if expiration is not None and expiration >= now:
                 raise AlreadyProcessed()
+            self.store.completed[self.key] = now + self.store.ttl
         return self
 
     def __exit__(self, exception_type, *args) -> bool:
         if exception_type is AlreadyProcessed: return True
-        if exception_type is None:
+        if exception_type is not None:
             with self.store.lock:
                 self.store.completed.pop(self.key, None)
         return False

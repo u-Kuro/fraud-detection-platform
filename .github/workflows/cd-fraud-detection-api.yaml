@@ -23,6 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       image-tag: ${{ steps.meta.outputs.version }}
+      digest: ${{ steps.build.outputs.digest }}
     steps:
       - uses: actions/checkout@v7
       - uses: ./.github/actions/setup-buildx-action
@@ -57,6 +58,7 @@ jobs:
             type=raw,value=latest,enable={{is_default_branch}}
 
       - name: Build and push
+        id: build
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -130,4 +132,4 @@ jobs:
             ${{ env.K8S_PATH }}/deployment.yaml
             ${{ env.K8S_PATH }}/service.yaml
             ${{ env.K8S_PATH }}/ingress-route.yaml
-          images: ${{ steps.aws-credentials.outputs.aws-account-id }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/${{ env.IMAGE_NAME }}:${{ needs.push.outputs.image-tag }}
+          images: ${{ steps.aws-credentials.outputs.aws-account-id }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/${{ env.IMAGE_NAME }}:${{ needs.push.outputs.image-tag }}@${{ needs.push.outputs.digest }}

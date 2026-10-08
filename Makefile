@@ -26,6 +26,8 @@ init: uv-sync
 
 update: atlas-hash uv-update
 
+test: infrastructure-test deployment-test
+
 up: update \
 	infrastructure-up \
 	deploy-migration \
@@ -33,6 +35,8 @@ up: update \
 	start-pipeline
 
 down: infrastructure-down
+
+format: infrastructure-format
 
 no-target:
 	@$(error Error: no target given, e.g. 'make up')

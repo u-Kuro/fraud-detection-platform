@@ -16,7 +16,10 @@ test-migration:
 deploy-migration:
 	@$(call RUN_ACT_PUSH_COMMAND,$(GITHUB_MIGRATE_WORKFLOW))
 
+deployment-test: test-migration test-dags test-fraud-detection-api
+
 .PHONY: \
 	test-dags deploy-dags \
 	test-fraud-detection-api deploy-fraud-detection-api \
-	test-migration deploy-migration
+	test-migration deploy-migration \
+	deployment-test

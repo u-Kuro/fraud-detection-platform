@@ -6,6 +6,9 @@ from airflow.dag_processing.dagbag import DagBag
 
 from dags.shared.modules.configs.project import ProjectConfig
 
+# MLflow
+patch(target="mlflow.search_registered_models").start()
+
 # Postgres
 patch("airflow.providers.postgres.hooks.postgres.PostgresHook").start()
 patch(

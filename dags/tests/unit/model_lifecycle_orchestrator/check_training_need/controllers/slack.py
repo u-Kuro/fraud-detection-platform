@@ -12,7 +12,17 @@ def test_build_training_approval_blocks_initializing():
     no_drift_result = build_training_approval_blocks_initializing(None)
     with_drift_result = build_training_approval_blocks_initializing(
         drift_result=DriftCheckResult(
-            drift_summary={"value":{}},
+            drift_summary={
+                "data_drift": {},
+                "concept_drift": {
+                    "f1": 1.0,
+                    "f1_delta": 1.0,
+                    "precision": 1.0,
+                    "precision_delta": 1.0,
+                    "recall": 1.0,
+                    "recall_delta": 1.0,
+                }
+            },
             drift_detected=False
         )
     )
@@ -35,7 +45,17 @@ def test_initialize_training_approval(mocker: MockerFixture):
             slack_training_approval_message_ts=None,
         ),
         drift_result=DriftCheckResult(
-            drift_summary={"value": {}},
+            drift_summary={
+                "data_drift": {},
+                "concept_drift": {
+                    "f1": 1.0,
+                    "f1_delta": 1.0,
+                    "precision": 1.0,
+                    "precision_delta": 1.0,
+                    "recall": 1.0,
+                    "recall_delta": 1.0,
+                }
+            },
             drift_detected=True
         )
     )
@@ -69,7 +89,17 @@ def test_build_training_approval_blocks():
     with_drift_result = build_training_approval_blocks(
         workflow_id=uuid4(),
         drift_result=DriftCheckResult(
-            drift_summary={"value":{}},
+            drift_summary={
+                "data_drift": {},
+                "concept_drift": {
+                    "f1": 1.0,
+                    "f1_delta": 1.0,
+                    "precision": 1.0,
+                    "precision_delta": 1.0,
+                    "recall": 1.0,
+                    "recall_delta": 1.0,
+                }
+            },
             drift_detected=False
         ),
         should_train_for_promotion=True
