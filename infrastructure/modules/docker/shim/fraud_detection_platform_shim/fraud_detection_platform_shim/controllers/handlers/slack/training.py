@@ -1,3 +1,5 @@
+import re
+
 from slack_bolt import Ack
 from slack_sdk import WebClient
 
@@ -7,7 +9,7 @@ from fraud_detection_platform_shim.services.mwaa import trigger_airflow_dag
 from fraud_detection_platform_shim.services.idempotency import slack_action_store
 from fraud_detection_platform_shim.services.slack import update_message
 
-@slack_app.action("training_decision")
+@slack_app.action(re.compile(r"^training_decision:"))
 def training_decision(
     ack: Ack,
     body: dict,
@@ -15,7 +17,7 @@ def training_decision(
     client: WebClient
 ):
     ack()
-    with slack_action_store.guard(action["action_id"], body["message"]["ts"]):
+    with slack_action_store.guard(training_decision.__name__, body["message"]["ts"]):
         training_value = TrainingValue.model_validate_json(action["value"])
         trigger_airflow_dag(
             dag_id="on_training_decision",

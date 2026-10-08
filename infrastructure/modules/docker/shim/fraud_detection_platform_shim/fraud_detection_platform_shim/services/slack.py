@@ -38,8 +38,9 @@ def update_message(
     body: dict,
     text_markdown: str
 ) -> None:
+    message = body["message"]
     blocks = [
-        block for block in body["message"]["blocks"]
+        block for block in message["blocks"]
         if block["type"] != "actions"
     ]
 
@@ -50,7 +51,7 @@ def update_message(
 
     client.chat_update(
         channel=body["channel"]["id"],
-        ts=body["message"]["ts"],
+        ts=message["ts"],
         blocks=blocks,
         text=text_markdown,
     )

@@ -44,7 +44,7 @@ def model_promotion_buttons(workflow_id: UUID) -> list:
                 "text": "🚀 Approve Promotion"
             },
             "style": "primary",
-            "action_id": "promotion_decision",
+            "action_id": "promotion_decision:approved",
             "value": json.dumps({
                 "approved": True,
                 "workflow_id": str(workflow_id),
@@ -59,7 +59,7 @@ def model_promotion_buttons(workflow_id: UUID) -> list:
                 "text": "❌ Dismiss"
             },
             "style": "danger",
-            "action_id": "promotion_decision",
+            "action_id": "promotion_decision:rejected",
             "value": json.dumps({
                 "approved": False,
                 "workflow_id": str(workflow_id),

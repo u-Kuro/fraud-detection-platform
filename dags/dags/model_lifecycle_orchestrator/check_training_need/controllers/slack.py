@@ -156,7 +156,7 @@ def training_decision_buttons(
                 "text": "✅ Approve Training"
             },
             "style": "primary",
-            "action_id": "training_decision",
+            "action_id": "training_decision:approved",
             "value": json.dumps({
                 "approved": True,
                 "workflow_id": str(workflow_id),
@@ -172,7 +172,7 @@ def training_decision_buttons(
                 "text": "❌ Dismiss"
             },
             "style": "danger",
-            "action_id": "training_decision",
+            "action_id": "training_decision:rejected",
             "value": json.dumps({
                 "approved": False,
                 "workflow_id": str(workflow_id),
