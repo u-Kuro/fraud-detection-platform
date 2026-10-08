@@ -41,5 +41,5 @@ format: infrastructure-format
 no-target:
 	@$(error Error: no target given, e.g. 'make up')
 
-.PHONY: init up down update no-target
+.PHONY: init update test up down format no-target
 .DEFAULT_GOAL := no-target
