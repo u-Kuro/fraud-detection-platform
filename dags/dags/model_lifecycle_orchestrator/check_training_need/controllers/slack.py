@@ -115,7 +115,7 @@ def build_training_approval_blocks_initializing(
                 f"  • F1: `{f1:.2%} ({f1_delta * 100:+.2f} pp)`\n"
                 f"  • Recall: `{recall:.2%} ({recall_delta * 100:+.2f} pp)`\n"
                 f"  • Precision: `{precision:.2%} ({precision_delta * 100:+.2f} pp)`\n"
-                f"  • Fraud Rate: `{fraud_rate:.3%} ({fraud_rate_delta * 100:+.3f} pp)`"
+                f"  • Fraud Rate: `{fraud_rate:.2%} ({fraud_rate_delta * 100:+.2f} pp)`"
             )
 
         return create_blocks(
@@ -237,7 +237,7 @@ def build_training_approval_blocks(
                 f"  • F1: `{f1:.2%} ({f1_delta * 100:+.2f} pp)`\n"
                 f"  • Recall: `{recall:.2%} ({recall_delta * 100:+.2f} pp)`\n"
                 f"  • Precision: `{precision:.2%} ({precision_delta * 100:+.2f} pp)`\n"
-                f"  • Fraud Rate: `{fraud_rate:.3%} ({fraud_rate_delta * 100:+.3f} pp)`"
+                f"  • Fraud Rate: `{fraud_rate:.2%} ({fraud_rate_delta * 100:+.2f} pp)`"
             )
 
         return create_blocks(
