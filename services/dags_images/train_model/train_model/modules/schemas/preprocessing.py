@@ -9,5 +9,4 @@ class PreprocessOutputs(BaseModel):
     x_test: ndarray
     y_train: ndarray
     y_test: ndarray
-    original_y_train_positive_scale: StrictFloat
     cross_validation: StratifiedKFold

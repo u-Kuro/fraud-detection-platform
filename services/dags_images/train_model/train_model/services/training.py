@@ -42,7 +42,6 @@ def train_model(
             model(
                 **best_model_hyperparameters,
                 device=TrainingConfig.device,
-                scale_pos_weight=preprocess_outputs.original_y_train_positive_scale,
                 random_state=TrainingConfig.random_state,
                 n_jobs=get_safe_cpu_count(),
                 verbosity=2,
@@ -77,7 +76,6 @@ def optimize_model_hyperparameters(
                 model(
                     **hyperparameters_sampler().resolve(trial),
                     device=TrainingConfig.device,
-                    scale_pos_weight=preprocessed_output.original_y_train_positive_scale,
                     random_state=TrainingConfig.random_state,
                     n_jobs=get_safe_cpu_count(),
                     verbosity=2,
@@ -92,7 +90,7 @@ def optimize_model_hyperparameters(
                     preprocessed_output.x_train,
                     preprocessed_output.y_train,
                     cv=preprocessed_output.cross_validation,
-                    scoring="average_precision",
+                    scoring=TrainingConfig.model_scoring,
                     n_jobs=1,
                 )
             )

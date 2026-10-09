@@ -19,15 +19,17 @@ from shared.modules.schemas.postgres.transaction_inferences import TransactionIn
 
 def test_get_metrics():
     dataframe = DataFrame({
-        TransactionInferences.is_fraud.key:            [1, 1, 0, 0, 0, 0],
-        TransactionInferences.is_fraud_prediction.key: [1, 0, 1, 1, 0, 0],
+        TransactionInferences.is_fraud.key:             [1, 1, 0, 0, 0, 0],
+        TransactionInferences.is_fraud_prediction.key:  [1, 0, 1, 1, 0, 0],
+        TransactionInferences.is_fraud_probability.key: [0.9, 0.4, 0.8, 0.6, 0.2, 0.1],
     })
 
-    precision, recall, f1 = get_metrics(dataframe)
+    precision, recall, f1, average_precision = get_metrics(dataframe)
 
     assert precision == approx(1 / 3)
     assert recall == approx(1 / 2)
     assert f1 == approx(2 / 5)
+    assert average_precision == approx(3 / 4)
 
 def test_get_drifted_columns():
     class Status(Enum):
@@ -83,10 +85,17 @@ def test_summarize_concept_drift():
     perfect = DataFrame({
         TransactionInferences.is_fraud.key: labels,
         TransactionInferences.is_fraud_prediction.key: labels,
+        TransactionInferences.is_fraud_probability.key: [1.0, 1.0, 0.0, 0.0],
     })
     inverted = DataFrame({
         TransactionInferences.is_fraud.key: labels,
         TransactionInferences.is_fraud_prediction.key: [0, 0, 1, 1],
+        TransactionInferences.is_fraud_probability.key: [0.0, 0.0, 1.0, 1.0],
+    })
+    threshold_shifted = DataFrame({
+        TransactionInferences.is_fraud.key: labels,
+        TransactionInferences.is_fraud_prediction.key: [0, 0, 1, 1],
+        TransactionInferences.is_fraud_probability.key: [1.0, 1.0, 0.0, 0.0],
     })
 
     skipped = summarize_concept_drift(
@@ -94,17 +103,23 @@ def test_summarize_concept_drift():
         df_reference=perfect,
         has_sufficient_fraud_samples=False,
     )
-    assert skipped == {EvidentlyConfig.drifted_key: False}
+    assert skipped == {"skipped": True, EvidentlyConfig.drifted_key: False}
 
     degraded = summarize_concept_drift(
         df_current=inverted,
         df_reference=perfect,
         has_sufficient_fraud_samples=True,
     )
+    assert degraded["precision"] == approx(0.0)
+    assert degraded["recall"] == approx(0.0)
     assert degraded["f1"] == approx(0.0)
+    assert degraded["average_precision"] == approx(0.5)
+    assert degraded["fraud_rate"] == approx(0.5)
     assert degraded["precision_delta"] == approx(-1.0)
     assert degraded["recall_delta"] == approx(-1.0)
     assert degraded["f1_delta"] == approx(-1.0)
+    assert degraded["average_precision_delta"] == approx(-0.5)
+    assert degraded["fraud_rate_delta"] == approx(0.0)
     assert degraded[EvidentlyConfig.drifted_key] is True
 
     stable = summarize_concept_drift(
@@ -112,8 +127,16 @@ def test_summarize_concept_drift():
         df_reference=perfect,
         has_sufficient_fraud_samples=True,
     )
-    assert stable["f1_delta"] == approx(0.0)
+    assert stable["average_precision_delta"] == approx(0.0)
     assert stable[EvidentlyConfig.drifted_key] is False
+
+    ranking_unchanged = summarize_concept_drift(
+        df_current=threshold_shifted,
+        df_reference=perfect,
+        has_sufficient_fraud_samples=True,
+    )
+    assert ranking_unchanged["average_precision_delta"] == approx(0.0)
+    assert ranking_unchanged[EvidentlyConfig.drifted_key] is False
 
 def test_run_drift_report():
     samples_per_class = EvidentlyConfig.minimum_fraud_samples
@@ -133,7 +156,7 @@ def test_run_drift_report():
     assert set(summary) == {EvidentlyConfig.data_drift_key, EvidentlyConfig.concept_drift_key}
     assert summary[EvidentlyConfig.data_drift_key][EvidentlyConfig.drifted_key] is False
     assert summary[EvidentlyConfig.concept_drift_key][EvidentlyConfig.drifted_key] is False
-    assert "f1" in summary[EvidentlyConfig.concept_drift_key]
+    assert "average_precision" in summary[EvidentlyConfig.concept_drift_key]
     assert isinstance(html_bytes, bytes)
     assert len(html_bytes) > 0
 

@@ -99,17 +99,23 @@ def build_training_approval_blocks_initializing(
         if concept_drift.get("skipped", False):
             concept_drift_text = "`Not evaluated, fewer than 100 fraud samples`"
         else:
+            average_precision = concept_drift["average_precision"]
+            average_precision_delta = concept_drift["average_precision_delta"]
             f1 = concept_drift["f1"]
             f1_delta = concept_drift["f1_delta"]
             precision = concept_drift["precision"]
             precision_delta = concept_drift["precision_delta"]
             recall = concept_drift["recall"]
             recall_delta = concept_drift["recall_delta"]
+            fraud_rate = concept_drift["fraud_rate"]
+            fraud_rate_delta = concept_drift["fraud_rate_delta"]
 
             concept_drift_text = (
+                f"  • Average Precision: `{average_precision:.2%} ({average_precision_delta * 100:+.2f} pp)`\n"
                 f"  • F1: `{f1:.2%} ({f1_delta * 100:+.2f} pp)`\n"
                 f"  • Recall: `{recall:.2%} ({recall_delta * 100:+.2f} pp)`\n"
-                f"  • Precision: `{precision:.2%} ({precision_delta * 100:+.2f} pp)`"
+                f"  • Precision: `{precision:.2%} ({precision_delta * 100:+.2f} pp)`\n"
+                f"  • Fraud Rate: `{fraud_rate:.3%} ({fraud_rate_delta * 100:+.3f} pp)`"
             )
 
         return create_blocks(
@@ -215,17 +221,23 @@ def build_training_approval_blocks(
         if concept_drift.get("skipped", False):
             concept_drift_text = "`Not evaluated, fewer than 100 fraud samples`"
         else:
+            average_precision = concept_drift["average_precision"]
+            average_precision_delta = concept_drift["average_precision_delta"]
             f1 = concept_drift["f1"]
             f1_delta = concept_drift["f1_delta"]
             precision = concept_drift["precision"]
             precision_delta = concept_drift["precision_delta"]
             recall = concept_drift["recall"]
             recall_delta = concept_drift["recall_delta"]
+            fraud_rate = concept_drift["fraud_rate"]
+            fraud_rate_delta = concept_drift["fraud_rate_delta"]
 
             concept_drift_text = (
+                f"  • Average Precision: `{average_precision:.2%} ({average_precision_delta * 100:+.2f} pp)`\n"
                 f"  • F1: `{f1:.2%} ({f1_delta * 100:+.2f} pp)`\n"
                 f"  • Recall: `{recall:.2%} ({recall_delta * 100:+.2f} pp)`\n"
-                f"  • Precision: `{precision:.2%} ({precision_delta * 100:+.2f} pp)`"
+                f"  • Precision: `{precision:.2%} ({precision_delta * 100:+.2f} pp)`\n"
+                f"  • Fraud Rate: `{fraud_rate:.3%} ({fraud_rate_delta * 100:+.3f} pp)`"
             )
 
         return create_blocks(

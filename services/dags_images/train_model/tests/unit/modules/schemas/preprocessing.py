@@ -13,7 +13,6 @@ class TestPreprocessOutputs:
             "x_test": numpy.array([]),
             "y_train": numpy.array([]),
             "y_test": numpy.array([]),
-            "original_y_train_positive_scale": 1.0,
             "cross_validation": StratifiedKFold(),
         }
 

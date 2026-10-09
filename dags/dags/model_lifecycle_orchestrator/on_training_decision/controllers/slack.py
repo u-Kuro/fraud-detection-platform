@@ -18,8 +18,8 @@ def initialize_promotion_approval(train_model_result: TrainModelResult) -> Model
             body=(
                 f"Fraud Detection: {train_model_result.model_name} v{train_model_result.model_version} is ready.\n\n"
                 
-                f"• *F1:* `{train_model_result.model_f1_score:.2%}`\n"
                 f"• *PR-AUC:* `{train_model_result.model_pr_auc:.2%}`\n"
+                f"• *F1:* `{train_model_result.model_f1_score:.2%}`\n"
                 f"• *Recall:* `{train_model_result.model_recall:.2%}`\n"
                 f"• *Precision:* `{train_model_result.model_precision:.2%}`\n\n"
                 
@@ -83,8 +83,8 @@ def update_promotion_approval(
             body=(
                 f"Fraud Detection: {train_model_result.model_name} v{train_model_result.model_version} is ready.\n\n"
                 
-                f"• *F1:* `{train_model_result.model_f1_score:.2%}`\n"
                 f"• *PR-AUC:* `{train_model_result.model_pr_auc:.2%}`\n"
+                f"• *F1:* `{train_model_result.model_f1_score:.2%}`\n"
                 f"• *Recall:* `{train_model_result.model_recall:.2%}`\n"
                 f"• *Precision:* `{train_model_result.model_precision:.2%}`\n\n"
                 

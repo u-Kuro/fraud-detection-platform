@@ -16,8 +16,6 @@ def preprocess(dataset: DataFrame) -> PreprocessOutputs:
         stratify=y
     )
 
-    original_y_train_positive_scale = (y_train == 0).sum() / (y_train == 1).sum()
-
     cross_validation = StratifiedKFold(
         n_splits=int(1 / TrainingConfig.cv_val_size),
         shuffle=True,
@@ -29,6 +27,5 @@ def preprocess(dataset: DataFrame) -> PreprocessOutputs:
         x_test=x_test,
         y_train=y_train,
         y_test=y_test,
-        original_y_train_positive_scale=original_y_train_positive_scale,
         cross_validation=cross_validation
     )

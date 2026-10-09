@@ -4,19 +4,21 @@ from evidently import BinaryClassification, DataDefinition, Dataset, Report
 from evidently.metrics import F1Score, Precision, Recall, ValueDrift
 from evidently.presets import DataDriftPreset
 from pandas import DataFrame
-from sklearn.metrics import f1_score, precision_score, recall_score
+from sklearn.metrics import average_precision_score, f1_score, precision_score, recall_score
 
 from drift_check.modules.configs.evidently import EvidentlyConfig
 from drift_check.repositories.s3.drift_reports import upload_drift_report
 from shared.modules.schemas.postgres.transaction_inferences import TransactionInferences
 
-def get_metrics(df: DataFrame) -> tuple[float, float, float]:
+def get_metrics(df: DataFrame) -> tuple[float, float, float, float]:
     y_true = df[TransactionInferences.is_fraud.key].astype(int)
     y_pred = df[TransactionInferences.is_fraud_prediction.key].astype(int)
+    y_probability = df[TransactionInferences.is_fraud_probability.key].astype(float)
     return (
         float(precision_score(y_true, y_pred, zero_division=0)),
         float(recall_score(y_true, y_pred, zero_division=0)),
         float(f1_score(y_true, y_pred, zero_division=0)),
+        float(average_precision_score(y_true, y_probability)),
     )
 
 def get_drifted_columns(results: dict) -> set[str]:
@@ -49,17 +51,23 @@ def summarize_concept_drift(
     has_sufficient_fraud_samples: bool,
 ) -> dict:
     if has_sufficient_fraud_samples:
-        current_precision, current_recall, current_f1 = get_metrics(df_current)
-        reference_precision, reference_recall, reference_f1 = get_metrics(df_reference)
+        current_precision, current_recall, current_f1, current_average_precision = get_metrics(df_current)
+        reference_precision, reference_recall, reference_f1, reference_average_precision = get_metrics(df_reference)
+        current_fraud_rate = float(df_current[TransactionInferences.is_fraud.key].mean())
+        reference_fraud_rate = float(df_reference[TransactionInferences.is_fraud.key].mean())
 
         return {
             "precision": current_precision,
             "recall": current_recall,
             "f1": current_f1,
+            "fraud_rate": current_fraud_rate,
+            "average_precision": current_average_precision,
             "precision_delta": current_precision - reference_precision,
             "recall_delta": current_recall - reference_recall,
-            "f1_delta": (f1_delta := current_f1 - reference_f1),
-            EvidentlyConfig.drifted_key: f1_delta <= EvidentlyConfig.f1_delta_threshold,
+            "f1_delta": current_f1 - reference_f1,
+            "average_precision_delta": (average_precision_delta := current_average_precision - reference_average_precision),
+            "fraud_rate_delta": current_fraud_rate - reference_fraud_rate,
+            EvidentlyConfig.drifted_key: average_precision_delta <= EvidentlyConfig.average_precision_delta_threshold,
         }
     else:
         return {

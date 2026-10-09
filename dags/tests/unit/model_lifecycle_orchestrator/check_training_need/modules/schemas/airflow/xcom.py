@@ -14,12 +14,16 @@ class TestDriftCheckResult:
             DriftCheckXComKeys.drift_summary: {
                 "data_drift": {},
                 "concept_drift": {
+                    "average_precision": 1.0,
+                    "average_precision_delta": 1.0,
                     "f1": 1.0,
                     "f1_delta": 1.0,
                     "precision": 1.0,
                     "precision_delta": 1.0,
                     "recall": 1.0,
                     "recall_delta": 1.0,
+                    "fraud_rate": 1.0,
+                    "fraud_rate_delta": 1.0,
                 }
             },
             DriftCheckXComKeys.drift_detected: True,

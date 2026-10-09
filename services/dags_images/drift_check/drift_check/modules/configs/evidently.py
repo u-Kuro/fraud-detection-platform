@@ -8,4 +8,4 @@ class EvidentlyConfig:
 
     minimum_fraud_samples: int = 100
     share_of_drifted_features_threshold: float = 0.5
-    f1_delta_threshold: float = -0.1
+    average_precision_delta_threshold: float = -0.1
