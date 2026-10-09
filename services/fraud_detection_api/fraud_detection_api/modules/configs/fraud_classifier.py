@@ -5,5 +5,5 @@ from fraud_detection_api.repositories.postgres.model_deployments import get_acti
 
 @dataclass(frozen=True)
 class FraudClassifierConfig:
-    classification_threshold: float = 0.5
+    classification_threshold: float = 0.875
     deployed_model: DeployedModel = get_active_model_deployment()
