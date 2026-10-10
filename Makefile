@@ -26,7 +26,7 @@ init: uv-sync
 
 update: atlas-hash uv-update
 
-test: infrastructure-test deployment-test
+test: update infrastructure-test deployment-test
 
 up: update \
 	infrastructure-up \

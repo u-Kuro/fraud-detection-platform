@@ -1,14 +1,25 @@
 import json
+from datetime import datetime, timezone
 
 import pytest
+from pandas import DataFrame
 from pytest_mock import MockerFixture
 
 from drift_check.modules.configs.airflow.xcom import DriftCheckXComKeys
 from drift_check.modules.configs.evidently import EvidentlyConfig
 from shared.modules.configs.airflow import AirflowConfig
+from shared.modules.configs.dataset import DatasetConfig
 
 @pytest.mark.usefixtures("fs")
 def test_main(mocker: MockerFixture):
+    mocker.patch(
+        "drift_check.main.load_reference_dataset",
+        return_value=(DataFrame(), datetime.now(tz=timezone.utc)),
+    )
+    mocker.patch(
+        "drift_check.main.load_current_dataset",
+        return_value=DataFrame(index=range(DatasetConfig.minimum_rows)),
+    )
     mocker.patch(
         target="drift_check.main.drift_check",
         return_value=(

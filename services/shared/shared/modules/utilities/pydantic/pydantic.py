@@ -1,13 +1,13 @@
-from functools import lru_cache
+from functools import cache
 from typing import Callable, cast
 
 from pydantic import validate_call
 
-def validated_lru_cache[T](
+def validated_cache[T](
     function: Callable[..., T],
 ) -> Callable[..., T]:
     validated = validate_call(validate_return=True)(function)
-    return cast(Callable[..., T], lru_cache(maxsize=None)(validated))
+    return cast(Callable[..., T], cache(validated))
 
 # class NamedCachedProperty[T](cached_property[T]):
 #     def __init__(self, function: Callable[..., T]):

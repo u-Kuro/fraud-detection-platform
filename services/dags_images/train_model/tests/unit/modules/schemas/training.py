@@ -1,5 +1,5 @@
 import pytest
-from sklearn.pipeline import Pipeline
+from imblearn.pipeline import Pipeline
 from sklearn.preprocessing import FunctionTransformer
 
 from train_model.modules.schemas.training import TrainModelOutputs

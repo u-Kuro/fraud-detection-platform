@@ -174,7 +174,7 @@ def test_drift_check(mocker: MockerFixture):
         "drift_check.services.evidently.run_drift_report",
         return_value=(drifted_summary, html_bytes),
     )
-    upload = mocker.patch("drift_check.repositories.s3.drift_reports.upload_drift_report")
+    upload = mocker.patch("drift_check.services.evidently.upload_drift_report")
 
     drift_detected, summary = drift_check(DataFrame(), DataFrame())
 

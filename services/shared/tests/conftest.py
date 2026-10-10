@@ -3,6 +3,7 @@ from uuid import uuid4
 
 # MLflow
 patch(target="mlflow.set_experiment").start()
+patch(target="mlflow.search_registered_models").start()
 patch(target="mlflow.pyfunc.load_model").start()
 patch(target="mlflow.log_artifact").start()
 patch(target="mlflow.log_figure").start()
@@ -15,3 +16,4 @@ patch(
 
 # S3
 patch(target="boto3.s3.inject.upload_fileobj").start()
+patch(target="botocore.client.BaseClient._make_api_call").start()

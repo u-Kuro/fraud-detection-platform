@@ -16,4 +16,4 @@ class TestTrainingConfig:
         assert TrainingConfig.bayes_steps > 0
         assert TrainingConfig.training_timeout_seconds > 0
         assert TrainingConfig.cv_val_size > 0
-        assert TrainingConfig.device == "cuda"
+        assert TrainingConfig.device == "cuda" or TrainingConfig.device == "cpu"

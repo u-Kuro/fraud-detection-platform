@@ -1,13 +1,13 @@
 import pytest
 from pydantic import StrictStr, ValidationError
 
-from shared.modules.utilities.pydantic.pydantic import validated_lru_cache
+from shared.modules.utilities.pydantic.pydantic import validated_cache
 
-class TestValidatedLRUCache:
-    def test_lru_cache(self):
+class TestValidatedCache:
+    def test_cache(self):
         function_calls = 0
 
-        @validated_lru_cache
+        @validated_cache
         def function(value: StrictStr) -> StrictStr:
             nonlocal function_calls
             function_calls += 1
@@ -19,7 +19,7 @@ class TestValidatedLRUCache:
         assert function_calls == 1
 
     def test_arguments_validation(self):
-        @validated_lru_cache
+        @validated_cache
         def function(value: StrictStr) -> StrictStr:
             return value
 
@@ -29,7 +29,7 @@ class TestValidatedLRUCache:
             function(1)
 
     def test_return_validation(self):
-        @validated_lru_cache
+        @validated_cache
         def function() -> StrictStr:
             return 1
 
