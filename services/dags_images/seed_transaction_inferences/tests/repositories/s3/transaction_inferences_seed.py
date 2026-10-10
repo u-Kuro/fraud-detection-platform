@@ -5,7 +5,7 @@ import pytest
 from pandas import DataFrame
 from pytest_mock import MockerFixture
 
-class GetTransactionInferencesSeedIterator:
+class TestGetTransactionInferencesSeedIterator:
     @staticmethod
     @pytest.fixture
     def mocked_download_fileobject(mocker: MockerFixture) -> MagicMock:
