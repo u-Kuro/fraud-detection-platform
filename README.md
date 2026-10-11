@@ -42,7 +42,7 @@ A rejected approval deletes the workflow, and a daily run without drift takes no
 
 ## Model results
 
-The results come from the notebook experiments in [`notebooks/02_models.ipynb`](notebooks/02_models.ipynb). Each model is a RobustScaler, SMOTE, and classifier pipeline tuned using Optuna with up to 30 trials and a 1-hour limit, then scored on a stratified 20% split (56,962 test rows containing 98 frauds).
+The results come from the notebook experiments in [`notebooks/02_preprocessing_and_model_training.ipynb`](notebooks/02_preprocessing_and_model_training.ipynb). Each model is a RobustScaler, SMOTE, and classifier pipeline tuned using Optuna with up to 30 trials and a 1-hour limit, then scored on a stratified 20% split (56,962 test rows containing 98 frauds).
 
 | Model | F1 | PR-AUC | Recall | Precision |
 |---|---|---|---|---|
@@ -51,7 +51,7 @@ The results come from the notebook experiments in [`notebooks/02_models.ipynb`](
 | **XGBoost** | **0.761** | **0.866** | 0.878 | **0.672** |
 | MLP (PyTorch) | 0.427 | 0.836 | 0.867 | 0.283 |
 
-XGBoost scored the highest on F1, PR-AUC, and precision, so it is the model the platform trains. The inference API flags fraud above 0.875, selected as a balanced approximate for missed frauds and false alerts found in [`notebooks/02_models.ipynb`](notebooks/02_models.ipynb). SHAP interpretation is in [`notebooks/03_model_interpretation.ipynb`](notebooks/03_model_interpretation.ipynb).
+XGBoost scored the highest on F1, PR-AUC, and precision, so it is the model the platform trains. The inference API flags fraud above 0.875, selected as a balanced approximate for missed frauds and false alerts found in [`notebooks/02_preprocessing_and_model_training.ipynb`](notebooks/02_preprocessing_and_model_training.ipynb). SHAP interpretation is in [`notebooks/03_model_interpretation.ipynb`](notebooks/03_model_interpretation.ipynb).
 
 ## Screenshots
 
