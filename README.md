@@ -11,7 +11,7 @@ An end-to-end MLOps platform that monitors a credit-card fraud model for drift, 
 | Pipeline | [4 Airflow DAGs](dags/dags/model_lifecycle_orchestrator/) run cold-start seeding, a daily drift check, training, and promotion, with Slack approvals gate both training and promotion. |
 | Model | XGBoost classifier tuned with Optuna and registered in MLflow, scoring 0.866 PR-AUC and 0.761 F1 on a held-out split. |
 | Serving | FastAPI service on Kubernetes that loads the active model from MLflow, flags fraud above a 0.875 probability cutoff, and stores every prediction in PostgreSQL. |
-| Infrastructure | [19 Terraform modules](infrastructure/main.tf) provision emulated AWS services (S3, ECR, RDS, EKS, MWAA, IAM, Secrets Manager, SSM), MLflow, Traefik, MetalLB, Kyverno, and the supporting containers. |
+| Infrastructure | [19 Terraform modules](infrastructure/main.tf) provision emulated AWS services (S3, ECR, RDS, EKS, MWAA, Secrets Manager, SSM), MLflow, Traefik, MetalLB, Kyverno, and the supporting containers. |
 | CI/CD | [6 GitHub Actions workflows](.github/workflows/) run locally with nektos/act, covering image builds, DAG sync, API deployment, and schema migrations. |
 | Tests | 183 test functions across 96 files covering DAGs, job images, shared code, and APIs, run inside Docker image builds. |
 | Screenshots | Airflow, Slack, MLflow, and inference API captures from a local run are in [`screenshots/`](screenshots/). |
