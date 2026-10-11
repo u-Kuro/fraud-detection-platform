@@ -25,8 +25,8 @@ An end-to-end MLOps platform that monitors a credit-card fraud model for drift, 
 |---|---|---|
 | Orchestration | Airflow | Schedules the daily drift check, that runs each job as a Kubernetes pod, and posts Slack approval requests. |
 | Workloads | K3s standing in for EKS | Runs [4 job images](services/dags_images/) (drift check, training, archive, seed) and the inference API. |
-| Serving | [FastAPI service](services/fraud_detection_api/) | Loads the active model from MLflow, serves `/predict`, and stores each prediction in PostgreSQL. |
-| Approvals | Local [shim container](infrastructure/modules/docker/shim/) API | Receives Slack button clicks over Socket Mode and triggers the matching DAG using MWAA API. It also answers GitHub's workflow-dispatch endpoint with act, so that promotion task can trigger the inference API deployment locally. |
+| Serving | [Fraud detection API service](services/fraud_detection_api/) | Loads the active model from MLflow, serves `/predict`, and stores each prediction in PostgreSQL. |
+| Approvals | [Local shim container API](infrastructure/modules/docker/shim/) | Receives Slack button clicks over Socket Mode and triggers the matching DAG using MWAA API. It also answers GitHub's workflow-dispatch endpoint with act, so that promotion task can trigger the inference API deployment locally. |
 | Tracking | [MLflow on K3s cluster](infrastructure/modules/k8s/mlflow/) | Tracks experiments and registers models per-team workspaces, backed by PostgreSQL and S3. |
 | Emulated AWS | MiniStack | Provides RDS PostgreSQL, S3, ECR, Secrets Manager, and SSM for workflow state, inferences, artifacts, reports, archives, and container images. |
 | CI/CD | [6 GitHub Actions workflows](.github/workflows/) run using act | Builds and pushes images, syncs DAGs, applies migrations, and deploys the inference API when a promotion dispatches the workflow. |
@@ -34,7 +34,7 @@ An end-to-end MLOps platform that monitors a credit-card fraud model for drift, 
 ### Model lifecycle
 
 1. [`cold_start`](dags/dags/model_lifecycle_orchestrator/cold_start/) seeds [`transaction_inferences`](database/migrations/20260529000000_initial_schema.sql) from S3 when the table is empty, then starts [`check_training_need`](dags/dags/model_lifecycle_orchestrator/check_training_need/).
-2. `check_training_need` runs daily and launches the drift-check pod when a model is deployed. It sends a training approval request to the selected Slack channel when drift is detected or when no model is deployed.
+2. [`check_training_need`](dags/dags/model_lifecycle_orchestrator/check_training_need/) runs daily and launches the drift-check pod when a model is deployed. It sends a training approval request to the selected Slack channel when drift is detected or when no model is deployed.
 3. After approval, [`on_training_decision`](dags/dags/model_lifecycle_orchestrator/on_training_decision/) trains and registers the model in a pod, then posts a promotion request.
 4. After a person approves the promotion request in Slack, [`on_promotion_decision`](dags/dags/model_lifecycle_orchestrator/on_promotion_decision/) records the model as the active deployment, deploys the inference API, and archives the model's training data to S3.
 
@@ -42,16 +42,16 @@ A rejected approval deletes the workflow, and a daily run without drift takes no
 
 ## Model results
 
-The results come from the notebook experiments in [`notebooks/02_preprocessing_and_model_training.ipynb`](notebooks/02_preprocessing_and_model_training.ipynb). Each model is a RobustScaler, SMOTE, and classifier pipeline tuned using Optuna with up to 30 trials and a 1-hour limit, then scored on a stratified 20% split (56,962 test rows containing 98 frauds).
+The results come from the notebook experiments in [`02_preprocessing_and_model_training.ipynb`](notebooks/02_preprocessing_and_model_training.ipynb). Each model is a RobustScaler, SMOTE, and classifier pipeline tuned using Optuna with up to 30 trials and a 1-hour limit, then scored on a stratified 20% split (56,962 test rows containing 98 frauds).
 
 | Model | F1 | PR-AUC | Recall | Precision |
 |---|---|---|---|---|
-| KNN | 0.256 | 0.647 | 0.929 | 0.148 |
-| Random Forest | 0.720 | 0.853 | 0.878 | 0.610 |
 | **XGBoost** | **0.761** | **0.866** | 0.878 | **0.672** |
+| Random Forest | 0.720 | 0.853 | 0.878 | 0.610 |
 | MLP (PyTorch) | 0.427 | 0.836 | 0.867 | 0.283 |
+| KNN | 0.256 | 0.647 | 0.929 | 0.148 |
 
-XGBoost scored the highest on F1, PR-AUC, and precision, so it is the model the platform trains. The inference API flags fraud above 0.875, selected as a balanced approximate for missed frauds and false alerts found in [`notebooks/02_preprocessing_and_model_training.ipynb`](notebooks/02_preprocessing_and_model_training.ipynb). SHAP interpretation is in [`notebooks/03_model_interpretation.ipynb`](notebooks/03_model_interpretation.ipynb).
+XGBoost scored the highest on F1, PR-AUC, and precision, so it is the model the platform trains. The inference API flags fraud above 0.875, selected as a balanced approximate for missed frauds and false alerts found in [`02_preprocessing_and_model_training.ipynb`](notebooks/02_preprocessing_and_model_training.ipynb). SHAP interpretation is in [`03_model_interpretation.ipynb`](notebooks/03_model_interpretation.ipynb).
 
 ## Screenshots
 
@@ -62,7 +62,7 @@ Screenshots from a local run are in [`screenshots/`](screenshots/).
 | Airflow | [DAG list](screenshots/airflow-dag-runs.png) with the 4 DAGs and their latest successful runs. |
 | Slack | [Approvals](screenshots/slack-model-training-and-promotion-approvals.png) of the first training and the promotion of `xgboost` v1. |
 | MLflow training run | [Metrics](screenshots/mlflow-xgboost-run-metrics.png), [parameters](screenshots/mlflow-xgboost-run-parameters.png), and [artifacts](screenshots/mlflow-xgboost-run-artifacts.png) of the XGBoost run in the `mle` workspace. |
-| MLflow model registry | [Version 1 of the `xgboost` model](screenshots/mlflow-xgboost-model-registry-version.png) with its input and output schema. |
+| MLflow model registry | [Version 1 of the xgboost model](screenshots/mlflow-xgboost-model-registry-version.png) with its input and output schema. |
 | Evaluation plots | [Confusion matrix](screenshots/mlflow-xgboost-confusion-matrix.png) and [fraud probability scatter](screenshots/mlflow-xgboost-fraud-probability-scatter.png) logged by the training run. |
 | Inference API | [Request](screenshots/fraud-detection-api-request.png) and [response](screenshots/fraud-detection-api-response.png) for `POST /predict` in the FastAPI docs. |
 
@@ -80,8 +80,8 @@ The metrics in these screenshots come from training runs of the platform itself,
 | Failed runs leave no trace | A transactional MLflow run deletes the run and its model versions when training fails. |
 | Jobs as pods | Drift check, training, archive, and seeding run as Kubernetes pods from ECR images. CD updates each image reference using Airflow Variables stored in Secrets Manager. |
 | Cloud parity on a single machine | MiniStack emulates the AWS APIs, K3s stands in for EKS, and the shim container stands in for GitHub's workflow-dispatch endpoint. |
-| Team isolation | Each team gets a scoped Kubernetes namespace, PostgreSQL schema with roles, and an MLflow workspace. [Kyverno policies](infrastructure/modules/exports/for_k8s_cluster.tf) deny edits to the platform ConfigMap and Secrets by anyone outside the cluster-admin group. |
-| Safe schema changes | Atlas lints migrations in [CI](.github/workflows/ci-migrate.yaml) and treats destructive or backward-incompatible changes as errors. |
+| Team isolation | Each team gets a scoped Kubernetes namespace, PostgreSQL schema with roles, and an MLflow workspace. Kyverno policies deny edits to the platform ConfigMap and Secrets by anyone outside the cluster-admin group. |
+| Safe schema changes | Atlas lints migrations in CI and treats destructive or backward-incompatible changes as errors. |
 | Bounded inference storage | After each promotion, the inferences used to train the promoted model move to S3 as Parquet files with Hive-style date partitions. It is executed in 50,000-row batches that are then deleted from PostgreSQL. |
 
 ## Tests and CI
@@ -94,7 +94,7 @@ The metrics in these screenshots come from training runs of the platform itself,
 
 ## Scope and limits
 
-- The platform runs on emulators (MiniStack and nektos/act) and has not been deployed to real AWS. Some MiniStack workarounds are documented in the [Terraform comments](infrastructure/).
+- The platform runs on emulators (`MiniStack` and `nektos/act`) and has not been deployed to real AWS. Some MiniStack workarounds are documented in the [Terraform comments](infrastructure/).
 - The credentials in the example files are development placeholders.
 - The [DAG deployment workflow](.github/workflows/cd-dags.yaml) copies DAGs into the Airflow container using `docker cp` and rsync, because S3-based MWAA DAG upload does not work in this setup.
 
@@ -154,7 +154,7 @@ The metrics in these screenshots come from training runs of the platform itself,
 
 `make init` is optional and uses `uv sync` to create local virtual environments for editing.
 
-After the first deployment, the daily check_training_need posts a new training request only when drift is detected, and any failed task posts a "Task Failed" message with the error and a log link in the same channel.
+After the first deployment, the daily `check_training_need` posts a new training request only when drift is detected, and any failed task posts a "Task Failed" message with the error and a log link in the same channel.
 
 Terraform prints the service URLs as outputs (`ministack_host_url`, `mlflow_host_url`, and `mwaa_teams_environment_host_urls`).
 
@@ -163,7 +163,7 @@ Terraform prints the service URLs as outputs (`ministack_host_url`, `mlflow_host
 | MiniStack (emulated AWS) | [`http://localhost:4566`](http://localhost:4566) |
 | MLflow | [`http://mlflow.127.0.0.1.sslip.io`](http://mlflow.127.0.0.1.sslip.io) |
 | Inference API (after the first promotion) | [`http://fraud-detection-api.127.0.0.1.sslip.io`](http://fraud-detection-api.127.0.0.1.sslip.io) |
-| Airflow | [http://localhost:18080](http://localhost:18080) |
+| Airflow | [`http://localhost:18080`](http://localhost:18080) |
 
 Commands that run workflows using act execute on the host and join the stack's Docker network, so they need the infrastructure to be up first.
 
