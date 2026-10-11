@@ -1,6 +1,6 @@
 # Fraud Detection Platform
 
-An end-to-end MLOps platform that monitors a credit-card fraud model for drift, trains a replacement when drift is detected, and deploys it only after a person approves each step. The whole cloud setup, including an AWS emulator, a Kubernetes cluster, and CI/CD, runs locally in Docker with a single `make up`.
+An end-to-end MLOps platform that monitors a credit-card fraud detection model for drift, trains a replacement when drift is detected, and deploys it only after a person approves each step. The whole cloud setup, including an AWS emulator, a Kubernetes cluster, and CI/CD, runs locally in Docker with a single `make up`.
 
 **Stack:** Python 3.12, Apache Airflow, MLflow, XGBoost, scikit-learn, Optuna, Evidently, FastAPI, PostgreSQL, Terraform, Kubernetes (K3s), Docker, Slack, GitHub Actions ([nektos/act](https://github.com/nektos/act)), Atlas ([ariga/atlas](https://github.com/ariga/atlas)), MiniStack ([ministackorg/ministack](https://github.com/ministackorg/ministack))
 
