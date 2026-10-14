@@ -103,7 +103,7 @@ def run_drift_report(
                 drift_share=EvidentlyConfig.share_of_drifted_features_threshold,
                 num_method="psi"
             ),
-            ValueDrift(column=probability_key),
+            ValueDrift(column=probability_key, method="wasserstein"),
             *([Precision(), Recall(), F1Score()] if has_sufficient_fraud_samples else []),
         ],
         include_tests=True
